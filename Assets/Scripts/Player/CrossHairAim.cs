@@ -1,51 +1,51 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Корректно размещает экранный UI-прицел (Image) над точкой попадания луча от gunEnd.
+/// Работает с Canvas в режиме ScreenSpace - Camera или Overlay; использует RectTransformUtility.
+/// </summary>
 public class CrosshairAim : MonoBehaviour
 {
-    public Transform gunEnd; 
-    public Camera mainCamera; 
-    public LayerMask groundMask = 1; 
+    public Transform gunEnd;
+    public Camera mainCamera;
+    public Canvas canvas; // обязательно назначить (канвас, где находится UI)
+    public LayerMask groundMask;
     public float maxDistance = 1000f;
 
-    private Image crosshairImage;
     private RectTransform rectTransform;
+    private RectTransform canvasRect;
 
     void Start()
     {
-        crosshairImage = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
-        if (crosshairImage == null || rectTransform == null)
-        {
-            Debug.LogError("UI Image или RectTransform не найдены на Crosshair!");
-        }
-
-        if (mainCamera == null)
-        {
-            mainCamera = Camera.main; 
-        }
+        if (rectTransform == null) Debug.LogError("CrosshairAimImproved: требуется RectTransform на элементе UI");
+        if (mainCamera == null) mainCamera = Camera.main;
+        if (canvas == null) Debug.LogError("CrosshairAimImproved: назначьте Canvas (Screen Space - Camera или Overlay)");
+        else canvasRect = canvas.GetComponent<RectTransform>();
     }
 
     void LateUpdate()
     {
-        if (gunEnd == null || mainCamera == null)
-        {
-            return; 
-        }
+        if (gunEnd == null || mainCamera == null || rectTransform == null || canvasRect == null) return;
 
         Ray ray = new Ray(gunEnd.position, gunEnd.forward);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, maxDistance, groundMask))
+        if (Physics.Raycast(ray, out RaycastHit hit, maxDistance, groundMask))
         {
-            Vector3 screenPoint = mainCamera.WorldToScreenPoint(hit.point);
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(mainCamera, hit.point);
 
-            if (screenPoint.z > 0)
+            // Конвертируем screenPoint в локальные координаты canvas
+            Vector2 localPoint;
+            bool ok = RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera, out localPoint);
+            if (ok)
             {
-                rectTransform.position = screenPoint;
+                rectTransform.localPosition = localPoint;
             }
-         
         }
-      
+        else
+        {
+            // если не попали — можно спрятать прицел или поставить в центр
+            // rectTransform.localPosition = Vector2.zero;
+        }
     }
 }
