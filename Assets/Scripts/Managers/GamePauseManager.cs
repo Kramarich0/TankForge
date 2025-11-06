@@ -68,7 +68,6 @@ public class GamePauseManager : MonoBehaviour
 
         SetPausePanel(true);
 
-
         disabledPlayerInputs.Clear();
         foreach (var p in FindObjectsOfType<PlayerInput>(true))
         {

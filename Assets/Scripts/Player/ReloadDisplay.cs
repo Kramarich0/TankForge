@@ -25,13 +25,13 @@ public class ReloadDisplay : MonoBehaviour
 
         if (reloadText != null && isReloading)
         {
-            reloadText.text = "<color=red>Перезарядка: " + Mathf.CeilToInt(currentReloadTime).ToString() + "с</color>";
+            reloadText.text = $"<color=red>Перезарядка... {currentReloadTime:F1}с</color>";
             gameObject.SetActive(true);
         }
         else
         {
             reloadText.text = "<color=green>Готово</color>";
-            gameObject.SetActive(true); 
+            gameObject.SetActive(true);
         }
     }
 

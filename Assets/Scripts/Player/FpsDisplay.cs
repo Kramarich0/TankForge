@@ -17,10 +17,10 @@ public class FpsDisplay : MonoBehaviour
         if (accumulatedTime >= updateInterval)
         {
             float fps = frames / accumulatedTime;
-            fpsText.text = $"{fps:0.} FPS";
+            fpsText.text = $"{fps:0.0} FPS";
 
             frames = 0;
-            accumulatedTime = 0f;
+            accumulatedTime -= updateInterval; 
         }
     }
 }

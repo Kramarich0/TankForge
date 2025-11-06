@@ -1,8 +1,28 @@
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class SimpleTankAI : MonoBehaviour
+[RequireComponent(typeof(TankHealth))]
+[RequireComponent(typeof(NavMeshAgent))]
+public class TankAI : MonoBehaviour
 {
+    public enum TankClass { Light, Medium, Heavy }
+    [System.Serializable]
+    public struct TankStats
+    {
+        public float health;
+        public float moveSpeed;
+        public float rotationSpeed;
+        public float fireRate;
+        public float shootRange;
+        public int bulletDamage;
+    }
+    [Header("Class")]
+    public TankClass tankClass = TankClass.Medium;
+    public TankStats lightStats = new() { health = 75f, moveSpeed = 5f, rotationSpeed = 60f, fireRate = 1f, shootRange = 80f, bulletDamage = 100 };
+    public TankStats mediumStats = new() { health = 150f, moveSpeed = 3f, rotationSpeed = 40f, fireRate = .1f, shootRange = 100f, bulletDamage = 50 };
+    public TankStats heavyStats = new() { health = 300f, moveSpeed = 2f, rotationSpeed = 30f, fireRate = .5f, shootRange = 120f, bulletDamage = 10 };
+
     [Header("Health")]
     private TankHealth tankHealth;
 
@@ -26,6 +46,7 @@ public class SimpleTankAI : MonoBehaviour
     public float fireRate = 9f;
     public float minGunAngle = -5f;
     public float maxGunAngle = 20f;
+    private int bulletDamage;
 
     public AudioClip idleSound;
     public AudioClip driveSound;
@@ -100,6 +121,8 @@ public class SimpleTankAI : MonoBehaviour
     {
         tankHealth = GetComponent<TankHealth>();
         agent = GetComponent<NavMeshAgent>();
+        ApplyStatsFromClass();
+
         agent.speed = moveSpeed;
         agent.angularSpeed = 120f;
         agent.acceleration = 8f;
@@ -113,8 +136,7 @@ public class SimpleTankAI : MonoBehaviour
             SetupAudioSource(shootSource, shootSound, 0.4f, false);
         }
 
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(transform.position, out hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
         {
             agent.Warp(hit.position);
             navAvailable = true;
@@ -124,6 +146,44 @@ public class SimpleTankAI : MonoBehaviour
         {
             navAvailable = false;
             if (debugLogs) Debug.LogWarning("[AI] NavMesh not found nearby. Using fallback movement.");
+        }
+    }
+
+    void ApplyStatsFromClass()
+    {
+        TankStats stats = mediumStats;
+        switch (tankClass)
+        {
+            case TankClass.Light:
+                stats = lightStats; break;
+            case TankClass.Medium:
+                stats = mediumStats; break;
+            case TankClass.Heavy:
+                stats = heavyStats; break;
+        }
+
+        moveSpeed = stats.moveSpeed;
+        rotationSpeed = stats.rotationSpeed;
+        fireRate = stats.fireRate;
+        shootRange = stats.shootRange;
+        bulletDamage = stats.bulletDamage;
+
+        if (tankHealth != null)
+        {
+            float h = stats.health;
+            var thType = tankHealth.GetType();
+
+            FieldInfo fMax = thType.GetField("maxHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            fMax?.SetValue(tankHealth, h);
+
+            PropertyInfo pMax = thType.GetProperty("maxHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (pMax != null && pMax.CanWrite) pMax.SetValue(tankHealth, h);
+
+            FieldInfo fCur = thType.GetField("currentHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            fCur?.SetValue(tankHealth, h);
+
+            PropertyInfo pCur = thType.GetProperty("currentHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (pCur != null && pCur.CanWrite) pCur.SetValue(tankHealth, h);
         }
     }
 
@@ -249,8 +309,7 @@ public class SimpleTankAI : MonoBehaviour
 
     bool IsLineOfSightClear()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(gunEnd.position, player.position - gunEnd.position, out hit, shootRange))
+        if (Physics.Raycast(gunEnd.position, player.position - gunEnd.position, out RaycastHit hit, shootRange))
         {
             if (hit.collider.CompareTag("Player"))
             {
@@ -266,10 +325,14 @@ public class SimpleTankAI : MonoBehaviour
 
         GameObject b = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
 
-        Rigidbody rb = b.GetComponent<Rigidbody>();
-        if (rb != null)
+        if (b.TryGetComponent<Rigidbody>(out var rb))
         {
             rb.linearVelocity = gunEnd.forward * 100f;
+        }
+
+        if (b.TryGetComponent<Bullet>(out var bullet))
+        {
+            bullet.damage = bulletDamage;
         }
 
         if (shootSound != null && shootSource != null)

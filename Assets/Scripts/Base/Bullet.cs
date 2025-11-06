@@ -25,8 +25,7 @@ public class Bullet : MonoBehaviour
         hasHit = true;
 
         IDamageable target = collision.collider.GetComponent<IDamageable>();
-        if (target == null)
-            target = collision.collider.GetComponentInParent<IDamageable>();
+        target ??= collision.collider.GetComponentInParent<IDamageable>();
 
         if (target != null)
         {

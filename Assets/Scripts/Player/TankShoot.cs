@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(AudioSource))]
 public class TankShoot : MonoBehaviour
 {
     [Header("Shooting")]
@@ -14,7 +16,6 @@ public class TankShoot : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip shootSound;
     public AudioClip reloadSound;
-    private bool reloadSoundPlaying = false;
 
     [Header("Reload UI")]
     public ReloadDisplay reloadDisplay;
@@ -28,43 +29,73 @@ public class TankShoot : MonoBehaviour
     private bool isRecoiling = false;
     private Vector3 originalLocalPos;
 
+    private bool canShoot = false;
+    private bool reloadSoundPlaying = false;
+
     void Start()
     {
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
 
         originalLocalPos = transform.localPosition;
+        nextFireTime = 0f;
+
+
+        StartCoroutine(EnableShootingNextFrame());
     }
 
-    void OnEnable()
+    IEnumerator EnableShootingNextFrame()
     {
-        if (shootAction?.action != null) shootAction.action.Enable();
+        yield return null;
+        canShoot = true;
+
+        if (shootAction?.action != null)
+        {
+            shootAction.action.Enable();
+            shootAction.action.Reset();
+        }
     }
 
     void OnDisable()
     {
-        if (shootAction?.action != null) shootAction.action.Disable();
+        if (shootAction?.action != null)
+        {
+            shootAction.action.Disable();
+        }
     }
 
     void Update()
     {
+        if (!canShoot) return;
         if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
-
         if (shootAction?.action == null) return;
+
+
+        bool pressed = false;
+        try
+        {
+            pressed = shootAction.action.ReadValue<float>() > 0.5f;
+        }
+        catch
+        {
+            pressed = shootAction.action.IsPressed();
+        }
+
+        if (pressed && Time.time >= nextFireTime)
+        {
+            Shoot();
+        }
+
 
         if (reloadDisplay != null)
         {
-            float remainingTime = nextFireTime - Time.time;
+            float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
             reloadDisplay.SetReload(remainingTime, 1f / fireRate);
         }
 
-        if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
-        {
-            Shoot();
-            reloadSoundPlaying = false;
-        }
 
-        if (Time.time < nextFireTime)
+        if (Time.time < nextFireTime && nextFireTime > 0f)
         {
             if (!reloadSoundPlaying && reloadSound != null)
             {
@@ -74,15 +105,14 @@ public class TankShoot : MonoBehaviour
                 reloadSoundPlaying = true;
             }
         }
-        else
+        else if (reloadSoundPlaying)
         {
-            if (reloadSoundPlaying)
-            {
-                audioSource.Stop();
-                audioSource.loop = false;
-                reloadSoundPlaying = false;
-            }
+            audioSource.Stop();
+            audioSource.loop = false;
+            audioSource.clip = null;
+            reloadSoundPlaying = false;
         }
+
 
         if (isRecoiling)
         {
@@ -100,30 +130,26 @@ public class TankShoot : MonoBehaviour
     {
         nextFireTime = Time.time + (1f / fireRate);
 
-        // Звук
         if (shootSound != null && audioSource != null)
         {
             audioSource.PlayOneShot(shootSound);
         }
 
-        // Дым
         if (muzzleSmoke != null)
         {
             muzzleSmoke.SetActive(true);
             Invoke(nameof(HideMuzzleSmoke), 2f);
         }
 
-        // Отдача
         isRecoiling = true;
 
-        // Создаём снаряд
         if (bulletPrefab != null && gunEnd != null)
         {
             GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.linearVelocity = gunEnd.forward;
+                rb.linearVelocity = gunEnd.forward * 20f;
             }
         }
     }
