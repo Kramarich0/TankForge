@@ -327,13 +327,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 133943337}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.012370795, y: 0.98396087, z: -0.075566106, w: 0.1611139}
+  m_LocalRotation: {x: 0.012638509, y: 0.98383397, z: -0.0772011, w: 0.16109312}
   m_LocalPosition: {x: 694.3263, y: 2.8630128, z: 926.0118}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 8.783, y: 161.402, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &133943342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,23 +346,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d11156d8b463c3468fa6a1d710813bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 214556437}
+  target: {fileID: 7825726635607387692}
   lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  zoomAction: {fileID: -4466400523724897031, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
+  sensitivity: 0.04
   offset: {x: 0, y: 5, z: -10}
-  minPitch: -20
-  maxPitch: 50
-  baseSensitivity: 0.05
-  zoomSensitivityMultiplier: 0.6
-  rotationSmoothTime: 0
-  positionSmoothTime: 0
-  inputResponsivenessThreshold: 0.01
-  minDistance: 3
-  maxDistance: 14
-  zoomSpeed: 6
-  distanceSmoothTime: 0.12
-  cameraCollisionRadius: 0.3
-  collisionOffset: 0.25
+  rotationSpeed: 3
+  smoothSpeed: 5
 --- !u!4 &150499267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7162602615162024691, guid: 520381c93e2f9734bab9f23f83618de2, type: 3}
@@ -437,37 +426,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e132733b84047940b6a9043814d6ee2, type: 3}
---- !u!1 &214556436
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 214556437}
-  m_Layer: 0
-  m_Name: MainPivot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &214556437
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 214556436}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.58, y: 2.56, z: 4.96}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 924451296}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &334310316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1990,7 +1948,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &924451296
 Transform:
   m_ObjectHideFlags: 0
@@ -2024,7 +1982,6 @@ Transform:
   - {fileID: 4424391845487473240}
   - {fileID: 4424391845487473202}
   - {fileID: 1912782321}
-  - {fileID: 214556437}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!54 &924451297
@@ -2088,25 +2045,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  forwardSpeed: 8
+  forwardSpeed: 4
   backwardSpeed: 1
-  acceleration: 1
+  acceleration: 1.5
   deceleration: 8
   turnSpeed: 30
-  turnWhileReverseFactor: 0.6
-  rotationPivot: {fileID: 214556437}
-  adjustRigidbodyCenterOfMass: 1
-  useRigidbody: 1
-  inputDeadzone: 0.02
-  rotationSmoothTime: 0.06
-  idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
-  driveSound: {fileID: 8300000, guid: ff4a19a8ba7e622489b396ca9fe6ff5c, type: 3}
+  idleSound: {fileID: 0}
+  driveSound: {fileID: 0}
   minVolume: 0.2
   maxVolume: 1
   minPitch: 0.7
   maxPitch: 1.3
   blendSpeed: 5
-  speedDisplay: {fileID: 1370471686}
+  speedDisplay: {fileID: 0}
 --- !u!114 &924451300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2619,6 +2570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1107730477}
   - component: {fileID: 1107730479}
+  - component: {fileID: 1107730480}
   m_Layer: 0
   m_Name: SniperCamera
   m_TagString: Untagged
@@ -2692,6 +2644,33 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!54 &1107730480
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107730476}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!4 &1117594506 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2778711286873668843, guid: 5c89ab9d3f42fe849a82955bf08b4895, type: 3}
@@ -4175,7 +4154,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 5c0aaa0cd89427247a7d82a9dbeb1573, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -4291,16 +4270,15 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 1667916944}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  bulletSpeed: 80
-  fireRate: 0.1
+  fireRate: 0.0975
   muzzleSmoke: {fileID: 1172309540}
   audioSource: {fileID: 0}
   shootSound: {fileID: 8300000, guid: 5c0aaa0cd89427247a7d82a9dbeb1573, type: 3}
   reloadSound: {fileID: 8300000, guid: c105999fa8579cf458be59ad56674a31, type: 3}
   reloadDisplay: {fileID: 1079573579}
   recoilAmount: 0.1
-  recoilSpeed: 10
-  returnSpeed: 5
+  recoilSpeed: 1
+  returnSpeed: 2
 --- !u!114 &1166000409
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4314,11 +4292,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunElevation
   lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  invertY: 0
-  minPitch: -10
-  maxPitch: 20
   sensitivity: 0.05
-  smoothTime: 0.06
+  maxDegreesPerSecond: 10
+  minAngle: -4
+  maxAngle: 20
 --- !u!4 &1166000417
 Transform:
   m_ObjectHideFlags: 0
@@ -5812,7 +5789,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameScoreManager
   playerScore: 0
-  scoreDisplay: {fileID: 816313760}
+  scoreDisplay: {fileID: 0}
 --- !u!1 &1477165556
 GameObject:
   m_ObjectHideFlags: 0
@@ -6141,8 +6118,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   maxDistance: 1000
-  smoothSpeed: 20
-  preferCameraRay: 1
 --- !u!114 &1513068524
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6317,8 +6292,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   maxDistance: 1000
-  smoothSpeed: 20
-  preferCameraRay: 1
 --- !u!114 &1567123271
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6912,15 +6885,9 @@ MonoBehaviour:
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   forwardSpeed: 4
   backwardSpeed: 1
-  acceleration: 0.0002
-  deceleration: 8
+  acceleration: 1
+  deceleration: 0.5
   turnSpeed: 30
-  turnWhileReverseFactor: 0.6
-  rotationPivot: {fileID: 0}
-  adjustRigidbodyCenterOfMass: 1
-  useRigidbody: 1
-  inputDeadzone: 0.02
-  rotationSmoothTime: 0.06
   idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
   driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
   minVolume: 0.2
@@ -6928,7 +6895,7 @@ MonoBehaviour:
   minPitch: 0.7
   maxPitch: 1.3
   blendSpeed: 5
-  speedDisplay: {fileID: 0}
+  speedDisplay: {fileID: 1370471686}
 --- !u!1 &1912782320
 GameObject:
   m_ObjectHideFlags: 0
@@ -6974,18 +6941,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankSniperView
   toggleViewAction: {fileID: 1647088302594120134, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  zoomAction: {fileID: -4466400523724897031, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 1667916944}
   mainCamera: {fileID: 133943340}
   sniperCamera: {fileID: 1107730479}
   crosshairUI: {fileID: 1567123268}
   sniperVignette: {fileID: 1834758887}
-  sniperFOV: 12
-  transitionSpeed: 10
-  sniperDistanceOffset: 0
-  zoomSpeed: 5
-  minZoom: -10
-  maxZoom: 10
 --- !u!1 &1914302072
 GameObject:
   m_ObjectHideFlags: 0
@@ -7611,18 +7571,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankSniperView
   toggleViewAction: {fileID: 1647088302594120134, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  zoomAction: {fileID: 0}
   gunEnd: {fileID: 370585203}
   mainCamera: {fileID: 133943340}
   sniperCamera: {fileID: 388195686}
   crosshairUI: {fileID: 1567123268}
   sniperVignette: {fileID: 1834758887}
-  sniperFOV: 12
-  transitionSpeed: 10
-  sniperDistanceOffset: 0
-  zoomSpeed: 5
-  minZoom: -10
-  maxZoom: 10
 --- !u!23 &189470214163172146
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -13747,7 +13700,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &7491958299208256864
 GameObject:
   m_ObjectHideFlags: 0
@@ -14428,11 +14381,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   lookAction: {fileID: -5456195109082554791, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  invertY: 0
-  minPitch: -10
-  maxPitch: 20
   sensitivity: 0.05
-  smoothTime: 0.06
+  maxDegreesPerSecond: 10
+  minAngle: -10
+  maxAngle: 20
 --- !u!114 &8444805226178550942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14448,7 +14400,6 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 370585203}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  bulletSpeed: 80
   fireRate: 0.167
   muzzleSmoke: {fileID: 6813416509946747716}
   audioSource: {fileID: 0}
@@ -14456,8 +14407,8 @@ MonoBehaviour:
   reloadSound: {fileID: 0}
   reloadDisplay: {fileID: 1079573579}
   recoilAmount: 0.1
-  recoilSpeed: 10
-  returnSpeed: 5
+  recoilSpeed: 1
+  returnSpeed: 2
 --- !u!82 &8444805226178550943
 AudioSource:
   m_ObjectHideFlags: 0

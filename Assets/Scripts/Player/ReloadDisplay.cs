@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class ReloadDisplay : MonoBehaviour
 {
     private TextMeshProUGUI reloadText;

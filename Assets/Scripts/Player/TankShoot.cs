@@ -7,6 +7,7 @@ public class TankShoot : MonoBehaviour
     public InputActionReference shootAction;
     public Transform gunEnd;
     public GameObject bulletPrefab;
+    public float bulletSpeed = 280f;
     public float fireRate = 0.5f;
 
     [Header("Effects")]
@@ -20,9 +21,9 @@ public class TankShoot : MonoBehaviour
     public ReloadDisplay reloadDisplay;
 
     [Header("Recoil")]
-    public float recoilAmount = 0.1f;
-    public float recoilSpeed = 10f;
-    public float returnSpeed = 5f;
+    public float recoilAmount = 0.12f;
+    public float recoilSpeed = 20f;
+    public float returnSpeed = 7f;
 
     private float nextFireTime = 0f;
     private bool isRecoiling = false;
@@ -36,25 +37,17 @@ public class TankShoot : MonoBehaviour
         originalLocalPos = transform.localPosition;
     }
 
-    void OnEnable()
-    {
-        if (shootAction?.action != null) shootAction.action.Enable();
-    }
-
-    void OnDisable()
-    {
-        if (shootAction?.action != null) shootAction.action.Disable();
-    }
+    void OnEnable() { if (shootAction?.action != null) shootAction.action.Enable(); }
+    void OnDisable() { if (shootAction?.action != null) shootAction.action.Disable(); }
 
     void Update()
     {
         if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
-
         if (shootAction?.action == null) return;
 
         if (reloadDisplay != null)
         {
-            float remainingTime = nextFireTime - Time.time;
+            float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
             reloadDisplay.SetReload(remainingTime, 1f / fireRate);
         }
 
@@ -84,11 +77,13 @@ public class TankShoot : MonoBehaviour
             }
         }
 
+        // Отдача
         if (isRecoiling)
         {
             Vector3 targetPos = originalLocalPos - transform.forward * recoilAmount;
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, recoilSpeed * Time.deltaTime);
-            isRecoiling = Vector3.Distance(transform.localPosition, targetPos) > 0.01f;
+            if (Vector3.Distance(transform.localPosition, targetPos) < 0.01f)
+                isRecoiling = false;
         }
         else
         {
@@ -100,30 +95,25 @@ public class TankShoot : MonoBehaviour
     {
         nextFireTime = Time.time + (1f / fireRate);
 
-        // Звук
-        if (shootSound != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(shootSound);
-        }
+        if (shootSound != null && audioSource != null) audioSource.PlayOneShot(shootSound);
 
-        // Дым
         if (muzzleSmoke != null)
         {
             muzzleSmoke.SetActive(true);
-            Invoke(nameof(HideMuzzleSmoke), 2f);
+            CancelInvoke(nameof(HideMuzzleSmoke));
+            Invoke(nameof(HideMuzzleSmoke), 1.2f);
         }
 
-        // Отдача
         isRecoiling = true;
 
-        // Создаём снаряд
         if (bulletPrefab != null && gunEnd != null)
         {
             GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.linearVelocity = gunEnd.forward;
+                rb.linearVelocity = gunEnd.forward * bulletSpeed;
+                rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             }
         }
     }

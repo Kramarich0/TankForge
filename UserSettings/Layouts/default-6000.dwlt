@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_Position:
     m_Target: {x: 697.02545, y: 2.4300683, z: 131.6947}
     speed: 2
-    m_Value: {x: 233.54813, y: 0.1509707, z: 812.3863}
+    m_Value: {x: 697.02545, y: 2.4300683, z: 131.6947}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1061,11 +1061,11 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.049827583, y: -0.6676061, z: 0.043706067, w: -0.7418183}
     speed: 2
-    m_Value: {x: 0.031818826, y: 0.96918136, z: -0.17743191, w: 0.16903177}
+    m_Value: {x: 0.04982758, y: 0.6676061, z: -0.043706067, w: 0.7418183}
   m_Size:
     m_Target: 3.2404625
     speed: 2
-    m_Value: 4.9934187
+    m_Value: 3.2404625
   m_Ortho:
     m_Target: 0
     speed: 2
