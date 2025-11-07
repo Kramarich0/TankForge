@@ -2,26 +2,24 @@ using UnityEngine;
 
 public class TurretController : MonoBehaviour
 {
-    public Transform cameraTransform;  
-    public Transform turret;           
+    public Transform cameraTransform;
+    public Transform turret;
 
-    public float rotationSpeed = 30f;  
-    public float snapAngle = 1f;       
+    public float rotationSpeed = 30f;
+    public float snapAngle = 1f;
     public bool invertTurretForward = false;
 
     void LateUpdate()
     {
         if (cameraTransform == null || turret == null) return;
 
-        // Вектор к цели, проецируем на горизонтальную плоскость
-        Vector3 dir = cameraTransform.position - turret.position;
+        Vector3 dir = cameraTransform.forward;
         dir = Vector3.ProjectOnPlane(dir, Vector3.up); 
+
         if (dir.sqrMagnitude < 0.0001f) return;
 
-        // Целевая rotation только по Y
         Quaternion targetRot = Quaternion.LookRotation(dir.normalized * (invertTurretForward ? -1f : 1f));
-        
-        // Сохраняем текущие X и Z, меняем только Y
+
         Vector3 euler = turret.rotation.eulerAngles;
         float angleDiff = Mathf.DeltaAngle(euler.y, targetRot.eulerAngles.y);
 
@@ -37,4 +35,5 @@ public class TurretController : MonoBehaviour
 
         turret.rotation = Quaternion.Euler(euler);
     }
+
 }
