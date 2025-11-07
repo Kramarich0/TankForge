@@ -346,7 +346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d11156d8b463c3468fa6a1d710813bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 924451296}
+  target: {fileID: 7825726635607387692}
   lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   distance: 10
   height: 4.5
@@ -536,13 +536,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24c91f7946b71ab4d9a576b6c9cd0ed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurretController
-  cameraTransform: {fileID: 0}
-  turret: {fileID: 0}
+  cameraTransform: {fileID: 133943341}
+  turret: {fileID: 368864156}
   rotationSpeed: 30
-  maxDistance: 2000
-  aimMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  snapAngle: 1
+  invertTurretForward: 0
 --- !u!1 &370585202
 GameObject:
   m_ObjectHideFlags: 0
@@ -1952,7 +1950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &924451296
 Transform:
   m_ObjectHideFlags: 0
@@ -2049,20 +2047,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  maxForwardSpeed: 6
-  maxBackwardSpeed: 2.5
+  forwardSpeed: 4
+  backwardSpeed: 1
   acceleration: 1.5
   deceleration: 8
-  turnSpeedStationary: 90
-  turnSpeedMoving: 45
-  mass: 1500
-  idleSource: {fileID: 0}
-  driveSource: {fileID: 0}
+  turnSpeed: 30
+  idleSound: {fileID: 0}
+  driveSound: {fileID: 0}
   minVolume: 0.2
   maxVolume: 1
   minPitch: 0.7
   maxPitch: 1.3
-  audioBlendSpeed: 3
+  blendSpeed: 5
+  speedDisplay: {fileID: 0}
 --- !u!114 &924451300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5247,10 +5244,8 @@ MonoBehaviour:
   cameraTransform: {fileID: 133943341}
   turret: {fileID: 1166000407}
   rotationSpeed: 30
-  maxDistance: 2000
-  aimMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
+  snapAngle: 1
+  invertTurretForward: 0
 --- !u!1 &1329297881
 GameObject:
   m_ObjectHideFlags: 0
@@ -6892,20 +6887,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  maxForwardSpeed: 6
-  maxBackwardSpeed: 2.5
+  forwardSpeed: 4
+  backwardSpeed: 1
   acceleration: 1
   deceleration: 0.5
-  turnSpeedStationary: 90
-  turnSpeedMoving: 45
-  mass: 1500
-  idleSource: {fileID: 0}
-  driveSource: {fileID: 0}
+  turnSpeed: 30
+  idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
+  driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
   minVolume: 0.2
   maxVolume: 1
   minPitch: 0.7
   maxPitch: 1.3
-  audioBlendSpeed: 3
+  blendSpeed: 5
+  speedDisplay: {fileID: 1370471686}
 --- !u!1 &1912782320
 GameObject:
   m_ObjectHideFlags: 0
@@ -13710,7 +13704,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &7491958299208256864
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,54 +1,110 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Переключение прицела (sniper). Убираем любые попытки включать GameObject в Update.
-/// Toggle по InputAction.WasPressedThisFrame()\
-/// sniperCamera следует позиционировать каждый кадр на gunEnd, или можно parent it.
-/// </summary>
 public class TankSniperView : MonoBehaviour
 {
-    public InputActionReference toggleViewAction;
-    public Transform gunEnd;
-    public Camera mainCamera;
-    public Camera sniperCamera;
-    public GameObject crosshairUI;
-    public GameObject sniperVignette;
+    public InputActionReference toggleViewAction; 
+    public Transform gunEnd; 
+    public Camera mainCamera; 
+    public Camera sniperCamera; 
+    public GameObject crosshairUI; 
+    public GameObject sniperVignette; 
+
     private bool isSniperView = false;
 
     void Start()
     {
-        toggleViewAction?.action?.Enable();
-        SetSniperState(false);
+        if (toggleViewAction?.action != null)
+        {
+            toggleViewAction.action.Enable();
+        }
+        
+        if (crosshairUI != null)
+        {
+            crosshairUI.SetActive(false);
+        }
+
+        if (sniperVignette != null)
+        {
+            sniperVignette.SetActive(false);
+        }
     }
 
     void Update()
     {
-        if (toggleViewAction?.action == null) return;
+        if (!gameObject.activeInHierarchy)
+        {
+            Debug.LogError("GameObject с TankSniperView неактивен! Активируем...");
+            gameObject.SetActive(true);
+        }
+
+        if (toggleViewAction?.action == null)
+        {
+            Debug.LogError("toggleViewAction == null в Update!");
+            return;
+        }
+
+        if (!toggleViewAction.action.enabled)
+        {
+            Debug.LogWarning("InputAction отключена! Пытаемся включить...");
+            toggleViewAction.action.Enable();
+        }
+
+        // Debug.Log("InputAction.enabled = " + toggleViewAction.action.enabled);
+        // Debug.Log("isSniperView = " + isSniperView);
 
         if (toggleViewAction.action.WasPressedThisFrame())
         {
-            SetSniperState(!isSniperView);
+            // Debug.Log("Кнопка нажата!");
+            ToggleSniperView();
         }
 
-        if (isSniperView && gunEnd != null && sniperCamera != null)
+        if (isSniperView)
         {
-            // простое позиционирование камеры в точке оружия
-            sniperCamera.transform.SetPositionAndRotation(gunEnd.position, gunEnd.rotation);
+            if (gunEnd != null)
+            {
+                sniperCamera.transform.position = gunEnd.position;
+                sniperCamera.transform.rotation = gunEnd.rotation;
+            }
+            else
+            {
+                Debug.LogError("gunEnd == null при isSniperView = true!");
+            }
         }
     }
 
-    void SetSniperState(bool on)
+    void ToggleSniperView()
     {
-        isSniperView = on;
-        if (mainCamera != null) mainCamera.enabled = !on;
-        if (sniperCamera != null) sniperCamera.enabled = on;
-        if (crosshairUI != null) crosshairUI.SetActive(on);
-        if (sniperVignette != null) sniperVignette.SetActive(on);
+        // Debug.Log("ToggleSniperView вызван! isSniperView = " + isSniperView);
+
+        isSniperView = !isSniperView;
+        // Debug.Log("Теперь isSniperView = " + isSniperView);
+
+        mainCamera.enabled = !isSniperView;
+        sniperCamera.enabled = isSniperView;
+
+        if (crosshairUI != null)
+        {
+            crosshairUI.SetActive(isSniperView);
+        }
+
+        if (sniperVignette != null)
+        {
+            sniperVignette.SetActive(isSniperView);
+            // Debug.Log("Vignette.SetActive(" + isSniperView + ")")
+        }
+
+        // Debug.Log("mainCamera.enabled = " + mainCamera.enabled);
+        // Debug.Log("sniperCamera.enabled = " + sniperCamera.enabled);
     }
 
     void OnDestroy()
     {
-        toggleViewAction?.action?.Disable();
+        // Debug.Log("TankSniperView уничтожён!");
+        if (toggleViewAction?.action != null && toggleViewAction.action.enabled)
+        {
+            toggleViewAction.action.Disable();
+            // Debug.Log("InputAction отключена в OnDestroy!");
+        }
     }
 }
