@@ -180,15 +180,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.7281494
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.7425551
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.1452632
+      value: 5.839996
       objectReference: {fileID: 0}
     - target: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -625,7 +625,7 @@ GameObject:
   - component: {fileID: 387293787}
   - component: {fileID: 387293786}
   m_Layer: 5
-  m_Name: Canvas (1)
+  m_Name: PauseCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4291,7 +4291,7 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 1667916944}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  bulletSpeed: 80
+  bulletSpeed: 5000
   fireRate: 0.1
   muzzleSmoke: {fileID: 1172309540}
   audioSource: {fileID: 0}
@@ -4314,11 +4314,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunElevation
   lookAction: {fileID: -5630151704836100654, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  invertY: 0
-  minPitch: -10
-  maxPitch: 20
-  sensitivity: 0.05
-  smoothTime: 0.06
+  sensitivity: 0.02
+  smoothSpeed: 12
+  minAngle: -10
+  maxAngle: 20
 --- !u!4 &1166000417
 Transform:
   m_ObjectHideFlags: 0
@@ -6103,7 +6102,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1513068522
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6198,7 +6197,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1515545332
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6279,7 +6278,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1567123269
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6517,7 +6516,7 @@ GameObject:
   - component: {fileID: 1631186265}
   - component: {fileID: 1631186264}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: MainGameCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14428,11 +14427,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   lookAction: {fileID: -5456195109082554791, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  invertY: 0
-  minPitch: -10
-  maxPitch: 20
   sensitivity: 0.05
-  smoothTime: 0.06
+  smoothSpeed: 12
+  minAngle: -10
+  maxAngle: 20
 --- !u!114 &8444805226178550942
 MonoBehaviour:
   m_ObjectHideFlags: 0

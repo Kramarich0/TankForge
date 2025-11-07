@@ -51,7 +51,9 @@ public class TankMovement : MonoBehaviour
     public SpeedDisplay speedDisplay;
 
     private Rigidbody rb;
-    private float yawVelocity = 0f; // для SmoothDampAngle при повороте
+    private float yawVelocity = 0f; 
+    private Vector3 fixedDesiredVelocity = Vector3.zero;
+    private float fixedDeltaY = 0f;
 
     void Awake()
     {
@@ -127,7 +129,6 @@ public class TankMovement : MonoBehaviour
         float rawMoveInput = Mathf.Clamp(v.y, -1f, 1f);
         float rawTurnInput = Mathf.Clamp(v.x, -1f, 1f);
 
-        // Применяем порог мёртвой зоны к повороту, чтобы убрать дрожание и "плыв" без ввода
         float moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
         float turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
 
@@ -143,55 +144,27 @@ public class TankMovement : MonoBehaviour
         float rate = (Mathf.Abs(targetSpeed) > Mathf.Epsilon) ? acceleration : deceleration;
         currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, rate * Time.deltaTime);
 
-        // движение
-        Vector3 desiredVelocity = transform.forward * currentSpeed;
-        if (useRigidbody && rb != null)
-        {
-            rb.MovePosition(rb.position + desiredVelocity * Time.deltaTime);
-        }
-        else
-        {
-            transform.Translate(desiredVelocity * Time.deltaTime, Space.World);
-        }
+        // desired velocity (передаем в FixedUpdate)
+        fixedDesiredVelocity = transform.forward * currentSpeed;
 
-        // поворот: делаем адаптивное сглаживание — при активном вводе поворачиваем быстро (малое сглаживание), при отсутствии — быстро останавливаем
+        // поворот — рассчитываем желаемый угловой шаг для текущего кадра
         float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
         float desiredAngular = turnInput * effectiveTurnSpeed;
 
-        // сглаживание угла: используем SmoothDampAngle для стабильности
+        // сглаживаем угол — получаем deltaY (degrees) для применения в этом кадре
         float currentY = transform.eulerAngles.y;
-        float targetY = currentY + desiredAngular * Time.deltaTime * 1f; // целевой угол на этот кадр
-
+        float targetY = currentY + desiredAngular * Time.deltaTime;
         float smoothTime = rotationSmoothTime;
-        // если есть активный ввод — делаем почти мгновенный отклик
-        if (Mathf.Abs(turnInput) > 0.05f) smoothTime = rotationSmoothTime * 0.4f;
+        if (Mathf.Abs(turnInput) > 0.05f) smoothTime *= 0.4f;
 
         float newY = Mathf.SmoothDampAngle(currentY, targetY, ref yawVelocity, smoothTime);
-
         float deltaY = Mathf.DeltaAngle(currentY, newY);
+        fixedDeltaY = deltaY; // передаем в FixedUpdate
 
-        if (useRigidbody && rb != null)
-        {
-            rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, deltaY, 0f));
-        }
-        else
-        {
-            // Если rotationPivot задан и вы НЕ хотите менять centerOfMass, можно вращать вокруг pivot вручную:
-            if (rotationPivot != null && !useRigidbody)
-            {
-                transform.RotateAround(rotationPivot.position, Vector3.up, deltaY);
-            }
-            else
-            {
-                transform.Rotate(0f, deltaY, 0f);
-            }
-        }
+        // UI
+        if (speedDisplay != null) speedDisplay.SetSpeed(currentSpeed);
 
-        // отображение скорости
-        if (speedDisplay != null)
-            speedDisplay.SetSpeed(currentSpeed);
-
-        // звук
+        // Audio blend
         float absMove = Mathf.Abs(moveInput);
         targetBlend = Mathf.Clamp01(absMove);
         currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
@@ -211,6 +184,29 @@ public class TankMovement : MonoBehaviour
         {
             driveSource.volume = driveVolume;
             driveSource.pitch = drivePitch;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (useRigidbody && rb != null)
+        {
+            rb.MovePosition(rb.position + fixedDesiredVelocity * Time.fixedDeltaTime);
+            rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, fixedDeltaY, 0f));
+        }
+        else
+        {
+            // Transform-based fallback
+            transform.Translate(fixedDesiredVelocity * Time.fixedDeltaTime, Space.World);
+
+            if (rotationPivot != null && !useRigidbody)
+            {
+                transform.RotateAround(rotationPivot.position, Vector3.up, fixedDeltaY);
+            }
+            else
+            {
+                transform.Rotate(0f, fixedDeltaY, 0f);
+            }
         }
     }
 }

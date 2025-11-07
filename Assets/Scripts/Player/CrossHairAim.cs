@@ -1,18 +1,23 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Прицел (UI) — корректно позиционирует crosshair на Canvas любого типа.
+/// Использует ScreenPointToLocalPointInRectangle -> rectTransform.anchoredPosition.
+/// </summary>
 public class CrosshairAim : MonoBehaviour
 {
     public Transform gunEnd;
     public Camera mainCamera;
-    public LayerMask groundMask = ~0; // по умолчанию всё
+    public LayerMask groundMask = ~0;
     public float maxDistance = 1000f;
     [Range(0f, 50f)] public float smoothSpeed = 20f;
-    public bool preferCameraRay = true; // если true — пробуем сначала центр камеры, иначе — луч от ствола
+    public bool preferCameraRay = true;
 
     private Image crosshairImage;
     private RectTransform rectTransform;
-    private Vector3 currentScreenPos;
+    private Vector2 currentAnchoredPos;
+    private Canvas canvas;
 
     void Start()
     {
@@ -20,17 +25,19 @@ public class CrosshairAim : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
         if (mainCamera == null) mainCamera = Camera.main;
         if (crosshairImage == null || rectTransform == null) Debug.LogError("Crosshair: UI Image или RectTransform не найдены!");
-        currentScreenPos = rectTransform.position;
+        canvas = GetComponentInParent<Canvas>();
+        if (canvas == null) Debug.LogError("Crosshair: Canvas не найден в родительских объектах!");
+        // Инициализация текущей позиции (anchored)
+        currentAnchoredPos = rectTransform.anchoredPosition;
     }
 
     void LateUpdate()
     {
-        if (mainCamera == null || crosshairImage == null || rectTransform == null) return;
+        if (mainCamera == null || crosshairImage == null || rectTransform == null || canvas == null) return;
 
         Vector3 worldHitPoint = Vector3.zero;
         bool hitSomething = false;
 
-        // Первый вариант: пробуем луч от камеры через центр экрана (обычно даёт корректный прицел)
         if (preferCameraRay)
         {
             Ray camRay = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2f, Screen.height / 2f, 0f));
@@ -41,7 +48,6 @@ public class CrosshairAim : MonoBehaviour
             }
         }
 
-        // Если не попали от камеры, или предпочитаем - используем луч от ствола
         if (!hitSomething && gunEnd != null)
         {
             Ray ray = new Ray(gunEnd.position, gunEnd.forward);
@@ -52,22 +58,26 @@ public class CrosshairAim : MonoBehaviour
             }
         }
 
-        // Если всё ещё ничего — проецируем точку далеко по направлению камеры
         if (!hitSomething)
         {
             worldHitPoint = (preferCameraRay && mainCamera != null)
                 ? (mainCamera.transform.position + mainCamera.transform.forward * maxDistance)
-                : (gunEnd != null ? (gunEnd.position + gunEnd.forward * maxDistance) : Vector3.zero);
+                : (gunEnd != null ? (gunEnd.position + gunEnd.forward * maxDistance) : mainCamera.transform.position + mainCamera.transform.forward * maxDistance);
         }
 
-        // Конвертируем в экранные координаты корректно
         Vector3 screenPoint = mainCamera.WorldToScreenPoint(worldHitPoint);
 
         if (screenPoint.z > 0)
         {
-            Vector3 targetPos = screenPoint;
-            currentScreenPos = Vector3.Lerp(currentScreenPos, targetPos, 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
-            rectTransform.position = currentScreenPos;
+            Vector2 localPoint;
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            // преобразуем screenPoint -> локальные координаты канваса
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : mainCamera, out localPoint))
+            {
+                Vector2 targetAnchored = localPoint;
+                currentAnchoredPos = Vector2.Lerp(currentAnchoredPos, targetAnchored, 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
+                rectTransform.anchoredPosition = currentAnchoredPos;
+            }
         }
     }
 }
