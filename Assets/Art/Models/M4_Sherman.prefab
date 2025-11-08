@@ -1049,7 +1049,7 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 5612779968204697617}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  bulletSpeed: 80
+  bulletSpeed: 400
   fireRate: 0.167
   muzzleSmoke: {fileID: 1394061989147044565}
   audioSource: {fileID: 0}
@@ -1902,20 +1902,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  moveActionPath: Gameplay/Move
   forwardSpeed: 12
   backwardSpeed: 0.4
   acceleration: 5
   deceleration: 0.2
-  brakeDeceleration: 1.5
   turnSpeed: 55
   turnWhileReverseFactor: 0.6
-  useRigidbody: 1
   rotationPivot: {fileID: 0}
   adjustRigidbodyCenterOfMass: 1
+  useRigidbody: 1
   inputDeadzone: 0.02
-  movementEpsilon: 0.005
-  rotationEpsilon: 0.01
   rotationSmoothTime: 0.06
   idleSound: {fileID: 0}
   driveSound: {fileID: 0}
@@ -1924,7 +1920,6 @@ MonoBehaviour:
   minPitch: 0.7
   maxPitch: 1.3
   blendSpeed: 5
-  debugLogs: 1
   speedDisplay: {fileID: 0}
 --- !u!114 &646124022302727699
 MonoBehaviour:
@@ -3766,9 +3761,8 @@ MonoBehaviour:
   crosshairUI: {fileID: 0}
   sniperVignette: {fileID: 0}
   sniperFOV: 12
-  transitionSpeed: 3
-  sniperDistanceOffset: 0
-  zoomSpeed: 5
+  positionOffset: -0.2
+  zoomStep: 2
   minZoom: -10
   maxZoom: 10
 --- !u!1 &6295477157598390750

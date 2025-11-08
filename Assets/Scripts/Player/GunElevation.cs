@@ -2,46 +2,43 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// Управление углом возвышения орудия по входу lookAction (обычно та же ось, что и камера).
-/// Плавно интерполируется к targetPitch с помощью SmoothDampAngle (без проблем с 0-360).
+/// Управление углом возвышения орудия по направлению камеры.
+/// Пушка плавно интерполируется к цели, ограничена min/max углами.
 /// </summary>
 public class GunElevation : MonoBehaviour
 {
-    public InputActionReference lookAction; // привязать Player/Look -> <Mouse>/delta
-    public float sensitivity = 0.08f; // градусы/пиксель
-    public float smoothSpeed = 12f; // скорость сглаживания угла (больше - быстрее)
-    public float minAngle = -10f; // вниз
-    public float maxAngle = 20f;  // вверх
+    public Transform cameraTransform;      // Камера игрока
+    public float smoothSpeed = 8f;         // скорость сглаживания
+    public float minAngle = -10f;
+    public float maxAngle = 20f;
 
     private float currentPitch;
     private float targetPitch;
     private float pitchVelocity;
 
-    void OnEnable()
+    void Start()
     {
-        lookAction?.action?.Enable();
-
         float cur = transform.localEulerAngles.x;
         if (cur > 180f) cur -= 360f;
         currentPitch = cur;
         targetPitch = currentPitch;
     }
 
-    void OnDisable() => lookAction?.action?.Disable();
-
-    void Update()
+    void LateUpdate()
     {
-        if (lookAction?.action == null) return;
-        Vector2 delta = lookAction.action.ReadValue<Vector2>();
+        if (cameraTransform == null) return;
 
-        // Изменяем целевой угол. Минус — чтобы вертикальный ввод совпадал с привычным поведением.
-        targetPitch -= delta.y * sensitivity;
-        targetPitch = Mathf.Clamp(targetPitch, minAngle, maxAngle);
+        // Получаем вертикальный угол камеры в локальных координатах
+        float camPitch = cameraTransform.localEulerAngles.x;
+        if (camPitch > 180f) camPitch -= 360f;
 
-        // Плавное приближение (угловая версия).
+        // Ограничиваем целевой угол ствола относительно камеры
+        targetPitch = Mathf.Clamp(camPitch, minAngle, maxAngle);
+
+        // Плавное приближение
         currentPitch = Mathf.SmoothDampAngle(currentPitch, targetPitch, ref pitchVelocity, 1f / smoothSpeed);
 
-        // Применяем локальную ротацию по X, сохраняем остальные оси
+        // Применяем локальную ротацию по X, остальные оси остаются прежними
         Vector3 e = transform.localEulerAngles;
         e.x = currentPitch;
         transform.localEulerAngles = e;
