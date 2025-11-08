@@ -938,7 +938,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 1
   m_Speed: 4
@@ -3220,7 +3220,7 @@ MonoBehaviour:
   teamComp: {fileID: 62971683839857363}
   size: 0.7
   localOffset: {x: 0, y: 0, z: 0}
-  faceCamera: 1
+  faceCamera: 0
 --- !u!1 &8899341924330580271
 GameObject:
   m_ObjectHideFlags: 0

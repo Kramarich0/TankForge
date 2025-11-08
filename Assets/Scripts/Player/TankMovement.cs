@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody))]
 public class TankMovement : MonoBehaviour
 {
     public InputActionAsset actionsAsset;
@@ -9,28 +10,23 @@ public class TankMovement : MonoBehaviour
     [Header("Movement")]
     public float forwardSpeed = 8f;
     public float backwardSpeed = 4f;
-    public float acceleration = 10f;    // units/sec^2
-    public float deceleration = 12f;    // units/sec^2 when no input
-    public float turnSpeed = 90f;       // degrees per second (at full steer)
-    public float turnWhileReverseFactor = 0.6f; // поворот медленнее при движении назад
+    public float acceleration = 10f;
+    public float deceleration = 12f;
+    public float turnSpeed = 90f;
+    public float turnWhileReverseFactor = 0.6f;
 
     [Header("Pivot / Rigidbody")]
-    [Tooltip("Если у модели pivot не в центре, укажите Transform, расположенный в центре машины (пустой GameObject).")]
-    public Transform rotationPivot; // optional pivot in world space
-    [Tooltip("Если true — изменю centerOfMass на rb, чтобы вращение происходило вокруг rotationPivot (если задано).")]
+    public Transform rotationPivot;
     public bool adjustRigidbodyCenterOfMass = true;
-    [Header("Optional Rigidbody")]
     public bool useRigidbody = true;
 
     [Header("Smoothing / Responsiveness")]
     [Range(0f, 1f)] public float inputDeadzone = 0.02f;
-    [Tooltip("Чем меньше значение, тем быстрее остановится 'плавание' при отсутствии ввода.")]
     public float rotationSmoothTime = 0.06f;
 
     [Header("Engine Sounds")]
     public AudioClip idleSound;
     public AudioClip driveSound;
-
     [Range(0f, 1f)] public float minVolume = 0.2f;
     [Range(0f, 1f)] public float maxVolume = 1f;
     [Range(0.5f, 2f)] public float minPitch = 0.7f;
@@ -45,36 +41,44 @@ public class TankMovement : MonoBehaviour
     private float currentBlend = 0f;
     private float targetBlend = 0f;
 
+    // PHYSICS STATE
     private float currentSpeed = 0f;
     private float targetSpeed = 0f;
+    private float targetTurnInput = 0f;
+    private float currentYaw = 0f;
 
     public SpeedDisplay speedDisplay;
 
     private Rigidbody rb;
-    private float yawVelocity = 0f; // для SmoothDampAngle при повороте
+    private float yawVelocity = 0f;
 
     void Awake()
     {
-        if (useRigidbody)
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            rb = GetComponent<Rigidbody>();
-            if (rb == null)
-            {
-                Debug.LogWarning("Rigidbody не найден на танке, переключаюсь на movement через Transform.");
-                useRigidbody = false;
-            }
-            else
-            {
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-                // Если указан pivot и разрешено — смещаем центр массы
-                if (rotationPivot != null && adjustRigidbodyCenterOfMass)
-                {
-                    Vector3 com = rb.transform.InverseTransformPoint(rotationPivot.position);
-                    rb.centerOfMass = com;
-                    // небольшая логика: логируем один раз, чтобы знать что изменили
-                    Debug.Log($"TankMovement: rb.centerOfMass установлен в {com} (Local) по rotationPivot.");
-                }
-            }
+            Debug.LogError("TankMovement: Rigidbody не найден!");
+            useRigidbody = false;
+            return;
+        }
+
+        // ===== КЛЮЧЕВЫЕ НАСТРОЙКИ RIGIDBODY =====
+        rb.isKinematic = false;
+        rb.useGravity = true; // важно для коллизий!
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+        // Заморозим только вращение по X и Z (поворот только по Y)
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
+        // ВАЖНО: drag заставляет физику "тормозить" и сглаживать движение
+        rb.linearDamping = 0.5f;  // был 0, нужно чтобы не было рывков
+        rb.angularDamping = 5f;
+
+        if (rotationPivot != null && adjustRigidbodyCenterOfMass)
+        {
+            Vector3 com = rb.transform.InverseTransformPoint(rotationPivot.position);
+            rb.centerOfMass = com;
         }
 
         idleSource = gameObject.AddComponent<AudioSource>();
@@ -127,11 +131,10 @@ public class TankMovement : MonoBehaviour
         float rawMoveInput = Mathf.Clamp(v.y, -1f, 1f);
         float rawTurnInput = Mathf.Clamp(v.x, -1f, 1f);
 
-        // Применяем порог мёртвой зоны к повороту, чтобы убрать дрожание и "плыв" без ввода
         float moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
         float turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
 
-        // цель скорости
+        // Целевая скорость
         if (moveInput > 0)
             targetSpeed = moveInput * forwardSpeed;
         else if (moveInput < 0)
@@ -139,59 +142,9 @@ public class TankMovement : MonoBehaviour
         else
             targetSpeed = 0f;
 
-        // ускорение/торможение
-        float rate = (Mathf.Abs(targetSpeed) > Mathf.Epsilon) ? acceleration : deceleration;
-        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, rate * Time.deltaTime);
+        targetTurnInput = turnInput;
 
-        // движение
-        Vector3 desiredVelocity = transform.forward * currentSpeed;
-        if (useRigidbody && rb != null)
-        {
-            rb.MovePosition(rb.position + desiredVelocity * Time.deltaTime);
-        }
-        else
-        {
-            transform.Translate(desiredVelocity * Time.deltaTime, Space.World);
-        }
-
-        // поворот: делаем адаптивное сглаживание — при активном вводе поворачиваем быстро (малое сглаживание), при отсутствии — быстро останавливаем
-        float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
-        float desiredAngular = turnInput * effectiveTurnSpeed;
-
-        // сглаживание угла: используем SmoothDampAngle для стабильности
-        float currentY = transform.eulerAngles.y;
-        float targetY = currentY + desiredAngular * Time.deltaTime * 1f; // целевой угол на этот кадр
-
-        float smoothTime = rotationSmoothTime;
-        // если есть активный ввод — делаем почти мгновенный отклик
-        if (Mathf.Abs(turnInput) > 0.05f) smoothTime = rotationSmoothTime * 0.4f;
-
-        float newY = Mathf.SmoothDampAngle(currentY, targetY, ref yawVelocity, smoothTime);
-
-        float deltaY = Mathf.DeltaAngle(currentY, newY);
-
-        if (useRigidbody && rb != null)
-        {
-            rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, deltaY, 0f));
-        }
-        else
-        {
-            // Если rotationPivot задан и вы НЕ хотите менять centerOfMass, можно вращать вокруг pivot вручную:
-            if (rotationPivot != null && !useRigidbody)
-            {
-                transform.RotateAround(rotationPivot.position, Vector3.up, deltaY);
-            }
-            else
-            {
-                transform.Rotate(0f, deltaY, 0f);
-            }
-        }
-
-        // отображение скорости
-        if (speedDisplay != null)
-            speedDisplay.SetSpeed(currentSpeed);
-
-        // звук
+        // Звуки
         float absMove = Mathf.Abs(moveInput);
         targetBlend = Mathf.Clamp01(absMove);
         currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
@@ -212,5 +165,41 @@ public class TankMovement : MonoBehaviour
             driveSource.volume = driveVolume;
             driveSource.pitch = drivePitch;
         }
+
+        if (speedDisplay != null)
+            speedDisplay.SetSpeed(currentSpeed);
+    }
+
+    void FixedUpdate()
+    {
+        if (!useRigidbody || rb == null) return;
+
+        // ===== 1) СКОРОСТЬ =====
+        float rate = (Mathf.Abs(targetSpeed) > Mathf.Epsilon) ? acceleration : deceleration;
+        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, rate * Time.fixedDeltaTime);
+
+        // ===== 2) ДВИЖЕНИЕ через Velocity (КЛЮЧЕВОЕ ИЗМЕНЕНИЕ) =====
+        // Вместо MovePosition, устанавливаем velocity напрямую
+        // Это намного стабильнее и не вызывает дёрганья
+        Vector3 desiredVelocity = transform.forward * currentSpeed;
+
+        // Сохраняем Y компоненту (гравитация)
+        desiredVelocity.y = rb.linearVelocity.y;
+
+        rb.linearVelocity = desiredVelocity;
+
+        // ===== 3) ПОВОРОТ =====
+        float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
+        float desiredAngular = targetTurnInput * effectiveTurnSpeed;
+
+        // Применяем гладкий поворот
+        float smoothTime = rotationSmoothTime;
+        if (Mathf.Abs(targetTurnInput) > 0.05f)
+            smoothTime = rotationSmoothTime * 0.4f;
+
+        currentYaw = Mathf.SmoothDampAngle(currentYaw, currentYaw + desiredAngular * Time.fixedDeltaTime,
+            ref yawVelocity, smoothTime, Mathf.Infinity, Time.fixedDeltaTime);
+
+        rb.rotation = Quaternion.Euler(0f, currentYaw, 0f);
     }
 }

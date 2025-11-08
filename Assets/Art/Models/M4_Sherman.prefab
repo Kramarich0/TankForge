@@ -1903,28 +1903,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   moveActionPath: Gameplay/Move
-  forwardSpeed: 4.3
+  forwardSpeed: 12
   backwardSpeed: 0.4
-  acceleration: 0.5
+  acceleration: 5
   deceleration: 0.2
   brakeDeceleration: 1.5
   turnSpeed: 55
   turnWhileReverseFactor: 0.6
   useRigidbody: 1
-  rotationPivot: {fileID: 1830298337892503540}
+  rotationPivot: {fileID: 0}
   adjustRigidbodyCenterOfMass: 1
   inputDeadzone: 0.02
   movementEpsilon: 0.005
-  rotationEpsilon: 0.1
+  rotationEpsilon: 0.01
   rotationSmoothTime: 0.06
-  idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
-  driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
+  idleSound: {fileID: 0}
+  driveSound: {fileID: 0}
   minVolume: 0.2
   maxVolume: 1
   minPitch: 0.7
   maxPitch: 1.3
   blendSpeed: 5
-  debugLogs: 0
+  debugLogs: 1
   speedDisplay: {fileID: 0}
 --- !u!114 &646124022302727699
 MonoBehaviour:
@@ -2076,9 +2076,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &3758792498813145033
 GameObject:
   m_ObjectHideFlags: 0

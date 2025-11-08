@@ -69,7 +69,7 @@ public class TankSniperView : MonoBehaviour
             if (gunEnd != null && sniperCamera != null)
             {
                 Vector3 desiredPos = gunEnd.position + gunEnd.forward * sniperDistanceOffset;
-                sniperCamera.transform.position = Vector3.Lerp(sniperCamera.transform.position, desiredPos, 1f - Mathf.Exp(-transitionSpeed * Time.deltaTime));
+                //sniperCamera.transform.position = Vector3.Lerp(sniperCamera.transform.position, desiredPos, 1f - Mathf.Exp(-transitionSpeed * Time.deltaTime));
                 sniperCamera.transform.rotation = Quaternion.Slerp(sniperCamera.transform.rotation, gunEnd.rotation, 1f - Mathf.Exp(-transitionSpeed * Time.deltaTime));
 
                 sniperCamera.fieldOfView = Mathf.Lerp(sniperCamera.fieldOfView, Mathf.Max(1f, sniperFOV + currentZoom), Time.deltaTime * transitionSpeed);
