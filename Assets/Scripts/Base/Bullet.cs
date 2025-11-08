@@ -1,4 +1,3 @@
-// Bullet.cs
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -9,8 +8,12 @@ public class Bullet : MonoBehaviour
     public float lifeTime = 8f;
     public Team shooterTeam = Team.Neutral;
 
-    Rigidbody rb;
-    Collider col;
+    [Header("Physics")]
+    public bool useGravity = true;
+    public float gravityMultiplier = 1f; // усиливаем гравитацию при необходимости
+
+    private Rigidbody rb;
+    private Collider col;
 
     void Awake()
     {
@@ -18,43 +21,43 @@ public class Bullet : MonoBehaviour
         col = GetComponent<Collider>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        // по умолчанию гравитация выключена — будет включена в Initialize если нужно
-        rb.useGravity = false;
+        rb.useGravity = false; // включим в Initialize
     }
 
-    public void Initialize(Vector3 velocity, bool useGravity, Team shooter)
+    public void Initialize(Vector3 initialVelocity, Team shooter)
     {
         shooterTeam = shooter;
-        rb.linearVelocity = velocity;
-        rb.useGravity = useGravity;
+        rb.linearVelocity = initialVelocity;
+        rb.useGravity = true; // включаем сразу, чтобы синхронизировать с CrosshairAim
         Destroy(gameObject, lifeTime);
+    }
+    
+    void FixedUpdate()
+    {
+        // Добавляем гравитацию вручную для стабильного эффекта
+        if (useGravity)
+        {
+            rb.AddForce(Physics.gravity * (gravityMultiplier - 1f) * rb.mass, ForceMode.Acceleration);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         if (collision == null) return;
 
-        // Проверка команды по цели
         TeamComponent hitTeam = collision.collider.GetComponentInParent<TeamComponent>();
         if (hitTeam != null && hitTeam.team == shooterTeam)
         {
-            // Попали по своему — постарайся игнорировать дальнейшие столкновения с этим коллайдером
             if (col != null && collision.collider != null)
-            {
                 Physics.IgnoreCollision(col, collision.collider, true);
-            }
-            // не уничтожаем пулю сразу — она продолжит путь и может попасть по врагу
             return;
         }
 
-        // Попытка нанести урон через IDamageable
-        IDamageable dmg = collision.collider.GetComponentInParent<IDamageable>();
-        if (dmg != null)
+        if (collision.collider.TryGetComponent<IDamageable>(out var dmg))
         {
             dmg.TakeDamage(damage);
         }
 
-        // Можно добавить эффекты взрыва тут
         Destroy(gameObject);
     }
 }

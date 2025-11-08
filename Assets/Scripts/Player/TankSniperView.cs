@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 public class TankSniperView : MonoBehaviour
@@ -13,42 +12,38 @@ public class TankSniperView : MonoBehaviour
     public Camera mainCamera;
     public Camera sniperCamera;
     public GameObject crosshairUI;
-    public GameObject sniperVignette; // GameObject вместо Image, чтобы просто включать/выключать
+    public GameObject sniperVignette;
 
     [Header("Sniper Settings")]
     [Range(5f, 40f)] public float sniperFOV = 15f;
     public float positionOffset = -0.2f;
     public float zoomStep = 2f;
     public float minZoom = 10f;
-    public float maxZoom = 40f;
+    public float maxZoom = 20f;
 
-    private bool isSniperView = false;
-    private float zoomTarget;
-    private float zoomCurrent;
-    private float normalFOV;
-    private Vector3 stableOffset;
+    bool isSniperView = false;
+    float zoomTarget;
+    float zoomCurrent;
+    float normalFOV;
+    Vector3 stableOffset;
 
     void Start()
     {
         toggleViewAction?.action?.Enable();
         zoomAction?.action?.Enable();
 
-        if (mainCamera != null)
-            normalFOV = mainCamera.fieldOfView;
-
-        if (crosshairUI != null)
-            crosshairUI.SetActive(false);
+        if (mainCamera != null) normalFOV = mainCamera.fieldOfView;
+        if (crosshairUI != null) crosshairUI.SetActive(false);
 
         if (sniperCamera != null)
         {
             sniperCamera.enabled = false;
             zoomTarget = sniperFOV;
             zoomCurrent = sniperFOV;
-            stableOffset = sniperCamera.transform.position - gunEnd.position;
+            if (gunEnd != null) stableOffset = sniperCamera.transform.position - gunEnd.position;
         }
 
-        if (sniperVignette != null)
-            sniperVignette.SetActive(false); // изначально выключена
+        if (sniperVignette != null) sniperVignette.SetActive(false);
     }
 
     void Update()
@@ -64,7 +59,18 @@ public class TankSniperView : MonoBehaviour
 
     void HandleZoom()
     {
-        float scroll = zoomAction?.action.ReadValue<Vector2>().y ?? Input.GetAxis("Mouse ScrollWheel") * 5f;
+        float scroll = 0f;
+        if (zoomAction != null && zoomAction.action != null)
+        {
+            // ожидаем Vector2 от scroll или единственную ось
+            var v = zoomAction.action.ReadValue<Vector2>();
+            scroll = v.y;
+        }
+        else
+        {
+            scroll = Input.GetAxis("Mouse ScrollWheel") * 5f;
+        }
+
         if (Mathf.Abs(scroll) > 0.01f)
             zoomTarget = Mathf.Clamp(zoomTarget - scroll * zoomStep, minZoom, maxZoom);
 
@@ -80,7 +86,7 @@ public class TankSniperView : MonoBehaviour
         }
 
         if (mainCamera != null)
-            mainCamera.fieldOfView = normalFOV;
+            mainCamera.fieldOfView = isSniperView ? normalFOV : normalFOV;
     }
 
     void ToggleSniperView()
@@ -89,9 +95,15 @@ public class TankSniperView : MonoBehaviour
 
         if (mainCamera != null) mainCamera.enabled = !isSniperView;
         if (sniperCamera != null) sniperCamera.enabled = isSniperView;
-        if (crosshairUI != null) crosshairUI.SetActive(isSniperView);
-        if (sniperVignette != null) sniperVignette.SetActive(isSniperView); // включаем только в снайперском режиме
+        if (crosshairUI != null)
+        {
+            crosshairUI.SetActive(isSniperView);
+            if (crosshairUI.TryGetComponent<CrosshairAim>(out var crosshair))
+                crosshair.activeCamera = isSniperView ? sniperCamera : mainCamera; 
+        }
+        if (sniperVignette != null) sniperVignette.SetActive(isSniperView);
     }
+
 
     void OnDestroy()
     {

@@ -1,79 +1,76 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// Прицел (UI) — показывает точку потенциального попадания снаряда.
-/// Работает для любого Canvas, плавно двигая crosshair.
-/// </summary>
+[RequireComponent(typeof(Image))]
 public class CrosshairAim : MonoBehaviour
 {
-    public Transform gunEnd;             // Дуло пушки
-    public Camera mainCamera;            // Камера для расчёта UI
-    public LayerMask groundMask = ~0;    // Слои, по которым "падает" снаряд
-    public float maxDistance = 1000f;    // Максимальная дальность трассировки
-    public float projectileSpeed = 100f; // Скорость снаряда (для аппроксимации)
-    public float gravity = 9.81f;        // Гравитация
-    [Range(0f, 50f)] public float smoothSpeed = 20f;
+    public Transform gunEnd;
+    public Camera mainCamera;
+    public Camera activeCamera;
+    public LayerMask groundMask = ~0;
+    public float maxDistance = 1000f;
+    public float smoothSpeed = 15f;
 
-    private Image crosshairImage;
-    private RectTransform rectTransform;
-    private Vector2 currentAnchoredPos;
-    private Canvas canvas;
+    Image crosshairImage;
+    RectTransform rectTransform;
+    Vector2 currentAnchoredPos;
+    Canvas canvas;
 
     void Start()
     {
         crosshairImage = GetComponent<Image>();
         rectTransform = GetComponent<RectTransform>();
-        if (mainCamera == null) mainCamera = Camera.main;
-        if (crosshairImage == null || rectTransform == null) Debug.LogError("Crosshair: UI Image или RectTransform не найдены!");
+        if (activeCamera == null) activeCamera = mainCamera;
         canvas = GetComponentInParent<Canvas>();
-        if (canvas == null) Debug.LogError("Crosshair: Canvas не найден в родительских объектах!");
+        if (canvas == null) Debug.LogError("Crosshair: Canvas не найден!");
         currentAnchoredPos = rectTransform.anchoredPosition;
     }
 
     void LateUpdate()
     {
-        if (mainCamera == null || crosshairImage == null || rectTransform == null || canvas == null || gunEnd == null) return;
+        if (mainCamera == null || gunEnd == null) return;
 
-        // Рассчитываем предполагаемую точку падения снаряда
-        Vector3 hitPoint = PredictProjectileHitPoint(gunEnd.position, gunEnd.forward, projectileSpeed, gravity);
+        TankShoot shootComp = gunEnd.GetComponentInParent<TankShoot>();
+        if (shootComp == null) return;
 
-        // Преобразуем мировую точку в экранные координаты
-        Vector3 screenPoint = mainCamera.WorldToScreenPoint(hitPoint);
+        float speed = shootComp.bulletSpeed;
 
-        if (screenPoint.z > 0) // Проверяем, что точка перед камерой
+        Vector3 hitPoint = PredictProjectileHitPoint(gunEnd.position, gunEnd.forward, speed, Physics.gravity);
+
+        Vector3 screenPoint = activeCamera.WorldToScreenPoint(hitPoint);
+        if (screenPoint.z <= 0f) return;
+
+        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvasRect, screenPoint,
+            canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : activeCamera,
+            out Vector2 localPoint))
         {
-            Vector2 localPoint;
-            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                canvasRect, screenPoint, canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : mainCamera, out localPoint))
-            {
-                Vector2 targetAnchored = localPoint;
-                // Плавное движение прицела
-                currentAnchoredPos = Vector2.Lerp(currentAnchoredPos, targetAnchored, 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime));
-                rectTransform.anchoredPosition = currentAnchoredPos;
-            }
+            Vector2 targetAnchored = localPoint;
+            float t = 1f - Mathf.Exp(-smoothSpeed * Time.deltaTime);
+            currentAnchoredPos = Vector2.Lerp(currentAnchoredPos, targetAnchored, t);
+            rectTransform.anchoredPosition = currentAnchoredPos;
         }
     }
 
-    // Простая аппроксимация траектории снаряда для прицела
-    private Vector3 PredictProjectileHitPoint(Vector3 start, Vector3 direction, float speed, float gravity)
+    private Vector3 PredictProjectileHitPoint(Vector3 start, Vector3 direction, float speed, Vector3 gravity)
     {
-        Vector3 velocity = direction.normalized * speed;
-        Vector3 position = start;
+        Vector3 velocity = direction.normalized * Mathf.Max(0.0001f, speed);
+        Vector3 pos = start;
+        float dt = Time.fixedDeltaTime;
 
-        float timeStep = 0.02f; // шаг симуляции
-        for (float t = 0; t < maxDistance / speed; t += timeStep)
+        for (float t = 0f; t < 10f; t += dt)
         {
-            Vector3 nextPos = position + velocity * timeStep;
-            velocity.y -= gravity * timeStep;
+            velocity += gravity * dt;
+            Vector3 nextPos = pos + velocity * dt;
 
-            if (Physics.Linecast(position, nextPos, out RaycastHit hit, groundMask))
+            if (Physics.Linecast(pos, nextPos, out RaycastHit hit, groundMask))
                 return hit.point;
 
-            position = nextPos;
+            pos = nextPos;
+            if ((pos - start).sqrMagnitude > maxDistance * maxDistance) break;
         }
 
-        return position; // Если не встретили препятствия
+        return pos;
     }
 }

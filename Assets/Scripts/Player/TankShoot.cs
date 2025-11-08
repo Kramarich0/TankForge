@@ -124,7 +124,7 @@ public class TankShoot : MonoBehaviour
             {
                 TeamComponent teamComp = GetComponentInParent<TeamComponent>();
                 Team team = teamComp ? teamComp.team : Team.Neutral;
-                bulletScript.Initialize(gunEnd.forward * bulletSpeed, false, team);
+                bulletScript.Initialize(gunEnd.forward * bulletSpeed, team);
             }
             else if (bullet.TryGetComponent<Rigidbody>(out var rb))
             {

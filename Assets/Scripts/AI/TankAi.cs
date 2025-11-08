@@ -385,17 +385,17 @@ public class TankAI : MonoBehaviour
                 Vector3 flatDir = horizontal.normalized;
                 Vector3 launchDir = Quaternion.AngleAxis(chosen * Mathf.Rad2Deg, Vector3.Cross(flatDir, Vector3.up)) * flatDir;
                 Vector3 initVel = launchDir * v;
-                bullet.Initialize(initVel, true, bullet.shooterTeam);
+                bullet.Initialize(initVel, bullet.shooterTeam);
             }
             else
             {
 
-                bullet.Initialize(aim.normalized * projectileSpeed, false, bullet.shooterTeam);
+                bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam);
             }
         }
         else
         {
-            bullet.Initialize(aim.normalized * projectileSpeed, false, bullet.shooterTeam);
+            bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam);
         }
     }
 

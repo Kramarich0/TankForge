@@ -1024,13 +1024,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621057602138274241}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 836a80bade71a5b4db9622a32c6fa123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  lookAction: {fileID: -5456195109082554791, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  sensitivity: 0.02
+  cameraTransform: {fileID: 0}
   smoothSpeed: 6
   minAngle: -10
   maxAngle: 20
@@ -1049,7 +1048,7 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 5612779968204697617}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  bulletSpeed: 400
+  bulletSpeed: 1000
   fireRate: 0.167
   muzzleSmoke: {fileID: 1394061989147044565}
   audioSource: {fileID: 0}
@@ -1604,6 +1603,63 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2607771478180640819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7042978435149473361}
+  - component: {fileID: 7293954005535512430}
+  m_Layer: 11
+  m_Name: TurretAim
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7042978435149473361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2607771478180640819}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4774352311489665857}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7293954005535512430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2607771478180640819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d771a0a8e2ccbba43afcba286c16e2d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TurretAiming
+  turretPivot: {fileID: 7181268360043757752}
+  gunPivot: {fileID: 8942453463153120974}
+  cameraTransform: {fileID: 0}
+  gunEnd: {fileID: 5612779968204697617}
+  yawSpeed: 30
+  yawSnapAngle: 1
+  yawSmoothTime: 0.06
+  pitchSpeed: 1
+  pitchMin: -10
+  pitchMax: 25
+  pitchSnapAngle: 0.8
+  aimDistance: 200
+  invertPitch: 1
 --- !u!1 &2769166960978812865
 GameObject:
   m_ObjectHideFlags: 0
@@ -1887,6 +1943,7 @@ Transform:
   - {fileID: 6139414371712457770}
   - {fileID: 6638049670521133354}
   - {fileID: 1783261375823700215}
+  - {fileID: 7042978435149473361}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1036952151063692857
@@ -3041,7 +3098,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5512153298455479082}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 24c91f7946b71ab4d9a576b6c9cd0ed7, type: 3}
   m_Name: 
