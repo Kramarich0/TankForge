@@ -1,288 +1,216 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(AudioSource))]
 public class TankMovement : MonoBehaviour
 {
-    [Header("Input (Input System)")]
     public InputActionAsset actionsAsset;
-    [Tooltip("Пример: 'Gameplay/Move' — действие должно отдавать Vector2 (x=turn, y=move).")]
-    public string moveActionPath = "Gameplay/Move";
-
-    InputAction moveAction;
-    bool hasInputAction = false;
+    private InputAction moveAction;
 
     [Header("Movement")]
     public float forwardSpeed = 8f;
     public float backwardSpeed = 4f;
-    public float acceleration = 10f;
-    public float deceleration = 12f;
-    public float brakeDeceleration = 30f;
-    public float turnSpeed = 90f;
-    public float turnWhileReverseFactor = 0.6f;
+    public float acceleration = 10f;    // units/sec^2
+    public float deceleration = 12f;    // units/sec^2 when no input
+    public float turnSpeed = 90f;       // degrees per second (at full steer)
+    public float turnWhileReverseFactor = 0.6f; // поворот медленнее при движении назад
 
-    [Header("Rigidbody / Pivot")]
-    [Tooltip("Если true — используем Rigidbody.MovePosition/MoveRotation (физика).")]
-    public bool useRigidbody = true;
-    public Transform rotationPivot;
+    [Header("Pivot / Rigidbody")]
+    [Tooltip("Если у модели pivot не в центре, укажите Transform, расположенный в центре машины (пустой GameObject).")]
+    public Transform rotationPivot; // optional pivot in world space
+    [Tooltip("Если true — изменю centerOfMass на rb, чтобы вращение происходило вокруг rotationPivot (если задано).")]
     public bool adjustRigidbodyCenterOfMass = true;
+    [Header("Optional Rigidbody")]
+    public bool useRigidbody = true;
 
-    [Header("Noise / Deadzones")]
-    [Range(0f, 0.1f)] public float inputDeadzone = 0.02f;
-    public float movementEpsilon = 0.001f;
-    public float rotationEpsilon = 0.01f;
-
-    [Header("Smoothing")]
-    [Tooltip("Время (в секундах) для экспоненциального сглаживания поворота (меньше — быстрее).")]
+    [Header("Smoothing / Responsiveness")]
+    [Range(0f, 1f)] public float inputDeadzone = 0.02f;
+    [Tooltip("Чем меньше значение, тем быстрее остановится 'плавание' при отсутствии ввода.")]
     public float rotationSmoothTime = 0.06f;
 
-    [Header("Audio")]
+    [Header("Engine Sounds")]
     public AudioClip idleSound;
     public AudioClip driveSound;
+
     [Range(0f, 1f)] public float minVolume = 0.2f;
     [Range(0f, 1f)] public float maxVolume = 1f;
     [Range(0.5f, 2f)] public float minPitch = 0.7f;
     [Range(0.5f, 2f)] public float maxPitch = 1.3f;
+
+    [Header("Smoothing")]
     public float blendSpeed = 5f;
 
-    [Header("Debug")]
-    public bool debugLogs = false;
+    private AudioSource idleSource;
+    private AudioSource driveSource;
 
+    private float currentBlend = 0f;
+    private float targetBlend = 0f;
 
-    Rigidbody rb;
-    AudioSource idleSource, driveSource;
-    float currentBlend = 0f, targetBlend = 0f;
-
-
-    float currentSpeed = 0f;
-    float targetSpeed = 0f;
-
-
-    float rawMoveInput = 0f;
-    float rawTurnInput = 0f;
-    float moveInput = 0f;
-    float turnInput = 0f;
-
-
-    float yawVelocity = 0f;
+    private float currentSpeed = 0f;
+    private float targetSpeed = 0f;
 
     public SpeedDisplay speedDisplay;
 
+    private Rigidbody rb;
+    private float yawVelocity = 0f; // для SmoothDampAngle при повороте
+
     void Awake()
     {
-        rb = GetComponent<Rigidbody>();
-
         if (useRigidbody)
         {
+            rb = GetComponent<Rigidbody>();
             if (rb == null)
             {
-                Debug.LogWarning("[TankMovement] useRigidbody=true, но Rigidbody не найден. Переключаюсь на Transform-mode.");
+                Debug.LogWarning("Rigidbody не найден на танке, переключаюсь на movement через Transform.");
                 useRigidbody = false;
             }
             else
             {
                 rb.interpolation = RigidbodyInterpolation.Interpolate;
-                rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
+                // Если указан pivot и разрешено — смещаем центр массы
                 if (rotationPivot != null && adjustRigidbodyCenterOfMass)
                 {
-                    rb.centerOfMass = rb.transform.InverseTransformPoint(rotationPivot.position);
-                    if (debugLogs) Debug.Log("[TankMovement] rb.centerOfMass set.");
+                    Vector3 com = rb.transform.InverseTransformPoint(rotationPivot.position);
+                    rb.centerOfMass = com;
+                    // небольшая логика: логируем один раз, чтобы знать что изменили
+                    Debug.Log($"TankMovement: rb.centerOfMass установлен в {com} (Local) по rotationPivot.");
                 }
             }
         }
-        else
-        {
-            if (rb != null)
-            {
-                rb.isKinematic = true;
-                if (debugLogs) Debug.Log("[TankMovement] Transform-mode: rb.isKinematic = true");
-            }
-        }
 
-        if (idleSound != null)
-        {
-            idleSource = gameObject.AddComponent<AudioSource>();
-            SetupAudioSource(idleSource, idleSound);
-        }
-        if (driveSound != null)
-        {
-            driveSource = gameObject.AddComponent<AudioSource>();
-            SetupAudioSource(driveSource, driveSound);
-        }
+        idleSource = gameObject.AddComponent<AudioSource>();
+        driveSource = gameObject.AddComponent<AudioSource>();
+        SetupAudioSource(idleSource, idleSound, true);
+        SetupAudioSource(driveSource, driveSound, true);
     }
 
-    void SetupAudioSource(AudioSource source, AudioClip clip)
+    void SetupAudioSource(AudioSource source, AudioClip clip, bool loop)
     {
-        source.clip = clip;
-        source.loop = true;
-        source.playOnAwake = false;
-        source.volume = 0f;
-        source.pitch = 1f;
-        source.spatialBlend = 1f;
-        source.Play();
+        if (clip != null)
+        {
+            source.clip = clip;
+            source.loop = loop;
+            source.playOnAwake = false;
+            source.volume = 0f;
+            source.pitch = 1f;
+        }
     }
 
     void OnEnable()
     {
-        hasInputAction = false;
-        if (actionsAsset != null && !string.IsNullOrEmpty(moveActionPath))
+        if (actionsAsset == null)
         {
-            try
-            {
-                moveAction = actionsAsset.FindAction(moveActionPath, true);
-                if (moveAction != null)
-                {
-                    moveAction.Enable();
-                    hasInputAction = true;
-                    if (debugLogs) Debug.Log("[TankMovement] Using InputAction: " + moveActionPath);
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning("[TankMovement] Ошибка получения действия: " + e.Message);
-            }
+            Debug.LogError("actionsAsset не задан в TankMovement!");
+            return;
         }
+        moveAction = actionsAsset.FindAction("Gameplay/Move", true);
+        if (moveAction == null)
+        {
+            Debug.LogError("Move action не найден!");
+            return;
+        }
+        moveAction.Enable();
+
+        if (idleSound != null) idleSource.Play();
+        if (driveSound != null) driveSource.Play();
     }
 
     void OnDisable()
     {
-        if (hasInputAction && moveAction != null) moveAction.Disable();
+        if (moveAction != null) moveAction.Disable();
+        if (idleSource != null) idleSource.Stop();
+        if (driveSource != null) driveSource.Stop();
     }
 
     void Update()
     {
+        Vector2 v = moveAction.ReadValue<Vector2>();
+        float rawMoveInput = Mathf.Clamp(v.y, -1f, 1f);
+        float rawTurnInput = Mathf.Clamp(v.x, -1f, 1f);
 
-        Vector2 moveVec = Vector2.zero;
-        if (hasInputAction && moveAction != null)
-            moveVec = moveAction.ReadValue<Vector2>();
+        // Применяем порог мёртвой зоны к повороту, чтобы убрать дрожание и "плыв" без ввода
+        float moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
+        float turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
+
+        // цель скорости
+        if (moveInput > 0)
+            targetSpeed = moveInput * forwardSpeed;
+        else if (moveInput < 0)
+            targetSpeed = moveInput * backwardSpeed;
         else
-            moveVec = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            targetSpeed = 0f;
 
-        rawMoveInput = Mathf.Clamp(moveVec.y, -1f, 1f);
-        rawTurnInput = Mathf.Clamp(moveVec.x, -1f, 1f);
+        // ускорение/торможение
+        float rate = (Mathf.Abs(targetSpeed) > Mathf.Epsilon) ? acceleration : deceleration;
+        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, rate * Time.deltaTime);
 
-        moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
-        turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
-
-
-        if (moveInput > 0f) targetSpeed = moveInput * forwardSpeed;
-        else if (moveInput < 0f) targetSpeed = moveInput * backwardSpeed;
-        else targetSpeed = 0f;
-
-        float absMove = Mathf.Abs(moveInput);
-        targetBlend = Mathf.Clamp01(absMove);
-        currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
-        float idleVolume = Mathf.Lerp(maxVolume, minVolume, currentBlend);
-        float driveVolume = Mathf.Lerp(0f, maxVolume, currentBlend);
-        float idlePitch = Mathf.Lerp(maxPitch, minPitch, currentBlend);
-        float drivePitch = Mathf.Lerp(minPitch, maxPitch, currentBlend);
-        if (idleSource != null) { idleSource.volume = idleVolume; idleSource.pitch = idlePitch; }
-        if (driveSource != null) { driveSource.volume = driveVolume; driveSource.pitch = drivePitch; }
-    }
-
-    void FixedUpdate()
-    {
-        float tiltAngle = Vector3.Angle(transform.up, Vector3.up);
-        if (tiltAngle > 89f)
+        // движение
+        Vector3 desiredVelocity = transform.forward * currentSpeed;
+        if (useRigidbody && rb != null)
         {
-            currentSpeed = 0f;
-            return;
+            rb.MovePosition(rb.position + desiredVelocity * Time.deltaTime);
         }
+        else
+        {
+            transform.Translate(desiredVelocity * Time.deltaTime, Space.World);
+        }
+
+        // поворот: делаем адаптивное сглаживание — при активном вводе поворачиваем быстро (малое сглаживание), при отсутствии — быстро останавливаем
+        float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
+        float desiredAngular = turnInput * effectiveTurnSpeed;
+
+        // сглаживание угла: используем SmoothDampAngle для стабильности
+        float currentY = transform.eulerAngles.y;
+        float targetY = currentY + desiredAngular * Time.deltaTime * 1f; // целевой угол на этот кадр
+
+        float smoothTime = rotationSmoothTime;
+        // если есть активный ввод — делаем почти мгновенный отклик
+        if (Mathf.Abs(turnInput) > 0.05f) smoothTime = rotationSmoothTime * 0.4f;
+
+        float newY = Mathf.SmoothDampAngle(currentY, targetY, ref yawVelocity, smoothTime);
+
+        float deltaY = Mathf.DeltaAngle(currentY, newY);
 
         if (useRigidbody && rb != null)
         {
-
-            bool braking = false;
-            float targetSpeedForPhysics = targetSpeed;
-
-            if (rawMoveInput < -inputDeadzone && currentSpeed > 0.001f)
-            {
-
-                braking = true;
-                targetSpeedForPhysics = 0f;
-            }
-            else
-            {
-
-                targetSpeedForPhysics = targetSpeed;
-            }
-
-
-            float rate;
-            if (braking) rate = brakeDeceleration;
-            else rate = (Mathf.Abs(targetSpeedForPhysics) > Mathf.Epsilon) ? acceleration : deceleration;
-
-
-            currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeedForPhysics, rate * Time.fixedDeltaTime);
-
-
-
-
-            if (Mathf.Abs(currentSpeed) < movementEpsilon) currentSpeed = 0f;
-
-
-            Vector3 forward = rb.rotation * Vector3.forward;
-            Vector3 moveDelta = forward * currentSpeed * Time.fixedDeltaTime;
-            if (moveDelta.sqrMagnitude > (movementEpsilon * movementEpsilon))
-            {
-                rb.MovePosition(rb.position + moveDelta);
-            }
-
-
-            float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
-            float desiredAngular = turnInput * effectiveTurnSpeed;
-            float currentY = rb.rotation.eulerAngles.y;
-            float desiredY = currentY + desiredAngular * Time.fixedDeltaTime;
-
-
-            float t = 1f - Mathf.Exp(-Time.fixedDeltaTime / Mathf.Max(0.0001f, rotationSmoothTime));
-            Quaternion targetRot = Quaternion.Euler(0f, desiredY, 0f);
-            Quaternion newRot = Quaternion.Slerp(rb.rotation, targetRot, t);
-
-
-            float deltaAngle = Mathf.DeltaAngle(rb.rotation.eulerAngles.y, newRot.eulerAngles.y);
-            if (Mathf.Abs(deltaAngle) > rotationEpsilon)
-            {
-                rb.MoveRotation(newRot);
-            }
-
-
-            if (speedDisplay != null) speedDisplay.SetSpeed(Mathf.Abs(currentSpeed));
+            rb.MoveRotation(rb.rotation * Quaternion.Euler(0f, deltaY, 0f));
         }
         else
         {
-
-
-            float physTargetSpeed = targetSpeed;
-
-
-            bool braking = false;
-            if (rawMoveInput < -inputDeadzone && currentSpeed > 0.001f)
+            // Если rotationPivot задан и вы НЕ хотите менять centerOfMass, можно вращать вокруг pivot вручную:
+            if (rotationPivot != null && !useRigidbody)
             {
-                braking = true;
-                physTargetSpeed = 0f;
+                transform.RotateAround(rotationPivot.position, Vector3.up, deltaY);
             }
-
-            float rate = braking ? brakeDeceleration : ((Mathf.Abs(physTargetSpeed) > Mathf.Epsilon) ? acceleration : deceleration);
-            currentSpeed = Mathf.MoveTowards(currentSpeed, physTargetSpeed, rate * Time.fixedDeltaTime);
-            if (Mathf.Abs(currentSpeed) < movementEpsilon) currentSpeed = 0f;
-
-            Vector3 move = transform.forward * currentSpeed * Time.fixedDeltaTime;
-            if (move.sqrMagnitude > (movementEpsilon * movementEpsilon))
-                transform.Translate(move, Space.World);
-
-            float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
-            float turnAmount = turnInput * effectiveTurnSpeed * Time.fixedDeltaTime;
-            if (Mathf.Abs(turnAmount) > rotationEpsilon)
+            else
             {
-                if (rotationPivot != null)
-                    transform.RotateAround(rotationPivot.position, Vector3.up, turnAmount);
-                else
-                    transform.Rotate(0f, turnAmount, 0f);
+                transform.Rotate(0f, deltaY, 0f);
             }
+        }
 
-            if (speedDisplay != null) speedDisplay.SetSpeed(Mathf.Abs(currentSpeed));
+        // отображение скорости
+        if (speedDisplay != null)
+            speedDisplay.SetSpeed(currentSpeed);
+
+        // звук
+        float absMove = Mathf.Abs(moveInput);
+        targetBlend = Mathf.Clamp01(absMove);
+        currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
+
+        float idleVolume = Mathf.Lerp(maxVolume, minVolume, currentBlend);
+        float driveVolume = Mathf.Lerp(0f, maxVolume, currentBlend);
+
+        float idlePitch = Mathf.Lerp(maxPitch, minPitch, currentBlend);
+        float drivePitch = Mathf.Lerp(minPitch, maxPitch, currentBlend);
+
+        if (idleSource != null)
+        {
+            idleSource.volume = idleVolume;
+            idleSource.pitch = idlePitch;
+        }
+        if (driveSource != null)
+        {
+            driveSource.volume = driveVolume;
+            driveSource.pitch = drivePitch;
         }
     }
 }
