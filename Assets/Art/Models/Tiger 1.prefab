@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8284883616253908340}
   - component: {fileID: 3500383129314085693}
   - component: {fileID: 3801860786099400932}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Track_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 5091875714208518212}
   - component: {fileID: 8985652876845516825}
   - component: {fileID: 9130856002791439050}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel1_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 7823992935148558553}
   - component: {fileID: 3750300630239156799}
   - component: {fileID: 7876596715017724762}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel6_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ GameObject:
   - component: {fileID: 500006959386320726}
   - component: {fileID: 6564471829898867782}
   - component: {fileID: 7122113080745278591}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Sprocket_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,7 +369,7 @@ GameObject:
   - component: {fileID: 6256934203946154754}
   - component: {fileID: 4307901083166803787}
   - component: {fileID: 270921263343849893}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AiHealth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -568,7 +568,7 @@ GameObject:
   - component: {fileID: 7952219872998085890}
   - component: {fileID: 457417093139345377}
   - component: {fileID: 506533613779985924}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -670,7 +670,7 @@ GameObject:
   - component: {fileID: 701771372643133958}
   - component: {fileID: 5858139345192625573}
   - component: {fileID: 4226039264981142426}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel7_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -759,7 +759,7 @@ GameObject:
   - component: {fileID: 1826054664211053594}
   - component: {fileID: 6519968020838600430}
   - component: {fileID: 5048603733775815916}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel7_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -848,7 +848,7 @@ GameObject:
   - component: {fileID: 4738166773077117738}
   - component: {fileID: 2646360346991861818}
   - component: {fileID: 2731417420974466401}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel8_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -937,7 +937,7 @@ GameObject:
   - component: {fileID: 4166782447864923280}
   - component: {fileID: 1389978764779874138}
   - component: {fileID: 6552655881451211975}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Idler_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1024,7 +1024,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7892878942600776212}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Muzzle_MG2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 3647258869403263868}
   - component: {fileID: 8751402106025691335}
   - component: {fileID: 2509401565897758532}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Tiger 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1157,7 +1157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankAI
-  tankClass: 1
+  team: 2
   lightStats:
     health: 75
     moveSpeed: 5
@@ -1179,29 +1179,33 @@ MonoBehaviour:
     fireRate: 0.5
     shootRange: 120
     bulletDamage: 10
-  enemyHealthDisplay: {fileID: 0}
-  player: {fileID: 0}
+  tankClass: 1
   turret: {fileID: 2382063789921380104}
   gun: {fileID: 9103224602226357386}
   gunEnd: {fileID: 6638456541141968631}
   body: {fileID: 4683581856932107850}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  shootRange: 100
+  detectionRadius: 120
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 10240
+  preferredAttackDistance: 30
+  chaseDistance: 150
+  loseTargetTime: 3
+  bulletSpeed: 80
+  spreadAngle: 1.5
+  fireRate: 9
   moveSpeed: 3
   rotationSpeed: 40
-  fireRate: 9
-  minGunAngle: -5
-  maxGunAngle: 20
-  idleSound: {fileID: 0}
-  driveSound: {fileID: 0}
-  muzzleSmoke: {fileID: 0}
-  shootSource: {fileID: 0}
-  shootSound: {fileID: 0}
+  turretRotationSpeed: 60
+  bodyRotationSmoothing: 8
+  strafeAmplitude: 1.2
+  strafeFrequency: 0.6
+  approachSpeedFactor: 1
+  minApproachDistance: 10
+  gunPitchSmoothing: 30
   debugGizmos: 1
   debugLogs: 0
-  invertBodyForward: 0
-  invertTurretForward: 0
-  gunUsesLocalXForPitch: 0
 --- !u!54 &2509401565897758532
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1238,7 +1242,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4319558060877532982}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheels_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1281,7 +1285,7 @@ GameObject:
   - component: {fileID: 939951806442023999}
   - component: {fileID: 5567531668704830786}
   - component: {fileID: 3078026791417122610}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Mantlet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1371,7 +1375,7 @@ GameObject:
   - component: {fileID: 6040631437414862104}
   - component: {fileID: 6308399490933271341}
   - component: {fileID: 1181380460066641693}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel3_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1458,7 +1462,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2810578723677817953}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheels_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1501,7 +1505,7 @@ GameObject:
   - component: {fileID: 5413713896134704525}
   - component: {fileID: 6519123575039899053}
   - component: {fileID: 5278541070849040787}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Sprocket_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1588,7 +1592,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7912426515744226256}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Exhaust_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1619,7 +1623,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2710751370180389276}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Muzzle_MG1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1652,7 +1656,7 @@ GameObject:
   - component: {fileID: 1677889482578515658}
   - component: {fileID: 7955423521146610358}
   - component: {fileID: 2941349830439507776}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel1_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1741,7 +1745,7 @@ GameObject:
   - component: {fileID: 4451617833487405432}
   - component: {fileID: 2168564503660301119}
   - component: {fileID: 3920144014860826067}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1831,7 +1835,7 @@ GameObject:
   - component: {fileID: 3007456592073652225}
   - component: {fileID: 543772152936971001}
   - component: {fileID: 1364611505377821760}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel2_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1919,7 +1923,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1902235961709924642}
   - component: {fileID: 5060097020305869848}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: EnemyCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2003,7 +2007,7 @@ GameObject:
   - component: {fileID: 4382064926859169994}
   - component: {fileID: 1181725932459627409}
   - component: {fileID: 5166783911287154539}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel5_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2092,7 +2096,7 @@ GameObject:
   - component: {fileID: 2382063789921380104}
   - component: {fileID: 9030936738902678302}
   - component: {fileID: 6979227519789921415}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2182,7 +2186,7 @@ GameObject:
   - component: {fileID: 357294886782659776}
   - component: {fileID: 3863551368596474831}
   - component: {fileID: 6818418196354321478}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel6_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2271,7 +2275,7 @@ GameObject:
   - component: {fileID: 7436098922239199528}
   - component: {fileID: 6941354289096532176}
   - component: {fileID: 25029493318010843}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2346,7 +2350,7 @@ GameObject:
   - component: {fileID: 1577557231552565935}
   - component: {fileID: 9188170415271696263}
   - component: {fileID: 8903588037949103249}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel4_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2435,7 +2439,7 @@ GameObject:
   - component: {fileID: 2923289281842000279}
   - component: {fileID: 6034620353423795810}
   - component: {fileID: 4359449315559015583}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel8_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2524,7 +2528,7 @@ GameObject:
   - component: {fileID: 4683581856932107850}
   - component: {fileID: 3108657581515730663}
   - component: {fileID: 2428030822713200145}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2620,7 +2624,7 @@ GameObject:
   - component: {fileID: 5711590392724389266}
   - component: {fileID: 8770007066091492358}
   - component: {fileID: 6824293230199015072}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Idler_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2707,7 +2711,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6638456541141968631}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2740,7 +2744,7 @@ GameObject:
   - component: {fileID: 7442447051432739607}
   - component: {fileID: 5562655856382465636}
   - component: {fileID: 6275109716950650628}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel2_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2827,7 +2831,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1377990317500824876}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Exhaust_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2860,7 +2864,7 @@ GameObject:
   - component: {fileID: 4792251898952823334}
   - component: {fileID: 6552948776313927539}
   - component: {fileID: 2499508213795903496}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel5_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2949,7 +2953,7 @@ GameObject:
   - component: {fileID: 3198201790779155518}
   - component: {fileID: 5141294494861623459}
   - component: {fileID: 5577377915392464687}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel4_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3038,7 +3042,7 @@ GameObject:
   - component: {fileID: 4813919704401637546}
   - component: {fileID: 8623294461921957834}
   - component: {fileID: 5611300357300250432}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Wheel3_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3125,7 +3129,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9103224602226357386}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3160,7 +3164,7 @@ GameObject:
   - component: {fileID: 3094873574422638014}
   - component: {fileID: 2835855467121584003}
   - component: {fileID: 862747582544207110}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Panzer_VI_E_Track_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}

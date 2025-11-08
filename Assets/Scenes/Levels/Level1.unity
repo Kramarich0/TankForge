@@ -1672,9 +1672,17 @@ PrefabInstance:
       value: m4a3_sherman
       objectReference: {fileID: 0}
     - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: team
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: player
       value: 
       objectReference: {fileID: 706573778}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: targetLayer.m_Bits
+      value: 4096
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5450,6 +5458,10 @@ PrefabInstance:
     - target: {fileID: 2126485755847636676, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: m_Name
       value: m4a3_sherman
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: team
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: player

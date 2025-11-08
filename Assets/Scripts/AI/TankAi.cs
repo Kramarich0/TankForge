@@ -1,13 +1,16 @@
+using System;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.AI;
 
+[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(TankHealth))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class TankAI : MonoBehaviour
 {
-    public enum TankClass { Light, Medium, Heavy }
-    [System.Serializable]
+    public enum Team { Player = 0, Friendly = 1, Enemy = 2 }
+    [Header("Team")]
+    public Team team = Team.Enemy;
+
+    [Serializable]
     public struct TankStats
     {
         public float health;
@@ -17,136 +20,81 @@ public class TankAI : MonoBehaviour
         public float shootRange;
         public int bulletDamage;
     }
+
     [Header("Class")]
+    public TankStats lightStats = new() { health = 75f, moveSpeed = 6f, rotationSpeed = 120f, fireRate = 1.5f, shootRange = 80f, bulletDamage = 60 };
+    public TankStats mediumStats = new() { health = 150f, moveSpeed = 4f, rotationSpeed = 70f, fireRate = 1f, shootRange = 100f, bulletDamage = 40 };
+    public TankStats heavyStats = new() { health = 300f, moveSpeed = 2f, rotationSpeed = 45f, fireRate = 0.6f, shootRange = 120f, bulletDamage = 80 };
+    public enum TankClass { Light, Medium, Heavy }
     public TankClass tankClass = TankClass.Medium;
-    public TankStats lightStats = new() { health = 75f, moveSpeed = 5f, rotationSpeed = 60f, fireRate = 1f, shootRange = 80f, bulletDamage = 100 };
-    public TankStats mediumStats = new() { health = 150f, moveSpeed = 3f, rotationSpeed = 40f, fireRate = .1f, shootRange = 100f, bulletDamage = 50 };
-    public TankStats heavyStats = new() { health = 300f, moveSpeed = 2f, rotationSpeed = 30f, fireRate = .5f, shootRange = 120f, bulletDamage = 10 };
 
-    [Header("Health")]
-    private TankHealth tankHealth;
-
-    [Header("UI")]
-    public HealthAiDisplay enemyHealthDisplay;
-
-    [Header("Transfroms")]
-    public Transform player;
+    [Header("References")]
     public Transform turret;
     public Transform gun;
     public Transform gunEnd;
     public Transform body;
-
-    [Header("Prefabs")]
     public GameObject bulletPrefab;
 
-    [Header("Movement / Combat")]
-    public float shootRange = 100f;
+    [Header("Detection & Teams")]
+    public float detectionRadius = 120f;
+    [Tooltip("Если оставить пустым (нулевым), будет искать по всем слоям — удобно для дебага")]
+    public LayerMask targetLayer = 0;
+    public float preferredAttackDistance = 30f;
+    public float chaseDistance = 150f;
+    public float loseTargetTime = 3f;
+
+    [Header("Shooting")]
+    public float bulletSpeed = 80f;
+    [Range(0f, 10f)] public float spreadAngle = 1.5f;
+    public float fireRate = 1f;
+    private float nextFireTime = 0f;
+    private int bulletDamage = 10;
+
+    [Header("Movement")]
     public float moveSpeed = 3f;
-    public float rotationSpeed = 40f;
-    public float fireRate = 9f;
-    public float minGunAngle = -5f;
-    public float maxGunAngle = 20f;
-    private int bulletDamage;
+    public float rotationSpeed = 45f;          // deg/s for body
+    public float turretRotationSpeed = 60f;    // deg/s for turret (separate, smoother)
+    public float bodyRotationSmoothing = 8f;
+    private Rigidbody rb;
 
-    public AudioClip idleSound;
-    public AudioClip driveSound;
+    [Header("Combat movement (strafe)")]
+    [Tooltip("Амплитуда бокового маневра (м)")]
+    public float strafeAmplitude = 1.2f;
+    [Tooltip("Частота страйфа")]
+    public float strafeFrequency = 0.6f;
+    public float approachSpeedFactor = 1f;
+    public float minApproachDistance = 10f;
 
-    private AudioSource idleSource;
-    private AudioSource driveSource;
+    [Header("Pitch smoothing")]
+    public float gunPitchSmoothing = 30f; // deg/s smoothing for pitch
 
-    public GameObject muzzleSmoke;
-    public AudioSource shootSource;
-    public AudioClip shootSound;
-
-    [Header("Debug / Fixes")]
+    [Header("Debug")]
     public bool debugGizmos = true;
     public bool debugLogs = false;
-    [Tooltip("Если модель корпуса в сцене смотрит 'назад' относительно forward (Z), включи это")]
-    public bool invertBodyForward = false;
-    [Tooltip("Если башня у модели смотрит в -Z (назад), включи это")]
-    public bool invertTurretForward = false;
-    [Tooltip("Если ствол вверх/вниз использует локальную ось X вместо Z, включи это")]
-    public bool gunUsesLocalXForPitch = true;
 
-    private NavMeshAgent agent;
-    private float nextFireTime = 0f;
-    private bool navAvailable = false;
+    private TankHealth tankHealth;
+    private Transform currentTarget;
+    private float lastSeenTargetTime = -999f;
+    private Vector3 lastTargetVelocity = Vector3.zero;
+    private Vector3 velocitySmooth = Vector3.zero;
+    private Vector3 patrolPoint;
+    private float patrolTimer = 0f;
+    private float nextPatrolPick = 0f;
+    private float seedOffset;
+    private System.Random rnd = new System.Random();
 
     void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ; // контролируем Y-вращение вручную
         tankHealth = GetComponent<TankHealth>();
-        agent = GetComponent<NavMeshAgent>();
-
-        idleSource = gameObject.AddComponent<AudioSource>();
-        driveSource = gameObject.AddComponent<AudioSource>();
-
-        SetupAudioSource(idleSource, idleSound, 0.5f, true);
-        SetupAudioSource(driveSource, driveSound, 0.1f, true);
+        seedOffset = (GetInstanceID() % 1000) * 0.1f;
     }
-
-    void UpdateAudio()
-    {
-        if (!navAvailable || agent == null) return;
-
-        bool isMoving = agent.velocity.sqrMagnitude > 0.01f;
-
-        float targetIdleVol = isMoving ? 0f : 1f;
-        float targetDriveVol = isMoving ? 1f : 0f;
-
-        idleSource.volume = Mathf.MoveTowards(idleSource.volume, targetIdleVol, Time.deltaTime * 2f);
-        driveSource.volume = Mathf.MoveTowards(driveSource.volume, targetDriveVol, Time.deltaTime * 2f);
-
-        if (!idleSource.isPlaying) idleSource.Play();
-        if (!driveSource.isPlaying) driveSource.Play();
-    }
-
-    void SetupAudioSource(AudioSource source, AudioClip clip, float volume, bool loop)
-    {
-        if (clip != null)
-        {
-            source.clip = clip;
-            source.loop = loop;
-            source.playOnAwake = false;
-            source.spatialBlend = 1f;
-            source.rolloffMode = AudioRolloffMode.Linear;
-            source.minDistance = 1f;
-            source.maxDistance = 100f;
-            source.volume = volume;
-            source.pitch = 1f;
-        }
-    }
-
 
     void Start()
     {
-        tankHealth = GetComponent<TankHealth>();
-        agent = GetComponent<NavMeshAgent>();
         ApplyStatsFromClass();
-
-        agent.speed = moveSpeed;
-        agent.angularSpeed = 120f;
-        agent.acceleration = 8f;
-        agent.updateRotation = false;
-        agent.updatePosition = true;
-        agent.stoppingDistance = shootRange * 0.9f;
-
-        shootSource = gameObject.AddComponent<AudioSource>();
-        if (shootSource != null && shootSound != null)
-        {
-            SetupAudioSource(shootSource, shootSound, 0.4f, false);
-        }
-
-        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
-        {
-            agent.Warp(hit.position);
-            navAvailable = true;
-            if (debugLogs) Debug.Log("[AI] NavMesh found and agent warped.");
-        }
-        else
-        {
-            navAvailable = false;
-            if (debugLogs) Debug.LogWarning("[AI] NavMesh not found nearby. Using fallback movement.");
-        }
+        nextPatrolPick = Time.time + UnityEngine.Random.Range(0f, 2f);
     }
 
     void ApplyStatsFromClass()
@@ -165,246 +113,360 @@ public class TankAI : MonoBehaviour
         moveSpeed = stats.moveSpeed;
         rotationSpeed = stats.rotationSpeed;
         fireRate = stats.fireRate;
-        shootRange = stats.shootRange;
         bulletDamage = stats.bulletDamage;
 
-        if (tankHealth != null)
-        {
-            float h = stats.health;
-            var thType = tankHealth.GetType();
-
-            FieldInfo fMax = thType.GetField("maxHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            fMax?.SetValue(tankHealth, h);
-
-            PropertyInfo pMax = thType.GetProperty("maxHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (pMax != null && pMax.CanWrite) pMax.SetValue(tankHealth, h);
-
-            FieldInfo fCur = thType.GetField("currentHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            fCur?.SetValue(tankHealth, h);
-
-            PropertyInfo pCur = thType.GetProperty("currentHealth", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            if (pCur != null && pCur.CanWrite) pCur.SetValue(tankHealth, h);
-        }
+        detectionRadius = Mathf.Max(detectionRadius, stats.shootRange + 20f);
     }
-
-    void OnEnable()
-    {
-        if (idleSound != null) idleSource.Play();
-        if (driveSound != null) driveSource.Play();
-    }
-
-    void OnDisable()
-    {
-        if (idleSource != null) idleSource.Stop();
-        if (driveSource != null) driveSource.Stop();
-    }
-
 
     void Update()
     {
         if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
-        if (player == null) return;
 
-        agent.speed = moveSpeed;
-        UpdateAudio();
+        FindOrUpdateTarget();
 
-        float dist = Vector3.Distance(transform.position, player.position);
-        if (debugLogs) Debug.Log("[AI] Distance = " + dist.ToString("F2"));
-
-
-        if (enemyHealthDisplay != null)
+        if (currentTarget != null)
         {
-            enemyHealthDisplay.SetHealth(tankHealth.currentHealth);
+            AimAndMaybeShoot();
         }
+    }
 
-        if (dist < shootRange)
-        {
-            if (navAvailable && agent.isOnNavMesh) agent.isStopped = true;
+    void FixedUpdate()
+    {
+        if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
 
-            if (turret != null)
-            {
-                Vector3 dir = player.position - turret.position;
-                dir.y = 0f;
-                if (dir.sqrMagnitude > 0.0001f)
-                {
-                    Quaternion targetRot = Quaternion.LookRotation(dir.normalized * (invertTurretForward ? -1f : 1f));
-                    float y = targetRot.eulerAngles.y;
-                    Quaternion onlyY = Quaternion.Euler(0f, y, 0f);
-                    turret.rotation = Quaternion.RotateTowards(turret.rotation, onlyY, rotationSpeed * Time.deltaTime);
-                }
-            }
-
-            if (gun != null)
-            {
-                Vector3 dirToPlayer = player.position - gun.position;
-                Vector3 adjustedTarget = new(player.position.x, gun.position.y, player.position.z);
-                Vector3 localDir = turret.InverseTransformDirection(adjustedTarget - gun.position);
-
-                float pitch;
-                if (gunUsesLocalXForPitch)
-                {
-                    pitch = Mathf.Atan2(localDir.y, localDir.z) * Mathf.Rad2Deg;
-                }
-                else
-                {
-                    pitch = Mathf.Atan2(localDir.y, localDir.x) * Mathf.Rad2Deg;
-                }
-
-                pitch = Mathf.Clamp(pitch, minGunAngle, maxGunAngle);
-
-                Vector3 currentEuler = gun.localEulerAngles;
-                float newPitch = Mathf.MoveTowardsAngle(currentEuler.x, pitch, rotationSpeed * Time.deltaTime);
-                gun.localEulerAngles = new Vector3(newPitch, currentEuler.y, currentEuler.z);
-            }
-
-
-            if (Time.time >= nextFireTime)
-            {
-                if (IsLineOfSightClear())
-                {
-                    Shoot();
-                    nextFireTime = Time.time + (1f / Mathf.Max(0.0001f, fireRate));
-                }
-            }
-        }
+        if (currentTarget != null)
+            HandleCombatMovement();
         else
+            HandlePatrolMovement();
+    }
+
+    // === FIXED/ADDED ===: более надёжный поиск цели с фолбеками
+    void FindOrUpdateTarget()
+    {
+        // Если есть цель - проверяем жив ли target и видимость
+        if (currentTarget != null)
         {
-            if (navAvailable && agent.isOnNavMesh)
+            TankHealth tgtHealth = currentTarget.GetComponent<TankHealth>();
+            if (tgtHealth == null || tgtHealth.currentHealth <= 0f)
             {
-                agent.isStopped = false;
-                agent.SetDestination(player.position);
+                if (debugLogs) Debug.Log($"{name}: target died - clearing");
+                currentTarget = null;
+                return;
+            }
 
-                Vector3 desired = agent.desiredVelocity;
-                Vector3 actualVel = agent.velocity;
+            float distNow = Vector3.Distance(transform.position, currentTarget.position);
+            if (distNow > chaseDistance * 1.5f)
+            {
+                currentTarget = null;
+                return;
+            }
 
-                Vector3 heading = desired.sqrMagnitude > 0.01f ? desired : actualVel;
-                if (heading.sqrMagnitude > 0.01f && body != null)
-                {
-                    Vector3 forwardDir = heading.normalized * (invertBodyForward ? -1f : 1f);
-                    Quaternion target = Quaternion.LookRotation(forwardDir);
-                    body.rotation = Quaternion.RotateTowards(body.rotation, target, rotationSpeed * Time.deltaTime);
-                }
+            if (IsLineOfSightClear(currentTarget))
+            {
+                lastSeenTargetTime = Time.time;
+                Rigidbody trgRb = currentTarget.GetComponent<Rigidbody>();
+                if (trgRb != null) lastTargetVelocity = trgRb.linearVelocity;
+                return;
             }
             else
             {
-                // fallback
-                Vector3 toTarget = player.position - transform.position;
-                toTarget.y = 0f;
-                if (toTarget.sqrMagnitude > 0.001f)
+                if (Time.time - lastSeenTargetTime > loseTargetTime)
                 {
-                    Vector3 move = toTarget.normalized * moveSpeed * Time.deltaTime;
-                    transform.position += move;
+                    if (debugLogs) Debug.Log($"{name}: lost sight of target - clearing");
+                    currentTarget = null;
+                }
+                return;
+            }
+        }
 
-                    if (body != null)
-                    {
-                        Vector3 forwardDir = toTarget.normalized * (invertBodyForward ? -1f : 1f);
-                        Quaternion target = Quaternion.LookRotation(forwardDir);
-                        body.rotation = Quaternion.RotateTowards(body.rotation, target, rotationSpeed * Time.deltaTime);
-                    }
+        // Если нет цели — ищем кандидатов
+        Collider[] cols;
+        if (targetLayer.value == 0) // === FIXED ===: если маска не задана — ищем по всем слоям (частая причина)
+        {
+            cols = Physics.OverlapSphere(transform.position, detectionRadius, ~0, QueryTriggerInteraction.Ignore);
+        }
+        else
+        {
+            cols = Physics.OverlapSphere(transform.position, detectionRadius, targetLayer, QueryTriggerInteraction.Ignore);
+        }
+
+        Transform best = null;
+        float bestScore = float.MaxValue;
+
+        foreach (var c in cols)
+        {
+            if (c.transform == transform) continue;
+
+            // пытаемся получить TankAI (чтобы знать команду)
+            TankAI otherAI = c.GetComponent<TankAI>();
+            TankHealth otherHealth = c.GetComponent<TankHealth>();
+            Rigidbody otherRb = c.GetComponent<Rigidbody>();
+
+            // фильтруем: без health — обычно не танк (фолбек — если нужен, можно расширить)
+            if (otherHealth == null) continue;
+            if (otherHealth.currentHealth <= 0f) continue;
+
+            bool isCandidate = false;
+
+            if (otherAI != null)
+            {
+                // если у цели есть TankAI — сравниваем команды
+                if (otherAI.team != this.team) isCandidate = true;
+            }
+            else
+            {
+                // === FIXED/ADDED ===: фолбек — если у объекта нет TankAI, но есть TankHealth, считаем его враждебным
+                // только если у цели не установлен явно та же команда (мы не знаем) — здесь выбор за тобой
+                // удобный вариант: если цель имеет тег "Player" и наша команда != Player => считаем вражеской
+                if (c.CompareTag("Player") && this.team != Team.Player) isCandidate = true;
+                else if (!c.CompareTag("Player"))
+                {
+                    // Если у цели нет TankAI — принимаем её как потенциальную цель (например, игрок)
+                    isCandidate = true;
                 }
             }
-        }
-    }
 
+            if (!isCandidate) continue;
 
-    bool IsLineOfSightClear()
-    {
-        if (Physics.Raycast(gunEnd.position, player.position - gunEnd.position, out RaycastHit hit, shootRange))
-        {
-            if (hit.collider.CompareTag("Player"))
+            float d = Vector3.Distance(transform.position, c.transform.position);
+            if (d < bestScore)
             {
-                return true;
+                bestScore = d;
+                best = c.transform;
             }
         }
-        return false;
+
+        if (best != null)
+        {
+            currentTarget = best;
+            lastSeenTargetTime = Time.time;
+            Rigidbody trgRb = currentTarget.GetComponent<Rigidbody>();
+            if (trgRb != null) lastTargetVelocity = trgRb.linearVelocity;
+            if (debugLogs) Debug.Log($"{name} acquired target {currentTarget.name}");
+        }
     }
 
-    void Shoot()
+    bool IsLineOfSightClear(Transform target)
     {
-        if (gunEnd == null || bulletPrefab == null) return;
+        if (gunEnd == null || target == null) return false;
+        Vector3 dir = (GetTargetAimPoint(target) - gunEnd.position);
+        float dist = dir.magnitude;
 
-        GameObject b = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
+        if (dist < 0.01f) return true;
 
-        if (b.TryGetComponent<Rigidbody>(out var rb))
+        // используем Raycast, игнорируем триггеры
+        if (Physics.Raycast(gunEnd.position, dir.normalized, out RaycastHit hit, Mathf.Min(dist, detectionRadius)))
         {
-            rb.linearVelocity = gunEnd.forward * 100f;
+            if (hit.collider.transform == target || hit.collider.transform.IsChildOf(target))
+                return true;
+            return false;
+        }
+        return true;
+    }
+
+    Vector3 GetTargetAimPoint(Transform target)
+    {
+        // цель по центру + немного вверх — обычно подходит для танка
+        return target.position + Vector3.up * 1.0f;
+    }
+
+    // === FIXED/ADDED ===: сглаживание башни и безопасная стрельба
+    private float pitchVelocity = 0f;
+    void AimAndMaybeShoot()
+    {
+        if (turret == null || gun == null || gunEnd == null || currentTarget == null) return;
+
+        Vector3 shooterPos = gunEnd.position;
+        Vector3 targetPos = GetTargetAimPoint(currentTarget);
+        Vector3 targetVel = Vector3.zero;
+        Rigidbody trgRb = currentTarget.GetComponent<Rigidbody>();
+        if (trgRb != null) targetVel = trgRb.linearVelocity;
+
+        Vector3 predicted;
+        bool success = FirstOrderIntercept(shooterPos, Vector3.zero, bulletSpeed, targetPos, targetVel, out predicted);
+        if (!success) predicted = targetPos;
+
+        // Поворот башни (Y) — ограничиваем скорость поворота turretRotationSpeed
+        Vector3 flatDir = predicted - turret.position;
+        flatDir.y = 0f;
+        if (flatDir.sqrMagnitude > 0.0001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(flatDir.normalized);
+            turret.rotation = Quaternion.RotateTowards(turret.rotation, targetRot, turretRotationSpeed * Time.deltaTime);
         }
 
-        if (b.TryGetComponent<Bullet>(out var bullet))
+        // Pitch: локальное направление относительно башни
+        Vector3 localDir = turret.InverseTransformDirection(predicted - gun.position);
+        float desiredPitch = Mathf.Atan2(localDir.y, localDir.z) * Mathf.Rad2Deg;
+
+        // Smooth pitch to avoid snapping (gunPitchSmoothing deg/sec)
+        Vector3 curEuler = gun.localEulerAngles;
+        float curPitch = curEuler.x;
+        // Convert to signed angle
+        curPitch = NormalizeAngle(curPitch);
+        float newPitch = Mathf.MoveTowards(curPitch, desiredPitch, gunPitchSmoothing * Time.deltaTime);
+        gun.localEulerAngles = new Vector3(newPitch, curEuler.y, curEuler.z);
+
+        // Стрельба (проверки)
+        float distToTarget = Vector3.Distance(transform.position, currentTarget.position);
+        if (distToTarget <= detectionRadius && Time.time >= nextFireTime)
         {
-            bullet.damage = bulletDamage;
+            if (IsLineOfSightClear(currentTarget))
+            {
+                Vector3 aimDir = (predicted - gunEnd.position).normalized;
+
+                // spread в конусе (не резкий)
+                float halfAngle = spreadAngle * 0.5f;
+                Quaternion spreadRot = Quaternion.Euler(UnityEngine.Random.Range(-halfAngle, halfAngle), UnityEngine.Random.Range(-halfAngle, halfAngle), 0f);
+                Vector3 finalDir = spreadRot * aimDir;
+
+                Shoot(finalDir);
+                nextFireTime = Time.time + 1f / Mathf.Max(0.0001f, fireRate);
+            }
+        }
+    }
+
+    void Shoot(Vector3 direction)
+    {
+        if (bulletPrefab == null || gunEnd == null) return;
+
+        GameObject b = Instantiate(bulletPrefab, gunEnd.position, Quaternion.LookRotation(direction));
+        Rigidbody brb = b.GetComponent<Rigidbody>();
+        if (brb != null)
+        {
+            brb.linearVelocity = direction * bulletSpeed;
         }
 
-        if (shootSound != null && shootSource != null)
+        var bulletComp = b.GetComponent<Bullet>();
+        if (bulletComp != null)
         {
-            shootSource.PlayOneShot(shootSound);
+            bulletComp.damage = bulletDamage;
         }
 
-        if (muzzleSmoke != null)
-        {
-            muzzleSmoke.SetActive(true);
-            Invoke(nameof(HideMuzzleSmoke), 0.8f);
-        }
-
-        if (debugLogs) Debug.DrawRay(gunEnd.position, gunEnd.forward * 10f, Color.red, 1f);
         Destroy(b, 8f);
+        if (debugLogs) Debug.DrawRay(gunEnd.position, direction * 10f, Color.red, 1f);
     }
 
-    void HideMuzzleSmoke()
+    // === FIXED/ADDED ===: плавное движение в бою с PerlinNoise для страйфа (устраняет резкие фазы)
+    void HandleCombatMovement()
     {
-        if (muzzleSmoke != null) muzzleSmoke.SetActive(false);
+        if (currentTarget == null) return;
+
+        Vector3 toTarget = currentTarget.position - transform.position;
+        toTarget.y = 0f;
+        float dist = toTarget.magnitude;
+
+        Vector3 forward = transform.forward;
+        Vector3 right = transform.right;
+
+        float targetForwardSpeed = 0f;
+        if (dist > preferredAttackDistance + 2f)
+            targetForwardSpeed = moveSpeed * approachSpeedFactor;
+        else if (dist < Mathf.Max(minApproachDistance, preferredAttackDistance * 0.5f))
+            targetForwardSpeed = -moveSpeed * 0.5f;
+        else
+            targetForwardSpeed = 0f;
+
+        // === FIXED ===: PerlinNoise для плавности, затем map to [-1,1]
+        float p = Mathf.PerlinNoise(seedOffset, Time.time * strafeFrequency);
+        float lateral = (p * 2f - 1f) * strafeAmplitude;
+
+        // Для снижения "вздрагивания" при смене направления — линейный Lerp (плавный переход)
+        lateral = Mathf.Lerp(0f, lateral, 0.9f);
+
+        Vector3 desiredVelocity = (forward * targetForwardSpeed) + (right * lateral);
+
+        Vector3 newVel = Vector3.SmoothDamp(rb.linearVelocity, desiredVelocity, ref velocitySmooth, 0.12f, moveSpeed * 2f, Time.fixedDeltaTime);
+        newVel.y = rb.linearVelocity.y; // сохраняем гравитацию
+        rb.linearVelocity = newVel;
+
+        // Поворот корпуса — используем RotateTowards с лимитом градусов/с, чтобы танк не "крутился" резко
+        Vector3 lookDir = toTarget.normalized;
+        if (newVel.sqrMagnitude > 0.1f) lookDir = newVel.normalized;
+
+        if (lookDir.sqrMagnitude > 0.001f)
+        {
+            Quaternion desiredRot = Quaternion.LookRotation(lookDir);
+            Quaternion limited = Quaternion.RotateTowards(rb.rotation, desiredRot, rotationSpeed * Time.fixedDeltaTime);
+            rb.MoveRotation(limited);
+
+            if (body != null)
+            {
+                body.rotation = Quaternion.RotateTowards(body.rotation, limited, rotationSpeed * Time.fixedDeltaTime);
+            }
+        }
     }
 
-    void Die()
+    // === FIXED/ADDED ===: плавный патруль
+    void HandlePatrolMovement()
     {
-        Debug.Log($"{gameObject.name} уничтожен!");
-        Destroy(gameObject);
+        if (Time.time >= nextPatrolPick)
+        {
+            Vector2 r = UnityEngine.Random.insideUnitCircle * Mathf.Clamp(detectionRadius * 0.4f, 10f, 40f);
+            patrolPoint = transform.position + new Vector3(r.x, 0f, r.y);
+            nextPatrolPick = Time.time + UnityEngine.Random.Range(3f, 6f);
+        }
+
+        Vector3 toPatrol = patrolPoint - transform.position;
+        toPatrol.y = 0f;
+        float d = toPatrol.magnitude;
+        Vector3 desired = (d > 0.5f) ? toPatrol.normalized * moveSpeed * 0.6f : Vector3.zero;
+
+        Vector3 newVel = Vector3.SmoothDamp(rb.linearVelocity, desired, ref velocitySmooth, 0.5f, moveSpeed * 2f, Time.fixedDeltaTime);
+        newVel.y = rb.linearVelocity.y;
+        rb.linearVelocity = newVel;
+
+        if (toPatrol.sqrMagnitude > 0.1f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(toPatrol.normalized);
+            Quaternion limited = Quaternion.RotateTowards(rb.rotation, targetRot, rotationSpeed * Time.fixedDeltaTime);
+            rb.MoveRotation(limited);
+            if (body != null) body.rotation = Quaternion.RotateTowards(body.rotation, limited, rotationSpeed * Time.fixedDeltaTime);
+        }
     }
 
+    // intercept (как раньше)
+    bool FirstOrderIntercept(Vector3 shooterPos, Vector3 shooterVel, float shotSpeed, Vector3 targetPos, Vector3 targetVel, out Vector3 predicted)
+    {
+        predicted = targetPos;
+        Vector3 r = targetPos - shooterPos;
+        Vector3 v = targetVel - shooterVel;
+
+        float a = Vector3.Dot(v, v) - shotSpeed * shotSpeed;
+        float b = 2f * Vector3.Dot(v, r);
+        float c = Vector3.Dot(r, r);
+
+        float disc = b * b - 4f * a * c;
+        if (disc < 0f)
+            return false;
+
+        float sqrtDisc = Mathf.Sqrt(disc);
+        float t1 = (-b + sqrtDisc) / (2f * a);
+        float t2 = (-b - sqrtDisc) / (2f * a);
+        float t = Mathf.Min(t1, t2);
+        if (t < 0f) t = Mathf.Max(t1, t2);
+        if (t < 0f) return false;
+
+        predicted = targetPos + targetVel * t;
+        return true;
+    }
 
     void OnDrawGizmos()
     {
         if (!debugGizmos) return;
-        if (player != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(transform.position + Vector3.up * 0.5f, player.position + Vector3.up * 0.5f);
-        }
-
-        if (body != null)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(body.position + Vector3.up * 0.5f, body.position + (body.forward * 2f) + Vector3.up * 0.5f);
-            Gizmos.DrawLine(body.position + Vector3.up * 0.5f, body.position + (body.right * 0.5f) + Vector3.up * 0.5f);
-        }
-
-        if (turret != null)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawLine(turret.position + Vector3.up * 0.6f, turret.position + (turret.forward * 2f) + Vector3.up * 0.6f);
-        }
-
-        if (gun != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(gun.position + Vector3.up * 0.7f, gun.position + (gun.forward * 2f) + Vector3.up * 0.7f);
-        }
-
-        if (gunEnd != null)
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
+        if (currentTarget != null && gunEnd != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(gunEnd.position + Vector3.up * 0.8f, gunEnd.position + (gunEnd.forward * 3f) + Vector3.up * 0.8f);
+            Gizmos.DrawLine(gunEnd.position, currentTarget.position + Vector3.up * 1f);
         }
+    }
 
-        if (agent != null && agent.isOnNavMesh)
-        {
-            Gizmos.color = Color.magenta;
-            Vector3 steer = agent.steeringTarget;
-            Gizmos.DrawLine(transform.position + Vector3.up * 0.2f, steer + Vector3.up * 0.2f);
-            Gizmos.DrawSphere(steer + Vector3.up * 0.2f, 0.1f);
-            Gizmos.color = Color.white;
-            Vector3 des = agent.desiredVelocity;
-            Gizmos.DrawLine(transform.position + Vector3.up * 0.3f, transform.position + (des.normalized * 1.5f) + Vector3.up * 0.3f);
-        }
+    float NormalizeAngle(float a)
+    {
+        while (a > 180f) a -= 360f;
+        while (a <= -180f) a += 360f;
+        return a;
     }
 }

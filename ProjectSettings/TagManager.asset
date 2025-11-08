@@ -17,9 +17,9 @@ TagManager:
   - Suimono_Water
   - Suimono_Depth
   - Suimono_Screen
-  - 
-  - 
-  - 
+  - PlayerTank
+  - EnemyTank
+  - FriendlyTank
   - 
   - 
   - 

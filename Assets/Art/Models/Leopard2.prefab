@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 838633806075663468}
   - component: {fileID: 4741971677767907969}
   - component: {fileID: 8937957950610481151}
-  m_Layer: 5
+  m_Layer: 12
   m_Name: HealthAiBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 2933179451823505245}
   - component: {fileID: 5339764778780198585}
   - component: {fileID: 7680502819353262663}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: frontRightGear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -188,7 +188,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7824809879486564789}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 3RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +219,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 445868290713086765}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 7RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -250,7 +250,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1060978986151336546}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: rootBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -299,7 +299,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7348769679636115969}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: GunAiLeoEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -333,7 +333,7 @@ GameObject:
   - component: {fileID: 4354224282961313980}
   - component: {fileID: 474489646785091719}
   - component: {fileID: 647901199043420406}
-  m_Layer: 5
+  m_Layer: 12
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -436,7 +436,7 @@ GameObject:
   - component: {fileID: 5135935930236040473}
   - component: {fileID: 6216903343043350862}
   - component: {fileID: 1596664373954713768}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Ai Health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1453875624340670765}
   - component: {fileID: 6218849148806748994}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: leftTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -737,7 +737,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1011852549049786918}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 4RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -770,7 +770,7 @@ GameObject:
   - component: {fileID: 7899060131994754272}
   - component: {fileID: 8818976274638604929}
   - component: {fileID: 8191619959575945338}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 6LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -859,7 +859,7 @@ GameObject:
   - component: {fileID: 7909462774966165468}
   - component: {fileID: 1325331098002344000}
   - component: {fileID: 6327278837392970190}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: EnemyCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -951,7 +951,7 @@ GameObject:
   - component: {fileID: 3726103839468725327}
   - component: {fileID: 5014541946464414574}
   - component: {fileID: 2007334722056700323}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 6RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1040,7 +1040,7 @@ GameObject:
   - component: {fileID: 1319916965766389964}
   - component: {fileID: 6933813288508813901}
   - component: {fileID: 7562071088946303044}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 7LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1127,7 +1127,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4477328860794857447}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 1RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1158,7 +1158,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3282377105599730665}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 7LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1189,7 +1189,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 722332054323351004}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: armature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1221,7 +1221,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3749421744766755999}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 1LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1252,7 +1252,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8566300849782078851}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 2RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1285,7 +1285,7 @@ GameObject:
   - component: {fileID: 9064183653610888798}
   - component: {fileID: 648020068944477257}
   - component: {fileID: 7943880457960105287}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 4LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1374,7 +1374,7 @@ GameObject:
   - component: {fileID: 6852573980347987317}
   - component: {fileID: 5455817643486630761}
   - component: {fileID: 73868293351154138}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1462,7 +1462,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5116717986629941279}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: rearRightGearBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1495,7 +1495,7 @@ GameObject:
   - component: {fileID: 3641008774874780491}
   - component: {fileID: 6257764290006277232}
   - component: {fileID: 8128174377383391569}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1584,7 +1584,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6638368945777118578}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 4LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1617,7 +1617,7 @@ GameObject:
   - component: {fileID: 2282712483293564153}
   - component: {fileID: 568001765864937173}
   - component: {fileID: 5757616184074933163}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: frontLeftGear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1706,7 +1706,7 @@ GameObject:
   - component: {fileID: 5756601794601527862}
   - component: {fileID: 7621011271762615041}
   - component: {fileID: 7020617756977655974}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 1LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1793,7 +1793,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4403009472747690962}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: rearLeftGearBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1826,7 +1826,7 @@ GameObject:
   - component: {fileID: 6735962607379270782}
   - component: {fileID: 4121289332610992808}
   - component: {fileID: 8358935596940099937}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 2RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1915,7 +1915,7 @@ GameObject:
   - component: {fileID: 2406261584591188067}
   - component: {fileID: 57680501512978369}
   - component: {fileID: 5500945760136991239}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 1RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2002,7 +2002,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6685211507696530723}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 6RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2034,7 +2034,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7539283363799981359}
   - component: {fileID: 2546718711450723389}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: rightTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2143,7 +2143,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3242575755032350273}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 3LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2176,7 +2176,7 @@ GameObject:
   - component: {fileID: 6755535226605369331}
   - component: {fileID: 6264583575934309801}
   - component: {fileID: 7749019287847974289}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 7RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2263,7 +2263,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5984498998549606111}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 6LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2299,7 +2299,7 @@ GameObject:
   - component: {fileID: 3351642093755439465}
   - component: {fileID: 1123867103300070019}
   - component: {fileID: 4585202906806677004}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Leopard2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2337,7 +2337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleTankAI
-  tankClass: 2
+  team: 2
   lightStats:
     health: 75
     moveSpeed: 5
@@ -2359,29 +2359,33 @@ MonoBehaviour:
     fireRate: 0.5
     shootRange: 120
     bulletDamage: 10
-  enemyHealthDisplay: {fileID: 1596664373954713768}
-  player: {fileID: 0}
+  tankClass: 2
   turret: {fileID: 6852573980347987317}
   gun: {fileID: 3641008774874780491}
   gunEnd: {fileID: 7348769679636115969}
   body: {fileID: 8485594340164001570}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  shootRange: 100
+  detectionRadius: 120
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 10240
+  preferredAttackDistance: 30
+  chaseDistance: 150
+  loseTargetTime: 3
+  bulletSpeed: 80
+  spreadAngle: 1.5
+  fireRate: 0.1
   moveSpeed: 3
   rotationSpeed: 40
-  fireRate: 0.1
-  minGunAngle: -2
-  maxGunAngle: 10
-  idleSound: {fileID: 8300000, guid: 424fa93cf23ad364491b37aef2a2cb38, type: 3}
-  driveSound: {fileID: 8300000, guid: ff4a19a8ba7e622489b396ca9fe6ff5c, type: 3}
-  muzzleSmoke: {fileID: 2438605965891431956}
-  shootSource: {fileID: 0}
-  shootSound: {fileID: 8300000, guid: 5c0aaa0cd89427247a7d82a9dbeb1573, type: 3}
+  turretRotationSpeed: 60
+  bodyRotationSmoothing: 8
+  strafeAmplitude: 1.5
+  strafeFrequency: 1.2
+  approachSpeedFactor: 1
+  minApproachDistance: 10
+  gunPitchSmoothing: 30
   debugGizmos: 0
   debugLogs: 0
-  invertBodyForward: 0
-  invertTurretForward: 0
-  gunUsesLocalXForPitch: 0
 --- !u!114 &7143281257750848462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2464,7 +2468,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
@@ -2479,7 +2483,7 @@ GameObject:
   - component: {fileID: 8305473451298485365}
   - component: {fileID: 650149028396895369}
   - component: {fileID: 2652381264565651589}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 3RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2568,7 +2572,7 @@ GameObject:
   - component: {fileID: 4400227383826751223}
   - component: {fileID: 1438085487325867950}
   - component: {fileID: 2080741172218455391}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 5LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2657,7 +2661,7 @@ GameObject:
   - component: {fileID: 8485594340164001570}
   - component: {fileID: 8954341531760698825}
   - component: {fileID: 3794095981273246920}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2767,7 +2771,7 @@ GameObject:
   - component: {fileID: 1497719137284666205}
   - component: {fileID: 7033976912383337543}
   - component: {fileID: 2832492877647668268}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 4RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2854,7 +2858,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3466184641224832550}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 5LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2887,7 +2891,7 @@ GameObject:
   - component: {fileID: 8770776857131494369}
   - component: {fileID: 8913658751500374492}
   - component: {fileID: 6143529880886435722}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 5RightWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2974,7 +2978,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2194343295403406511}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 2LeftWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3005,7 +3009,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 720128653705085422}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 5RightWheelBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3038,7 +3042,7 @@ GameObject:
   - component: {fileID: 491419590637934488}
   - component: {fileID: 4259753293543063895}
   - component: {fileID: 3227585176530269448}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: rearRightGear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3127,7 +3131,7 @@ GameObject:
   - component: {fileID: 5881851135040671436}
   - component: {fileID: 2466844251920131592}
   - component: {fileID: 2476728576406258861}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: rearLeftGear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3216,7 +3220,7 @@ GameObject:
   - component: {fileID: 9130966864389122055}
   - component: {fileID: 4922284303917492221}
   - component: {fileID: 8764283169334944952}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 2LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3303,7 +3307,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8850426606865973681}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: frontRightGearBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3336,7 +3340,7 @@ GameObject:
   - component: {fileID: 7347824133454942793}
   - component: {fileID: 6267692626499376688}
   - component: {fileID: 6031620708653925046}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: 3LeftWheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3423,7 +3427,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5637443728280582874}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: frontLeftGearBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3498,6 +3502,10 @@ PrefabInstance:
       value: MuzzleSmoke
       objectReference: {fileID: 0}
     - target: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -3506,11 +3514,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
---- !u!1 &2438605965891431956 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
-  m_PrefabInstance: {fileID: 9176564743708513760}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2440329558253218374 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6810709059391405990, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
