@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 838633806075663468}
   - component: {fileID: 4741971677767907969}
   - component: {fileID: 8937957950610481151}
+  - component: {fileID: 3443611418011510467}
   m_Layer: 12
   m_Name: HealthAiBar
   m_TagString: Untagged
@@ -88,8 +89,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d9b696f842078840adfb5f10888bd6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthAiDisplay
-  healthText: {fileID: 6216903343043350862}
+  target: {fileID: 0}
+  targetTeam: {fileID: 0}
+  healthText: {fileID: 0}
   healthBar: {fileID: 4741971677767907969}
+  verticalOffset: 2.2
+  friendlyColor: {r: 0, g: 1, b: 0, a: 1}
+  enemyColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!223 &3443611418011510467
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195088257961129285}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &301413088361341429
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,7 +368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4344319026216344977
 RectTransform:
   m_ObjectHideFlags: 0
@@ -436,6 +465,7 @@ GameObject:
   - component: {fileID: 5135935930236040473}
   - component: {fileID: 6216903343043350862}
   - component: {fileID: 1596664373954713768}
+  - component: {fileID: 2658706840084833799}
   m_Layer: 12
   m_Name: Ai Health
   m_TagString: Untagged
@@ -616,8 +646,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d9b696f842078840adfb5f10888bd6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthAiDisplay
-  healthText: {fileID: 6216903343043350862}
+  target: {fileID: 0}
+  targetTeam: {fileID: 0}
+  healthText: {fileID: 0}
   healthBar: {fileID: 4741971677767907969}
+  verticalOffset: 2.2
+  friendlyColor: {r: 0, g: 1, b: 0, a: 1}
+  enemyColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!223 &2658706840084833799
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1835230349543932431}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &2041337256289040278
 GameObject:
   m_ObjectHideFlags: 0
@@ -2299,6 +2357,7 @@ GameObject:
   - component: {fileID: 3351642093755439465}
   - component: {fileID: 1123867103300070019}
   - component: {fileID: 4585202906806677004}
+  - component: {fileID: 5377059141490470958}
   m_Layer: 12
   m_Name: Leopard2
   m_TagString: Untagged
@@ -2323,6 +2382,7 @@ Transform:
   - {fileID: 6852573980347987317}
   - {fileID: 4344319026216344977}
   - {fileID: 7909462774966165468}
+  - {fileID: 7665592436301482048}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &744730498311578427
@@ -2337,7 +2397,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleTankAI
-  team: 2
+  tankClass: 2
   lightStats:
     health: 75
     moveSpeed: 5
@@ -2359,33 +2419,34 @@ MonoBehaviour:
     fireRate: 0.5
     shootRange: 120
     bulletDamage: 10
-  tankClass: 2
+  enemyHealthDisplayPrefab: {fileID: 0}
+  player: {fileID: 0}
   turret: {fileID: 6852573980347987317}
   gun: {fileID: 3641008774874780491}
   gunEnd: {fileID: 7348769679636115969}
   body: {fileID: 8485594340164001570}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  detectionRadius: 120
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 10240
-  preferredAttackDistance: 30
-  chaseDistance: 150
-  loseTargetTime: 3
-  bulletSpeed: 80
-  spreadAngle: 1.5
-  fireRate: 0.1
+  shootRange: 100
   moveSpeed: 3
   rotationSpeed: 40
-  turretRotationSpeed: 60
-  bodyRotationSmoothing: 8
-  strafeAmplitude: 1.5
-  strafeFrequency: 1.2
-  approachSpeedFactor: 1
-  minApproachDistance: 10
-  gunPitchSmoothing: 30
+  fireRate: 0.1
+  minGunAngle: -5
+  maxGunAngle: 20
+  projectileSpeed: 80
+  bulletUseGravity: 1
+  idleSound: {fileID: 0}
+  driveSound: {fileID: 0}
+  shootSound: {fileID: 0}
   debugGizmos: 0
   debugLogs: 0
+  invertBodyForward: 0
+  invertTurretForward: 0
+  gunUsesLocalXForPitch: 1
+  detectionRadius: 120
+  fieldOfView: 140
+  detectionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &7143281257750848462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2472,6 +2533,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5377059141490470958
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5814213489443158634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
+  team: 2
 --- !u!1 &6002131571207418770
 GameObject:
   m_ObjectHideFlags: 0
@@ -2969,6 +3043,113 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6892132352815400336
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7665592436301482048}
+  - component: {fileID: 1393831685930756739}
+  - component: {fileID: 2670172275899961135}
+  - component: {fileID: 464709992383322937}
+  m_Layer: 12
+  m_Name: MarkerPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7665592436301482048
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6892132352815400336}
+  serializedVersion: 2
+  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4876480595684117890}
+  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+--- !u!33 &1393831685930756739
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6892132352815400336}
+  m_Mesh: {fileID: 0}
+--- !u!23 &2670172275899961135
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6892132352815400336}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &464709992383322937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6892132352815400336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd77761c757a17142b3cac323ef63db4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamMarker
+  pivot: {fileID: 0}
+  teamComp: {fileID: 5377059141490470958}
+  size: 0.7
+  localOffset: {x: 0, y: 0, z: 0}
+  faceCamera: 1
 --- !u!1 &6967866698077374070
 GameObject:
   m_ObjectHideFlags: 0

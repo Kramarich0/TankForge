@@ -977,8 +977,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   lookAction: {fileID: -5456195109082554791, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  sensitivity: 0.05
-  smoothSpeed: 12
+  sensitivity: 0.02
+  smoothSpeed: 6
   minAngle: -10
   maxAngle: 20
 --- !u!114 &6945161926540087329
@@ -1827,8 +1827,8 @@ MonoBehaviour:
   backwardSpeed: 0.4
   acceleration: 0.5
   deceleration: 0.2
-  brakeDeceleration: 1
-  turnSpeed: 50
+  brakeDeceleration: 1.5
+  turnSpeed: 45
   turnWhileReverseFactor: 0.6
   useRigidbody: 1
   rotationPivot: {fileID: 1830298337892503540}

@@ -105,9 +105,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bf050cbc874a0e4cb480947dcb27657, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  speed: 100
-  lifeTime: 5
   damage: 100
+  lifeTime: 5
+  shooterTeam: 2
 --- !u!54 &8573578418623416977
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -164,7 +164,7 @@ TrailRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8395639834743769822}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1

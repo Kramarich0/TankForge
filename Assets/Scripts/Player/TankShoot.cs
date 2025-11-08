@@ -38,26 +38,29 @@ public class TankShoot : MonoBehaviour
         originalLocalPos = transform.localPosition;
     }
 
-    void OnEnable() { if (shootAction?.action != null) shootAction.action.Enable(); }
-    void OnDisable() { if (shootAction?.action != null) shootAction.action.Disable(); }
+    void OnEnable() { shootAction?.action?.Enable(); }
+    void OnDisable() { shootAction?.action?.Disable(); }
 
     void Update()
     {
         if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
         if (shootAction?.action == null) return;
 
+        // Обновляем UI перезарядки
         if (reloadDisplay != null)
         {
             float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
             reloadDisplay.SetReload(remainingTime, 1f / fireRate);
         }
 
+        // Стрельба
         if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
         {
             Shoot();
             reloadSoundPlaying = false;
         }
 
+        // Звуки перезарядки
         if (Time.time < nextFireTime)
         {
             if (!reloadSoundPlaying && reloadSound != null)
@@ -68,14 +71,11 @@ public class TankShoot : MonoBehaviour
                 reloadSoundPlaying = true;
             }
         }
-        else
+        else if (reloadSoundPlaying)
         {
-            if (reloadSoundPlaying)
-            {
-                audioSource.Stop();
-                audioSource.loop = false;
-                reloadSoundPlaying = false;
-            }
+            audioSource.Stop();
+            audioSource.loop = false;
+            reloadSoundPlaying = false;
         }
 
         // Отдача
@@ -96,7 +96,7 @@ public class TankShoot : MonoBehaviour
     {
         nextFireTime = Time.time + (1f / fireRate);
 
-        if (shootSound != null && audioSource != null)
+        if (shootSound != null)
             audioSource.PlayOneShot(shootSound);
 
         if (muzzleSmoke != null)
@@ -112,13 +112,17 @@ public class TankShoot : MonoBehaviour
         {
             GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
 
+            // Передаём стартовые данные через Initialize()
             if (bullet.TryGetComponent<Bullet>(out var bulletScript))
-                bulletScript.speed = bulletSpeed;
-
-            if (bullet.TryGetComponent<Rigidbody>(out var rb))
             {
+                TeamComponent teamComp = GetComponentInParent<TeamComponent>();
+                Team team = teamComp ? teamComp.team : Team.Neutral;
+                bulletScript.Initialize(gunEnd.forward * bulletSpeed, false, team);
+            }
+            else if (bullet.TryGetComponent<Rigidbody>(out var rb))
+            {
+                // fallback, если Bullet отсутствует
                 rb.linearVelocity = gunEnd.forward * bulletSpeed;
-                rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             }
         }
     }

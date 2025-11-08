@@ -1,3 +1,4 @@
+// TankHealth.cs
 using UnityEngine;
 
 public class TankHealth : MonoBehaviour, IDamageable
@@ -7,25 +8,19 @@ public class TankHealth : MonoBehaviour, IDamageable
     [HideInInspector] public float currentHealth;
 
     [Header("UI")]
-    public HealthDisplay healthDisplay;       
-    public HealthAiDisplay aiHealthDisplay;     
+    public GameObject healthDisplay; // optional legacy (оставил на случай)
+    public HealthAiDisplay aiHealthDisplay; // prefab instance reference (world-space canvas)
 
     void Awake()
     {
         currentHealth = maxHealth;
 
-        if (healthDisplay != null)
-        {
-            healthDisplay.SetMaxHealth(maxHealth);
-            healthDisplay.SetHealth(currentHealth);
-            Debug.Log($"[TankHealth] {gameObject.name} привязан HealthDisplay: {healthDisplay.gameObject.name}");
-        }
-
         if (aiHealthDisplay != null)
         {
-            aiHealthDisplay.SetMaxHealth(maxHealth);
-            aiHealthDisplay.SetHealth(currentHealth);
-            Debug.Log($"[TankHealth] {gameObject.name} привязан HealthAiDisplay: {aiHealthDisplay.gameObject.name}");
+            // Если это префаб, можно инстанцировать, но ожидаем, что ты назначишь prefab в инспекторе и он уже инстанцирован
+            aiHealthDisplay.target = this;
+            aiHealthDisplay.targetTeam = GetComponent<TeamComponent>();
+            aiHealthDisplay.UpdateDisplay();
         }
     }
 
@@ -36,11 +31,10 @@ public class TankHealth : MonoBehaviour, IDamageable
 
         Debug.Log($"{gameObject.name} получил {damage} урона, осталось HP: {currentHealth}");
 
-        if (healthDisplay != null)
-            healthDisplay.SetHealth(currentHealth);
-
         if (aiHealthDisplay != null)
-            aiHealthDisplay.SetHealth(currentHealth);
+        {
+            aiHealthDisplay.UpdateDisplay();
+        }
 
         if (currentHealth <= 0f)
         {

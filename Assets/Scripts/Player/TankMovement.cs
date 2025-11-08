@@ -170,7 +170,6 @@ public class TankMovement : MonoBehaviour
         else if (moveInput < 0f) targetSpeed = moveInput * backwardSpeed; 
         else targetSpeed = 0f;
 
-        
         float absMove = Mathf.Abs(moveInput);
         targetBlend = Mathf.Clamp01(absMove);
         currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);

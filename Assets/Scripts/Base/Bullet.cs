@@ -1,45 +1,60 @@
+// Bullet.cs
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Rigidbody))]
 public class Bullet : MonoBehaviour
 {
-    public float speed = 10f;
-    public float lifeTime = 5f;
     public int damage = 20;
+    public float lifeTime = 8f;
+    public Team shooterTeam = Team.Neutral;
 
-    private bool hasHit = false;
+    Rigidbody rb;
+    Collider col;
 
-    void Start()
+    void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        // по умолчанию гравитация выключена — будет включена в Initialize если нужно
+        rb.useGravity = false;
+    }
+
+    public void Initialize(Vector3 velocity, bool useGravity, Team shooter)
+    {
+        shooterTeam = shooter;
+        rb.linearVelocity = velocity;
+        rb.useGravity = useGravity;
         Destroy(gameObject, lifeTime);
     }
 
-
     void OnCollisionEnter(Collision collision)
     {
-        if (hasHit) return;
-        hasHit = true;
+        if (collision == null) return;
 
-        IDamageable target = collision.collider.GetComponent<IDamageable>();
-        target ??= collision.collider.GetComponentInParent<IDamageable>();
-
-        if (target != null)
+        // Проверка команды по цели
+        TeamComponent hitTeam = collision.collider.GetComponentInParent<TeamComponent>();
+        if (hitTeam != null && hitTeam.team == shooterTeam)
         {
-            Debug.Log($"[Bullet] Попадание по {collision.collider.name} (parent {collision.collider.transform.root.name}). Наношу {damage} урона.");
-            target.TakeDamage(damage);
+            // Попали по своему — постарайся игнорировать дальнейшие столкновения с этим коллайдером
+            if (col != null && collision.collider != null)
+            {
+                Physics.IgnoreCollision(col, collision.collider, true);
+            }
+            // не уничтожаем пулю сразу — она продолжит путь и может попасть по врагу
+            return;
         }
-        else
+
+        // Попытка нанести урон через IDamageable
+        IDamageable dmg = collision.collider.GetComponentInParent<IDamageable>();
+        if (dmg != null)
         {
-            Debug.Log($"[Bullet] Попадание по {collision.collider.name} — IDamageable не найден.");
+            dmg.TakeDamage(damage);
         }
 
-        Explode();
-
-        if (TryGetComponent<Collider>(out var col)) col.enabled = false;
-        if (TryGetComponent<Rigidbody>(out var rb)) rb.linearVelocity = Vector3.zero;
+        // Можно добавить эффекты взрыва тут
         Destroy(gameObject);
-    }
-
-    void Explode()
-    {
     }
 }
