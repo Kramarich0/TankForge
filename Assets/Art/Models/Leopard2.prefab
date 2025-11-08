@@ -2337,7 +2337,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleTankAI
-  tankClass: 1
+  tankClass: 2
   lightStats:
     health: 75
     moveSpeed: 5

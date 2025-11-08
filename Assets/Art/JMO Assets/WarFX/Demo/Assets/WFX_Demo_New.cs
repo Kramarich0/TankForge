@@ -192,9 +192,8 @@ public class WFX_Demo_New : MonoBehaviour
 			particles.transform.parent = bulletholes.transform;
 		}
 
-		ParticleSystem ps = particles.GetComponent<ParticleSystem>();
-#if UNITY_5_5_OR_NEWER
-		if (ps != null)
+		#if UNITY_5_5_OR_NEWER
+		if (particles.TryGetComponent<ParticleSystem>(out var ps))
 		{
 			var main = ps.main;
 			if (main.loop)

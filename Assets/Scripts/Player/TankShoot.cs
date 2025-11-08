@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(AudioSource))]
 public class TankShoot : MonoBehaviour
 {
     [Header("Shooting")]
     public InputActionReference shootAction;
     public Transform gunEnd;
     public GameObject bulletPrefab;
-    public float bulletSpeed = 280f;
+    public float bulletSpeed = 800f;
     public float fireRate = 0.5f;
 
     [Header("Effects")]
@@ -95,7 +96,8 @@ public class TankShoot : MonoBehaviour
     {
         nextFireTime = Time.time + (1f / fireRate);
 
-        if (shootSound != null && audioSource != null) audioSource.PlayOneShot(shootSound);
+        if (shootSound != null && audioSource != null)
+            audioSource.PlayOneShot(shootSound);
 
         if (muzzleSmoke != null)
         {
@@ -109,8 +111,11 @@ public class TankShoot : MonoBehaviour
         if (bulletPrefab != null && gunEnd != null)
         {
             GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
-            Rigidbody rb = bullet.GetComponent<Rigidbody>();
-            if (rb != null)
+
+            if (bullet.TryGetComponent<Bullet>(out var bulletScript))
+                bulletScript.speed = bulletSpeed;
+
+            if (bullet.TryGetComponent<Rigidbody>(out var rb))
             {
                 rb.linearVelocity = gunEnd.forward * bulletSpeed;
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;

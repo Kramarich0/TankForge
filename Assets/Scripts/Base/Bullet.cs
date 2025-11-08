@@ -10,18 +10,13 @@ public class Bullet : MonoBehaviour
 
     void Start()
     {
-        gameObject.SetActive(true);
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.linearVelocity = transform.forward * speed;
-        }
         Destroy(gameObject, lifeTime);
     }
 
+
     void OnCollisionEnter(Collision collision)
     {
-        if (hasHit) return;      
+        if (hasHit) return;
         hasHit = true;
 
         IDamageable target = collision.collider.GetComponent<IDamageable>();
@@ -39,10 +34,8 @@ public class Bullet : MonoBehaviour
 
         Explode();
 
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb != null) rb.linearVelocity = Vector3.zero;
+        if (TryGetComponent<Collider>(out var col)) col.enabled = false;
+        if (TryGetComponent<Rigidbody>(out var rb)) rb.linearVelocity = Vector3.zero;
         Destroy(gameObject);
     }
 
