@@ -329,8 +329,7 @@ public class TankAI : MonoBehaviour
         else
         {
 
-            var rb = t.GetComponent<Rigidbody>();
-            if (rb != null) targetVel = rb.linearVelocity;
+            if (t.TryGetComponent<Rigidbody>(out var rb)) targetVel = rb.linearVelocity;
         }
 
         Vector3 dir = targetPos - gunEnd.position;

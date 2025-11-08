@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8455611261666705993}
   - component: {fileID: 7214845384376370596}
   - component: {fileID: 188055926720560206}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hatch_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 1751229570433415183}
   - component: {fileID: 5745137641899065375}
   - component: {fileID: 9211975353238428339}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_24
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 5224778176592427218}
   - component: {fileID: 7573771821551276288}
   - component: {fileID: 4617980241578961896}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Sus5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 1162819271039170069}
   - component: {fileID: 2888641956678744735}
   - component: {fileID: 488013966644100302}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Track_Full2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -401,7 +401,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5612779968204697617}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GunEnd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -423,6 +423,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8942453463153120974}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &777528161816675919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6638049670521133354}
+  m_Layer: 11
+  m_Name: ShermanCommanderPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6638049670521133354
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 777528161816675919}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.484, y: 3.156, z: -0.421}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4774352311489665857}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1026278598920335713
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,7 +465,7 @@ GameObject:
   - component: {fileID: 3363869578935642903}
   - component: {fileID: 5036298723270739621}
   - component: {fileID: 528234414083789448}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -523,7 +554,7 @@ GameObject:
   - component: {fileID: 7593621850863569308}
   - component: {fileID: 5278607496230997861}
   - component: {fileID: 1702792556031537487}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hatch_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -612,7 +643,8 @@ GameObject:
   - component: {fileID: 3548536648529646242}
   - component: {fileID: 925581589235628227}
   - component: {fileID: 7747720726188946595}
-  m_Layer: 0
+  - component: {fileID: 3237462397547497469}
+  m_Layer: 11
   m_Name: SM_M4_Turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,6 +723,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3237462397547497469
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1184051278638894097}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.1720939, y: 1.1962816, z: 2.833603}
+  m_Center: {x: 0.0073628426, y: 0.5974769, z: -0.23414606}
 --- !u!1 &1330818810813865339
 GameObject:
   m_ObjectHideFlags: 0
@@ -702,7 +755,7 @@ GameObject:
   - component: {fileID: 4298725394789515913}
   - component: {fileID: 6768429245158021194}
   - component: {fileID: 6291275730873445531}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -791,7 +844,7 @@ GameObject:
   - component: {fileID: 3432870597003816461}
   - component: {fileID: 3159202167371932649}
   - component: {fileID: 35601627955496633}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -883,7 +936,7 @@ GameObject:
   - component: {fileID: 11759095978582147}
   - component: {fileID: 6945161926540087329}
   - component: {fileID: 7830692974354987563}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_MainGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1004,8 +1057,11 @@ MonoBehaviour:
   reloadSound: {fileID: 0}
   reloadDisplay: {fileID: 0}
   recoilAmount: 0.1
-  recoilSpeed: 10
   returnSpeed: 5
+  recoilBack: 0.15
+  recoilUp: 0.05
+  recoilSpeed: 10
+  recoilReturnSpeed: 7
 --- !u!82 &7830692974354987563
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1114,7 +1170,7 @@ GameObject:
   - component: {fileID: 4037435956324080938}
   - component: {fileID: 1005596343363152020}
   - component: {fileID: 7440611789947138959}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1203,7 +1259,7 @@ GameObject:
   - component: {fileID: 7965257187804964136}
   - component: {fileID: 2615440414884550534}
   - component: {fileID: 66301444650155328}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1292,7 +1348,7 @@ GameObject:
   - component: {fileID: 1671111945884185084}
   - component: {fileID: 6772519519491078871}
   - component: {fileID: 8201510962114009171}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Sus4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1381,7 +1437,7 @@ GameObject:
   - component: {fileID: 7775978672034616848}
   - component: {fileID: 3358352278061656962}
   - component: {fileID: 2425930024337941298}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Sus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1470,7 +1526,7 @@ GameObject:
   - component: {fileID: 12803424051279429}
   - component: {fileID: 9107640357692043345}
   - component: {fileID: 5592758697563828623}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hatch_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1559,7 +1615,8 @@ GameObject:
   - component: {fileID: 2089185442318546144}
   - component: {fileID: 7574226373082270196}
   - component: {fileID: 8205246134366858829}
-  m_Layer: 0
+  - component: {fileID: 8272102856949626710}
+  m_Layer: 11
   m_Name: SM_M4_Hull
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1640,6 +1697,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &8272102856949626710
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2769166960978812865}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.025465, y: 1.5943248, z: 5.9465046}
+  m_Center: {x: -0.00000035762787, y: 0.79716206, z: 0.00010955334}
 --- !u!1 &3181741611327779533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1651,7 +1729,7 @@ GameObject:
   - component: {fileID: 416448758073699713}
   - component: {fileID: 8511459078053564923}
   - component: {fileID: 3096768432382017536}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Turret_In_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1740,10 +1818,10 @@ GameObject:
   - component: {fileID: 4774352311489665857}
   - component: {fileID: 1036952151063692857}
   - component: {fileID: 646124022302727699}
-  - component: {fileID: 8048723873222924086}
-  - component: {fileID: 5556891334657771340}
+  - component: {fileID: 5615422364906774958}
   - component: {fileID: 5769034963943196331}
-  m_Layer: 0
+  - component: {fileID: 6543952335926597029}
+  m_Layer: 11
   m_Name: M4_Sherman
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1807,6 +1885,8 @@ Transform:
   - {fileID: 9036050371917174792}
   - {fileID: 1830298337892503540}
   - {fileID: 6139414371712457770}
+  - {fileID: 6638049670521133354}
+  - {fileID: 1783261375823700215}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1036952151063692857
@@ -1828,14 +1908,14 @@ MonoBehaviour:
   acceleration: 0.5
   deceleration: 0.2
   brakeDeceleration: 1.5
-  turnSpeed: 45
+  turnSpeed: 55
   turnWhileReverseFactor: 0.6
   useRigidbody: 1
   rotationPivot: {fileID: 1830298337892503540}
   adjustRigidbodyCenterOfMass: 1
   inputDeadzone: 0.02
-  movementEpsilon: 0.001
-  rotationEpsilon: 0.01
+  movementEpsilon: 0.005
+  rotationEpsilon: 0.1
   rotationSmoothTime: 0.06
   idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
   driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
@@ -1862,54 +1942,19 @@ MonoBehaviour:
   currentHealth: 20
   healthDisplay: {fileID: 0}
   aiHealthDisplay: {fileID: 0}
---- !u!65 &8048723873222924086
-BoxCollider:
+--- !u!114 &5615422364906774958
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3328934320471145314}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 1
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3, y: 2.8261302, z: 6}
-  m_Center: {x: 0, y: 1.3869346, z: 0}
---- !u!54 &5556891334657771340
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3328934320471145314}
-  serializedVersion: 5
-  m_Mass: 50
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
+  team: 0
 --- !u!82 &5769034963943196331
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2007,6 +2052,33 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!54 &6543952335926597029
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3328934320471145314}
+  serializedVersion: 5
+  m_Mass: 1000
+  m_LinearDamping: 0.3
+  m_AngularDamping: 0.5
+  m_CenterOfMass: {x: 0, y: -0.5, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3758792498813145033
 GameObject:
   m_ObjectHideFlags: 0
@@ -2016,7 +2088,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1830298337892503540}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ShermainMainPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2049,7 +2121,7 @@ GameObject:
   - component: {fileID: 3793050737007442843}
   - component: {fileID: 2245979137717773144}
   - component: {fileID: 7848801873175471581}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Sus6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2138,7 +2210,7 @@ GameObject:
   - component: {fileID: 5395086512361210337}
   - component: {fileID: 7493488895827645097}
   - component: {fileID: 7484060425683794397}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2227,7 +2299,7 @@ GameObject:
   - component: {fileID: 7721367431684194439}
   - component: {fileID: 2285067378730985968}
   - component: {fileID: 4617118094247863884}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hull_In_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2316,7 +2388,7 @@ GameObject:
   - component: {fileID: 5753094159371439688}
   - component: {fileID: 4961905033669042047}
   - component: {fileID: 5401366461220291317}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2405,7 +2477,7 @@ GameObject:
   - component: {fileID: 5458440787417727339}
   - component: {fileID: 806931928819314231}
   - component: {fileID: 1588746637581424085}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hatch_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2494,7 +2566,7 @@ GameObject:
   - component: {fileID: 5450003046643659388}
   - component: {fileID: 3481147676472707711}
   - component: {fileID: 8307363010809945251}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2583,7 +2655,7 @@ GameObject:
   - component: {fileID: 6980912370792264403}
   - component: {fileID: 6493539062892044957}
   - component: {fileID: 8301128874807023973}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2672,7 +2744,7 @@ GameObject:
   - component: {fileID: 8362970527741315794}
   - component: {fileID: 8965575739394697784}
   - component: {fileID: 3211883850781965186}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_25
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2761,7 +2833,7 @@ GameObject:
   - component: {fileID: 1983620702802713147}
   - component: {fileID: 498465715820615260}
   - component: {fileID: 6229506615748564213}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Turret_In_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2850,7 +2922,7 @@ GameObject:
   - component: {fileID: 3284807217880263794}
   - component: {fileID: 605131581320681401}
   - component: {fileID: 1206099171384821079}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hatch_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2938,7 +3010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7181268360043757752}
   - component: {fileID: 3545288378769344352}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TurretPivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2995,7 +3067,7 @@ GameObject:
   - component: {fileID: 1036109035979453896}
   - component: {fileID: 9095305774964890948}
   - component: {fileID: 6432069857226145121}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_26
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3084,7 +3156,7 @@ GameObject:
   - component: {fileID: 5256307753197130780}
   - component: {fileID: 539967521173181652}
   - component: {fileID: 6353865083705494284}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3173,7 +3245,7 @@ GameObject:
   - component: {fileID: 3866130505797117504}
   - component: {fileID: 8760592025343787660}
   - component: {fileID: 260607191635005001}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3262,7 +3334,7 @@ GameObject:
   - component: {fileID: 6267838113582152005}
   - component: {fileID: 6945685509549746187}
   - component: {fileID: 5086116393957074863}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3352,7 +3424,7 @@ GameObject:
   - component: {fileID: 7015705838041804150}
   - component: {fileID: 2749153861306165320}
   - component: {fileID: 1120741563474105881}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Track_Full
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3475,7 +3547,7 @@ GameObject:
   - component: {fileID: 7612419778022686901}
   - component: {fileID: 2170110144352188226}
   - component: {fileID: 8720694679345361126}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hull_In_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3564,7 +3636,7 @@ GameObject:
   - component: {fileID: 5962634660020266897}
   - component: {fileID: 2165549482438628424}
   - component: {fileID: 8258886899621922829}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3652,7 +3724,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9036050371917174792}
   - component: {fileID: 2976203089532326028}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: TankSniperView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3687,14 +3759,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankSniperView
   toggleViewAction: {fileID: 1647088302594120134, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  zoomAction: {fileID: 0}
+  zoomAction: {fileID: -4466400523724897031, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 5612779968204697617}
   mainCamera: {fileID: 0}
   sniperCamera: {fileID: 5758507995687016594}
   crosshairUI: {fileID: 0}
   sniperVignette: {fileID: 0}
   sniperFOV: 12
-  transitionSpeed: 10
+  transitionSpeed: 3
   sniperDistanceOffset: 0
   zoomSpeed: 5
   minZoom: -10
@@ -3710,7 +3782,7 @@ GameObject:
   - component: {fileID: 2002773350691380172}
   - component: {fileID: 8238632482115089690}
   - component: {fileID: 7080313869871967756}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Ex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3798,8 +3870,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3418896993802446132}
   - component: {fileID: 5758507995687016594}
-  - component: {fileID: 2450389209912364593}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SniperCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3865,40 +3936,13 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!54 &2450389209912364593
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6500472487308084328}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &6516215007537593638
 GameObject:
   m_ObjectHideFlags: 0
@@ -3910,7 +3954,7 @@ GameObject:
   - component: {fileID: 3275246635447599323}
   - component: {fileID: 7644950419118628942}
   - component: {fileID: 4965471108206974708}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_23
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3999,7 +4043,7 @@ GameObject:
   - component: {fileID: 7887162115811254150}
   - component: {fileID: 2445671890567780529}
   - component: {fileID: 4137989211158874823}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Hull_Ex_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4077,6 +4121,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6639011185830007260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1783261375823700215}
+  m_Layer: 11
+  m_Name: ShermanMachineGunPivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1783261375823700215
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6639011185830007260}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.365, y: 2.294, z: 2.89}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4774352311489665857}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6845242456507901501
 GameObject:
   m_ObjectHideFlags: 0
@@ -4088,7 +4163,7 @@ GameObject:
   - component: {fileID: 3802864663164975958}
   - component: {fileID: 7453499323139229305}
   - component: {fileID: 7385713676115479335}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_21
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4177,7 +4252,7 @@ GameObject:
   - component: {fileID: 4487796462924357388}
   - component: {fileID: 5185282026222159811}
   - component: {fileID: 3580095610661175547}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4266,7 +4341,7 @@ GameObject:
   - component: {fileID: 5786154017143409554}
   - component: {fileID: 2475047595907677600}
   - component: {fileID: 6942620607592282090}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4355,7 +4430,7 @@ GameObject:
   - component: {fileID: 3954850602805171427}
   - component: {fileID: 7686858233038086572}
   - component: {fileID: 3954150905144064888}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_22
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4444,7 +4519,7 @@ GameObject:
   - component: {fileID: 5568992229212158918}
   - component: {fileID: 2866880902869672007}
   - component: {fileID: 7020709769687962230}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4531,7 +4606,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6139414371712457770}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ShermanCameraTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4564,7 +4639,7 @@ GameObject:
   - component: {fileID: 4036804478337082725}
   - component: {fileID: 5170319724427051022}
   - component: {fileID: 4708708227323700140}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Sus3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4653,7 +4728,7 @@ GameObject:
   - component: {fileID: 7740338465880612159}
   - component: {fileID: 563577925178048902}
   - component: {fileID: 2522617045530714476}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Sus2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4742,7 +4817,7 @@ GameObject:
   - component: {fileID: 3827341605538714807}
   - component: {fileID: 380163921534005032}
   - component: {fileID: 6134059465220749418}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4831,7 +4906,7 @@ GameObject:
   - component: {fileID: 218474044486997101}
   - component: {fileID: 7501159760807093015}
   - component: {fileID: 32027039434022195}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4920,7 +4995,7 @@ GameObject:
   - component: {fileID: 2709137768385028757}
   - component: {fileID: 5690070800702278586}
   - component: {fileID: 1550931825480218600}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5009,7 +5084,7 @@ GameObject:
   - component: {fileID: 7924647088158695962}
   - component: {fileID: 8069258842124933228}
   - component: {fileID: 4092353724563147702}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: SM_M4_Wheel_8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5138,6 +5213,10 @@ PrefabInstance:
     - target: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_Name
       value: MuzzleSmoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6813416509558619124, guid: 3b7f2c753d435d647a80f1f047a113e3, type: 3}
       propertyPath: m_IsActive

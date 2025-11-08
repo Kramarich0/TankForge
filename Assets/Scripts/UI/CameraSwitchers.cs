@@ -1,36 +1,31 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
-public class SingleCameraSwitcher : MonoBehaviour
+public class CameraSwitcher : MonoBehaviour
 {
-    public Transform camPivot3rd;
-    public Transform camPivot1st;
-    public Transform mainCameraTransform;
-    public InputActionReference switchAction;
+    public CinemachineCamera[] cameras; // массив всех камер
+    private int currentCamIndex = 0;
 
-    private bool is3rd = true;
-
-    private void OnEnable()
+    void Start()
     {
-        switchAction.action.Enable();
-        switchAction.action.performed += OnSwitch;
+        // В начале включаем только первую камеру
+        for (int i = 0; i < cameras.Length; i++)
+            cameras[i].Priority = (i == 0) ? 10 : 0;
     }
 
-    private void OnDisable()
+    void Update()
     {
-        switchAction.action.performed -= OnSwitch;
-        switchAction.action.Disable();
-    }
+        if (Input.GetKeyDown(KeyCode.V)) // кнопка для переключения
+        {
+            // выключаем текущую камеру
+            cameras[currentCamIndex].Priority = 0;
 
-    private void OnSwitch(InputAction.CallbackContext ctx)
-    {
-        is3rd = !is3rd;
-    }
+            // выбираем следующую камеру
+            currentCamIndex++;
+            if (currentCamIndex >= cameras.Length) currentCamIndex = 0;
 
-    private void LateUpdate()
-    {
-        Transform targetPivot = is3rd ? camPivot3rd : camPivot1st;
-        mainCameraTransform.position = targetPivot.position;
-        mainCameraTransform.rotation = targetPivot.rotation;
+            // включаем следующую камеру
+            cameras[currentCamIndex].Priority = 10;
+        }
     }
 }

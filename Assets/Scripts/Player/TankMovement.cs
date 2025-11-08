@@ -15,9 +15,9 @@ public class TankMovement : MonoBehaviour
     [Header("Movement")]
     public float forwardSpeed = 8f;
     public float backwardSpeed = 4f;
-    public float acceleration = 10f;        
-    public float deceleration = 12f;        
-    public float brakeDeceleration = 30f;   
+    public float acceleration = 10f;
+    public float deceleration = 12f;
+    public float brakeDeceleration = 30f;
     public float turnSpeed = 90f;
     public float turnWhileReverseFactor = 0.6f;
 
@@ -48,25 +48,25 @@ public class TankMovement : MonoBehaviour
     [Header("Debug")]
     public bool debugLogs = false;
 
-    
+
     Rigidbody rb;
     AudioSource idleSource, driveSource;
     float currentBlend = 0f, targetBlend = 0f;
 
-    
-    float currentSpeed = 0f;      
+
+    float currentSpeed = 0f;
     float targetSpeed = 0f;
 
-    
+
     float rawMoveInput = 0f;
     float rawTurnInput = 0f;
     float moveInput = 0f;
     float turnInput = 0f;
 
-    
+
     float yawVelocity = 0f;
 
-    public SpeedDisplay speedDisplay; 
+    public SpeedDisplay speedDisplay;
 
     void Awake()
     {
@@ -152,7 +152,7 @@ public class TankMovement : MonoBehaviour
 
     void Update()
     {
-        
+
         Vector2 moveVec = Vector2.zero;
         if (hasInputAction && moveAction != null)
             moveVec = moveAction.ReadValue<Vector2>();
@@ -165,9 +165,9 @@ public class TankMovement : MonoBehaviour
         moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
         turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
 
-        
+
         if (moveInput > 0f) targetSpeed = moveInput * forwardSpeed;
-        else if (moveInput < 0f) targetSpeed = moveInput * backwardSpeed; 
+        else if (moveInput < 0f) targetSpeed = moveInput * backwardSpeed;
         else targetSpeed = 0f;
 
         float absMove = Mathf.Abs(moveInput);
@@ -184,44 +184,44 @@ public class TankMovement : MonoBehaviour
     void FixedUpdate()
     {
         float tiltAngle = Vector3.Angle(transform.up, Vector3.up);
-        if (tiltAngle > 89f) 
+        if (tiltAngle > 89f)
         {
-            currentSpeed = 0f; 
-            return;            
+            currentSpeed = 0f;
+            return;
         }
-        
+
         if (useRigidbody && rb != null)
         {
-            
+
             bool braking = false;
             float targetSpeedForPhysics = targetSpeed;
 
             if (rawMoveInput < -inputDeadzone && currentSpeed > 0.001f)
             {
-                
+
                 braking = true;
                 targetSpeedForPhysics = 0f;
             }
             else
             {
-                
+
                 targetSpeedForPhysics = targetSpeed;
             }
 
-            
+
             float rate;
             if (braking) rate = brakeDeceleration;
             else rate = (Mathf.Abs(targetSpeedForPhysics) > Mathf.Epsilon) ? acceleration : deceleration;
 
-            
+
             currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeedForPhysics, rate * Time.fixedDeltaTime);
 
-            
-            
+
+
 
             if (Mathf.Abs(currentSpeed) < movementEpsilon) currentSpeed = 0f;
 
-            
+
             Vector3 forward = rb.rotation * Vector3.forward;
             Vector3 moveDelta = forward * currentSpeed * Time.fixedDeltaTime;
             if (moveDelta.sqrMagnitude > (movementEpsilon * movementEpsilon))
@@ -229,34 +229,34 @@ public class TankMovement : MonoBehaviour
                 rb.MovePosition(rb.position + moveDelta);
             }
 
-            
+
             float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
-            float desiredAngular = turnInput * effectiveTurnSpeed; 
+            float desiredAngular = turnInput * effectiveTurnSpeed;
             float currentY = rb.rotation.eulerAngles.y;
             float desiredY = currentY + desiredAngular * Time.fixedDeltaTime;
 
-            
+
             float t = 1f - Mathf.Exp(-Time.fixedDeltaTime / Mathf.Max(0.0001f, rotationSmoothTime));
             Quaternion targetRot = Quaternion.Euler(0f, desiredY, 0f);
             Quaternion newRot = Quaternion.Slerp(rb.rotation, targetRot, t);
 
-            
+
             float deltaAngle = Mathf.DeltaAngle(rb.rotation.eulerAngles.y, newRot.eulerAngles.y);
             if (Mathf.Abs(deltaAngle) > rotationEpsilon)
             {
                 rb.MoveRotation(newRot);
             }
 
-            
+
             if (speedDisplay != null) speedDisplay.SetSpeed(Mathf.Abs(currentSpeed));
         }
         else
         {
-            
-            
+
+
             float physTargetSpeed = targetSpeed;
 
-            
+
             bool braking = false;
             if (rawMoveInput < -inputDeadzone && currentSpeed > 0.001f)
             {

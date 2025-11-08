@@ -12,7 +12,7 @@ public class TeamMarker : MonoBehaviour
     public TeamComponent teamComp;       // можно перетащить вручную, скрипт попытается подтянуть сам
     public float size = 0.7f;           // масштаб маркера
     public Vector3 localOffset = Vector3.zero; // смещение относительно pivot (если нужно)
-    public bool faceCamera = true;      // поворачивать ли маркер к камере (по умолчанию да)
+    public bool faceCamera = false;      // поворачивать ли маркер к камере (по умолчанию да)
 
     // internal
     Mesh mesh;

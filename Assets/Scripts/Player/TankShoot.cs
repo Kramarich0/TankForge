@@ -23,12 +23,20 @@ public class TankShoot : MonoBehaviour
 
     [Header("Recoil")]
     public float recoilAmount = 0.12f;
-    public float recoilSpeed = 20f;
     public float returnSpeed = 7f;
 
     private float nextFireTime = 0f;
     private bool isRecoiling = false;
     private Vector3 originalLocalPos;
+
+    [Header("Recoil")]
+    public float recoilBack = 0.15f;   // сила отката назад
+    public float recoilUp = 0.05f;     // небольшой подъем ствола вверх
+    public float recoilSpeed = 20f;    // скорость движения к точке отдачи
+    public float recoilReturnSpeed = 7f; // скорость возврата в исходное положение
+
+    private Vector3 recoilVelocity;      // для SmoothDamp
+
 
     void Start()
     {
@@ -78,23 +86,24 @@ public class TankShoot : MonoBehaviour
             reloadSoundPlaying = false;
         }
 
-        // Отдача
-        if (isRecoiling)
+        // Вычисляем цель отдачи
+        Vector3 targetPos = isRecoiling ?
+         originalLocalPos - transform.forward * recoilBack + transform.up * recoilUp :
+         originalLocalPos;
+
+        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref recoilVelocity, 1f / (isRecoiling ? recoilSpeed : recoilReturnSpeed));
+
+        if (isRecoiling && Vector3.Distance(transform.localPosition, targetPos) < 0.001f)
         {
-            Vector3 targetPos = originalLocalPos - transform.forward * recoilAmount;
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPos, recoilSpeed * Time.deltaTime);
-            if (Vector3.Distance(transform.localPosition, targetPos) < 0.01f)
-                isRecoiling = false;
+            isRecoiling = false;
         }
-        else
-        {
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, originalLocalPos, returnSpeed * Time.deltaTime);
-        }
+
     }
 
     void Shoot()
     {
         nextFireTime = Time.time + (1f / fireRate);
+        isRecoiling = true;
 
         if (shootSound != null)
             audioSource.PlayOneShot(shootSound);
@@ -105,8 +114,6 @@ public class TankShoot : MonoBehaviour
             CancelInvoke(nameof(HideMuzzleSmoke));
             Invoke(nameof(HideMuzzleSmoke), 1.2f);
         }
-
-        isRecoiling = true;
 
         if (bulletPrefab != null && gunEnd != null)
         {
