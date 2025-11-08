@@ -11,3 +11,5 @@ public class ScoreDisplay : MonoBehaviour
             scoreText.text = "Очки: " + score.ToString();
     }
 }
+
+

@@ -1,27 +1,28 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Улучшенная камера: targetYaw/targetPitch, адаптивное сглаживание, плавная коррекция расстояния при коллизии (SphereCast).
-/// Основное отличие: при коллизии мы не мгновенно переносим камеру в hit.point, а корректируем целевую дистанцию и сглаживаем к ней.
-/// </summary>
+[HelpURL("https://docs.unity3d.com/Manual/Cameras.html")]
 public class CameraFollow : MonoBehaviour
 {
     [Header("Target / Input")]
     public Transform target;
-    public InputActionReference lookAction;  // Vector2
-    public InputActionReference zoomAction;  // Vector2 (mouse scroll -> y)
+    public InputActionReference lookAction;   // Vector2
+    public InputActionReference zoomAction;   // Vector2 (y) or Mouse Scroll
 
     [Header("Orbit")]
-    public Vector3 offset = new Vector3(0f, 4.0f, -8.0f);
+    [Tooltip("Local offset: x (right), y (up), z (back). Distance is -z by default.")]
+    public Vector3 offset = new Vector3(0f, 4f, -8f);
     public float minPitch = -20f;
     public float maxPitch = 50f;
-    public float baseSensitivity = 0.12f;
-    public float zoomSensitivityMultiplier = 0.6f;
+    [Tooltip("Base rotation sensitivity (degrees per second). Multiplicative with deltaTime.")]
+    public float baseSensitivity = 120f;
+    [Tooltip("Multiplier to reduce sensitivity when zoomed in.")]
+    [Range(0.1f, 1f)] public float zoomSensitivityMultiplier = 0.6f;
 
     [Header("Smoothing")]
-    public float rotationSmoothTime = 0.04f;
-    public float positionSmoothTime = 0.06f;
+    public float rotationSmoothTime = 0.06f;
+    public float positionSmoothTime = 0.08f;
+    [Tooltip("When input magnitude exceeds this, camera becomes more responsive.")]
     public float inputResponsivenessThreshold = 0.02f;
 
     [Header("Zoom / Distance")]
@@ -29,24 +30,36 @@ public class CameraFollow : MonoBehaviour
     public float maxDistance = 14f;
     public float zoomSpeed = 8f;
     public float distanceSmoothTime = 0.12f;
-    private float targetDistance;
-    private float currentDistance;
-    private float distanceVelocity = 0f;
 
     [Header("Collision")]
     public float cameraCollisionRadius = 0.3f;
-    public float collisionOffset = 0.25f; // отступ от коллизии
+    public float collisionOffset = 0.25f;
+    [Tooltip("Layers considered as obstruction for camera (terrain, walls...). Exclude player layer.")]
+    public LayerMask obstructionMask = ~0;
 
-    // internal
-    private float yaw = 0f;
-    private float pitch = 10f;
-    private float yawVel = 0f;
-    private float pitchVel = 0f;
-    private Vector3 positionVelocity = Vector3.zero;
+    [Header("Physics / Update mode")]
+    [Tooltip("If true and target has Rigidbody — camera may follow in FixedUpdate for best stability.")]
+    public bool followInFixedUpdateIfRigidbody = true;
+    [Tooltip("If true — prefer rb.position inside LateUpdate when using interpolation.")]
+    public bool preferRbPositionInLateUpdate = true;
 
-    // target angles for smoother pattern
-    private float targetYaw;
-    private float targetPitch;
+    [Header("Stability")]
+    [Tooltip("Ignore tiny position changes (noise).")]
+    public float positionEpsilon = 0.001f;
+    [Tooltip("Ignore tiny angle changes (noise).")]
+    public float angleEpsilon = 0.01f;
+
+    // internal state
+    float yaw = 0f;
+    float pitch = 10f;
+    float yawVel = 0f, pitchVel = 0f;
+    Vector3 positionVelocity = Vector3.zero;
+    float currentDistance;
+    float targetDistance;
+    float distanceVelocity = 0f;
+
+    Rigidbody targetRb;
+    bool followInFixed = false;
 
     void Start()
     {
@@ -58,15 +71,23 @@ public class CameraFollow : MonoBehaviour
 
         if (target != null)
         {
+            targetRb = target.GetComponent<Rigidbody>();
+
+            // initialize yaw/pitch from current camera-to-target direction
             Vector3 dir = (transform.position - target.position).normalized;
-            yaw = Quaternion.LookRotation(Vector3.ProjectOnPlane(dir, Vector3.up)).eulerAngles.y;
+            Vector3 flat = Vector3.ProjectOnPlane(dir, Vector3.up);
+            if (flat.sqrMagnitude > 0.001f)
+                yaw = Quaternion.LookRotation(flat).eulerAngles.y;
             float rawPitch = Quaternion.LookRotation(dir).eulerAngles.x;
             if (rawPitch > 180f) rawPitch -= 360f;
             pitch = Mathf.Clamp(rawPitch, minPitch, maxPitch);
         }
 
-        targetYaw = yaw;
-        targetPitch = pitch;
+        followInFixed = followInFixedUpdateIfRigidbody && (targetRb != null);
+        if (followInFixed && targetRb != null && targetRb.interpolation == RigidbodyInterpolation.None)
+        {
+            Debug.Log("[CameraFollow] Рекомендую включить rb.interpolation = Interpolate для более плавной камеры.");
+        }
     }
 
     void OnDisable()
@@ -75,17 +96,33 @@ public class CameraFollow : MonoBehaviour
         if (zoomAction?.action != null) zoomAction.action.Disable();
     }
 
+    void FixedUpdate()
+    {
+        if (followInFixed) Follow(Time.fixedDeltaTime, true);
+    }
+
     void LateUpdate()
+    {
+        if (!followInFixed) Follow(Time.deltaTime, false);
+    }
+
+    void Follow(float dt, bool calledFromFixed)
     {
         if (target == null) return;
 
-        // --- INPUT ---
+        // --- Read input
         Vector2 look = Vector2.zero;
         if (lookAction?.action != null) look = lookAction.action.ReadValue<Vector2>();
+        else
+        {
+            // fallback: mouse delta (not ideal for all platforms)
+            look = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        }
         float inputMag = look.magnitude;
 
-        float deltaYaw = look.x * baseSensitivity;
-        float deltaPitch = -look.y * baseSensitivity;
+        // Make input frame-rate independent: sensitivity is degrees / second
+        float deltaYaw = look.x * baseSensitivity * dt;
+        float deltaPitch = -look.y * baseSensitivity * dt;
 
         // zoom input
         float scrollY = 0f;
@@ -99,69 +136,84 @@ public class CameraFollow : MonoBehaviour
             scrollY = Input.GetAxis("Mouse ScrollWheel");
         }
 
-        if (Mathf.Abs(scrollY) > 10f) scrollY *= 0.01f;
-
-        // adapt sensitivity by zoom
-        float rotSmooth = rotationSmoothTime;
-        if (inputMag > inputResponsivenessThreshold) rotSmooth *= 0.28f;
+        // scale sensitivity when zoomed in
         float zoomFactor = Mathf.InverseLerp(maxDistance, minDistance, currentDistance);
         float sensitivityScale = Mathf.Lerp(1f, zoomSensitivityMultiplier, zoomFactor);
         deltaYaw *= sensitivityScale;
         deltaPitch *= sensitivityScale;
 
-        // NEW PATTERN: накапливаем в targetAngles и сглаживаем к ним
-        targetYaw += deltaYaw;
-        targetPitch = Mathf.Clamp(targetPitch + deltaPitch, minPitch, maxPitch);
+        // responsiveness: when user actively moving camera, reduce smoothing for responsiveness
+        float rotSmooth = rotationSmoothTime;
+        if (inputMag > inputResponsivenessThreshold) rotSmooth *= 0.28f;
 
-        yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawVel, rotSmooth);
-        pitch = Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchVel, rotSmooth);
+        // accumulate target angles
+        float targetYaw = yaw + deltaYaw * (360f / (2 * Mathf.PI)); // not necessary but keeps units consistent — left as linear
+        targetYaw = Mathf.Repeat(targetYaw, 360f);
+        float targetPitch = Mathf.Clamp(pitch + deltaPitch * (360f / (2 * Mathf.PI)), minPitch, maxPitch);
+
+        // smoothing (use dt-aware SmoothDampAngle overload)
+        yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref yawVel, Mathf.Max(0.0001f, rotSmooth), Mathf.Infinity, dt);
+        pitch = Mathf.SmoothDampAngle(pitch, targetPitch, ref pitchVel, Mathf.Max(0.0001f, rotSmooth), Mathf.Infinity, dt);
         pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
 
-        // ZOOM: меняем targetDistance сразу при скролле
+        // zoom change
         if (Mathf.Abs(scrollY) > 0.0001f)
         {
             float delta = scrollY * zoomSpeed;
             targetDistance = Mathf.Clamp(targetDistance - delta, minDistance, maxDistance);
         }
 
-        // COLLISION: рассчитываем желаемую дистанцию с учётом препятствий
+        // target position from Rigidbody or Transform
+        Vector3 targetPos;
+        if (!calledFromFixed && targetRb != null && preferRbPositionInLateUpdate)
+            targetPos = targetRb.position;
+        else
+            targetPos = (targetRb != null ? targetRb.position : target.position);
+
+        // compute rotation and offsets
         Quaternion rot = Quaternion.Euler(pitch, yaw, 0f);
-        Vector3 desiredOffset = rot * new Vector3(0f, offset.y, -targetDistance); // note: targetDistance
-        Vector3 desiredPos = target.position + desiredOffset;
+        Vector3 desiredOffset = rot * new Vector3(0f, offset.y, -targetDistance);
+        Vector3 desiredPos = targetPos + desiredOffset;
 
-        Vector3 rayOrigin = target.position + Vector3.up * 0.8f;
-        Vector3 dir = (desiredPos - rayOrigin);
-        float dist = dir.magnitude;
-
-        float desiredDistanceAfterCollision = targetDistance; // базовое значение — то, к чему мы хотим вернуться
+        // collision check: spherecast from near target to desired position
+        float desiredDistanceAfterCollision = targetDistance;
+        Vector3 rayOrigin = targetPos + Vector3.up * 0.8f;
+        Vector3 toDesired = desiredPos - rayOrigin;
+        float dist = toDesired.magnitude;
         if (dist > 0.001f)
         {
-            dir.Normalize();
-            if (Physics.SphereCast(rayOrigin, cameraCollisionRadius, dir, out RaycastHit hit, dist))
+            Vector3 dir = toDesired / dist;
+            if (Physics.SphereCast(rayOrigin, cameraCollisionRadius, dir, out RaycastHit hit, dist, obstructionMask, QueryTriggerInteraction.Ignore))
             {
-                // если есть препятствие — уменьшаем максимальную дистанцию (камера ближе к игроку)
-                float hitDistance = hit.distance;
-                float safe = Mathf.Max(minDistance, hitDistance - collisionOffset);
+                float safe = Mathf.Max(minDistance, hit.distance - collisionOffset);
                 desiredDistanceAfterCollision = Mathf.Min(desiredDistanceAfterCollision, safe);
             }
         }
 
-        // Плавно сглаживаем currentDistance к desiredDistanceAfterCollision
+        // smooth distance
         currentDistance = Mathf.SmoothDamp(currentDistance, Mathf.Clamp(desiredDistanceAfterCollision, minDistance, maxDistance),
-            ref distanceVelocity, distanceSmoothTime, Mathf.Infinity, Time.deltaTime);
+            ref distanceVelocity, distanceSmoothTime, Mathf.Infinity, dt);
 
-        // Позиция и ориентация
+        // final pos/rot smoothing
         Vector3 finalOffset = rot * new Vector3(0f, offset.y, -currentDistance);
-        Vector3 finalPos = target.position + finalOffset;
+        Vector3 finalPos = targetPos + finalOffset;
 
-        // Position smoothing (адаптивный)
         float posSmooth = positionSmoothTime;
         if (inputMag > inputResponsivenessThreshold) posSmooth *= 0.28f;
-        transform.position = Vector3.SmoothDamp(transform.position, finalPos, ref positionVelocity, posSmooth);
 
-        // Смотреть на цель (чуть выше центра)
-        Vector3 lookTarget = target.position + Vector3.up * (offset.y * 0.5f);
+        Vector3 newPos = Vector3.SmoothDamp(transform.position, finalPos, ref positionVelocity, Mathf.Max(0.0001f, posSmooth), Mathf.Infinity, dt);
+
+        if ((newPos - transform.position).sqrMagnitude > positionEpsilon * positionEpsilon)
+            transform.position = newPos;
+        else
+            transform.position = finalPos;
+
+        // look at slightly above the target center
+        Vector3 lookTarget = targetPos + Vector3.up * (offset.y * 0.5f);
         Quaternion lookRot = Quaternion.LookRotation(lookTarget - transform.position, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, 1f - Mathf.Exp(-18f * Time.deltaTime));
+
+        // smooth rotation using expo lerp (frame-rate independent)
+        float t = 1f - Mathf.Exp(-18f * dt);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, t);
     }
 }

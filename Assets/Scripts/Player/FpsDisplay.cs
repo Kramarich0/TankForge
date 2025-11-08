@@ -3,24 +3,29 @@ using TMPro;
 
 public class FpsDisplay : MonoBehaviour
 {
-    public TMP_Text fpsText;
-    public float updateInterval = 0.5f;
+    [SerializeField] private TMP_Text fpsText;
+    [SerializeField] private float updateInterval = 0.5f;
 
-    private float accumulatedTime = 0f;
-    private int frames = 0;
+    private float timeLeft;
+    private int frameCount;
+
+    void Start()
+    {
+        timeLeft = updateInterval;
+    }
 
     void Update()
     {
-        accumulatedTime += Time.unscaledDeltaTime;
-        frames++;
+        timeLeft -= Time.unscaledDeltaTime;
+        frameCount++;
 
-        if (accumulatedTime >= updateInterval)
+        if (timeLeft <= 0f)
         {
-            float fps = frames / accumulatedTime;
+            float fps = frameCount / updateInterval;
             fpsText.text = $"{fps:0.0} FPS";
 
-            frames = 0;
-            accumulatedTime -= updateInterval; 
+            frameCount = 0;
+            timeLeft = updateInterval;
         }
     }
 }

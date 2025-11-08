@@ -60,9 +60,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 1, b: 0.09811425, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2337,6 +2337,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SimpleTankAI
+  tankClass: 1
+  lightStats:
+    health: 75
+    moveSpeed: 5
+    rotationSpeed: 60
+    fireRate: 1
+    shootRange: 80
+    bulletDamage: 100
+  mediumStats:
+    health: 150
+    moveSpeed: 3
+    rotationSpeed: 40
+    fireRate: 0.1
+    shootRange: 100
+    bulletDamage: 50
+  heavyStats:
+    health: 300
+    moveSpeed: 2
+    rotationSpeed: 30
+    fireRate: 0.5
+    shootRange: 120
+    bulletDamage: 10
   enemyHealthDisplay: {fileID: 1596664373954713768}
   player: {fileID: 0}
   turret: {fileID: 6852573980347987317}
@@ -2445,7 +2467,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!1 &6002131571207418770
 GameObject:
   m_ObjectHideFlags: 0

@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 9195328833426488852}
   - component: {fileID: 9195328833426488875}
   - component: {fileID: 9195328833426488874}
-  - component: {fileID: 9195328833426488853}
+  - component: {fileID: 2135770441872308707}
   m_Layer: 0
   m_Name: Gas_Mesh
   m_TagString: Untagged
@@ -182,8 +182,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &9195328833426488853
-MeshCollider:
+--- !u!65 &2135770441872308707
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -200,7 +200,6 @@ MeshCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: -856059019632272089, guid: c039ae1e9145b43409e2025e5b1a0a81, type: 3}
+  serializedVersion: 3
+  m_Size: {x: 0.07112688, y: 0.13861442, z: 0.07112689}
+  m_Center: {x: 0, y: 0, z: 0}
