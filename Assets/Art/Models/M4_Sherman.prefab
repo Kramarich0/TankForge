@@ -1654,7 +1654,7 @@ MonoBehaviour:
   yawSpeed: 30
   yawSnapAngle: 1
   yawSmoothTime: 0.06
-  pitchSpeed: 1
+  pitchSpeed: 10
   pitchMin: -10
   pitchMax: 25
   pitchSnapAngle: 0.8
@@ -1959,11 +1959,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  forwardSpeed: 12
+  forwardSpeed: 4.3
   backwardSpeed: 0.4
-  acceleration: 5
+  acceleration: 1
   deceleration: 0.2
-  turnSpeed: 55
+  turnSpeed: 45
   turnWhileReverseFactor: 0.6
   rotationPivot: {fileID: 0}
   adjustRigidbodyCenterOfMass: 1
@@ -3815,13 +3815,15 @@ MonoBehaviour:
   gunEnd: {fileID: 5612779968204697617}
   mainCamera: {fileID: 0}
   sniperCamera: {fileID: 5758507995687016594}
-  crosshairUI: {fileID: 0}
+  crosshairAimUI: {fileID: 0}
+  crosshairSniperUI: {fileID: 0}
   sniperVignette: {fileID: 0}
-  sniperFOV: 12
-  positionOffset: -0.2
-  zoomStep: 2
-  minZoom: -10
-  maxZoom: 10
+  zoomStep: 1
+  zoomSpeed: 8
+  zoomFOVReduction: 50
+  maxZoomOffset: 0.35
+  positionOffset: 0
+  followSpeed: 10
 --- !u!1 &6295477157598390750
 GameObject:
   m_ObjectHideFlags: 0
