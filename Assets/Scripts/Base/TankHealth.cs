@@ -1,6 +1,7 @@
-// TankHealth.cs
+
 using UnityEngine;
 
+[RequireComponent(typeof(TeamComponent))]
 public class TankHealth : MonoBehaviour, IDamageable
 {
     [Header("Health")]
@@ -8,20 +9,15 @@ public class TankHealth : MonoBehaviour, IDamageable
     [HideInInspector] public float currentHealth;
 
     [Header("UI")]
-    public GameObject healthDisplay; // optional legacy (оставил на случай)
-    public HealthAiDisplay aiHealthDisplay; // prefab instance reference (world-space canvas)
+    public GameObject healthDisplay;
+
+    private TeamComponent teamComp;
 
     void Awake()
     {
+        teamComp = GetComponent<TeamComponent>();
         currentHealth = maxHealth;
 
-        if (aiHealthDisplay != null)
-        {
-            // Если это префаб, можно инстанцировать, но ожидаем, что ты назначишь prefab в инспекторе и он уже инстанцирован
-            aiHealthDisplay.target = this;
-            aiHealthDisplay.targetTeam = GetComponent<TeamComponent>();
-            aiHealthDisplay.UpdateDisplay();
-        }
     }
 
     public void TakeDamage(int damage)
@@ -30,11 +26,6 @@ public class TankHealth : MonoBehaviour, IDamageable
         currentHealth = Mathf.Max(currentHealth, 0f);
 
         Debug.Log($"{gameObject.name} получил {damage} урона, осталось HP: {currentHealth}");
-
-        if (aiHealthDisplay != null)
-        {
-            aiHealthDisplay.UpdateDisplay();
-        }
 
         if (currentHealth <= 0f)
         {
@@ -45,6 +36,23 @@ public class TankHealth : MonoBehaviour, IDamageable
     void Die()
     {
         Debug.Log($"{gameObject.name} уничтожен!");
+
+        if (teamComp != null)
+        {
+            if (teamComp.team == Team.Enemy)
+            {
+                GameManager.Instance?.OnEnemyDestroyed(gameObject);
+            }
+            else if (teamComp.team == Team.Friendly)
+            {
+                if (CompareTag("Player"))
+                {
+                    GameManager.Instance?.OnPlayerTankDestroyed();
+                }
+                else { Debug.Log("Союзник погиб!"); }
+            }
+        }
+
         Destroy(gameObject);
     }
 }

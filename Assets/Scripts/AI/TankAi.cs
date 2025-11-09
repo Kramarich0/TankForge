@@ -119,7 +119,7 @@ public class TankAI : MonoBehaviour
         agent.stoppingDistance = shootRange * 0.85f;
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
 
-        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
         {
             agent.Warp(hit.position);
             navAvailable = true;
@@ -136,7 +136,6 @@ public class TankAI : MonoBehaviour
             var d = Instantiate(enemyHealthDisplayPrefab);
             d.target = tankHealth;
             d.targetTeam = teamComp;
-            tankHealth.aiHealthDisplay = d;
         }
     }
 
@@ -411,4 +410,5 @@ public class TankAI : MonoBehaviour
             Gizmos.DrawRay(gunEnd.position, gunEnd.forward * 5f);
         }
     }
+
 }

@@ -938,10 +938,10 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 0
+  m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 1
-  m_Speed: 4
+  m_Radius: 1.4
+  m_Speed: 1
   m_Acceleration: 6
   avoidancePriority: 50
   m_AngularSpeed: 80
@@ -949,7 +949,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 2.7
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -1005,12 +1005,12 @@ MonoBehaviour:
   idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
   driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
   shootSound: {fileID: 8300000, guid: 62505f6711ea120428991ed5cf386584, type: 3}
-  debugGizmos: 0
+  debugGizmos: 1
   debugLogs: 0
   invertBodyForward: 0
   invertTurretForward: 0
   gunUsesLocalXForPitch: 0
-  detectionRadius: 1000
+  detectionRadius: 500
   fieldOfView: 140
   detectionMask:
     serializedVersion: 2
@@ -1023,7 +1023,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2126485755847636676}
   serializedVersion: 5
-  m_Mass: 1000
+  m_Mass: 45
   m_LinearDamping: 0.3
   m_AngularDamping: 0.5
   m_CenterOfMass: {x: 0, y: -0.5, z: 0}
@@ -1039,9 +1039,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &62971683839857363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3141,13 +3141,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8884927137235059614}
   serializedVersion: 2
-  m_LocalRotation: {x: 1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalPosition: {x: 0.000011444094, y: 5, z: 1.8189894e-12}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 91706448242340373}
-  m_LocalEulerAnglesHint: {x: 180, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!33 &1840464840192478065
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3220,7 +3220,7 @@ MonoBehaviour:
   teamComp: {fileID: 62971683839857363}
   size: 0.7
   localOffset: {x: 0, y: 0, z: 0}
-  faceCamera: 0
+  faceCamera: 1
 --- !u!1 &8899341924330580271
 GameObject:
   m_ObjectHideFlags: 0

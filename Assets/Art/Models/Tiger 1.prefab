@@ -865,7 +865,7 @@ GameObject:
   - component: {fileID: 4550064695049263837}
   m_Layer: 12
   m_Name: Tiger 1
-  m_TagString: Untagged
+  m_TagString: EnemyTank
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -914,7 +914,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 3792661680670055886}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1.877
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -983,8 +983,8 @@ MonoBehaviour:
   debugLogs: 0
   invertBodyForward: 0
   invertTurretForward: 0
-  gunUsesLocalXForPitch: 1
-  detectionRadius: 120
+  gunUsesLocalXForPitch: 0
+  detectionRadius: 100
   fieldOfView: 140
   detectionMask:
     serializedVersion: 2
@@ -997,7 +997,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3792661680670055886}
   serializedVersion: 5
-  m_Mass: 1000
+  m_Mass: 80
   m_LinearDamping: 0.3
   m_AngularDamping: 0.5
   m_CenterOfMass: {x: 0, y: -0.5, z: 0}
@@ -1013,9 +1013,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &4550064695049263837
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1516,7 +1516,7 @@ MonoBehaviour:
   teamComp: {fileID: 4550064695049263837}
   size: 0.7
   localOffset: {x: 0, y: 0, z: 0}
-  faceCamera: 1
+  faceCamera: 0
 --- !u!1 &6114121371098406546
 GameObject:
   m_ObjectHideFlags: 0
@@ -2400,8 +2400,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.7513642, y: 1.5897026, z: 6.355857}
-  m_Center: {x: 0.0000010132792, y: 1.2090259, z: -0.18787007}
+  m_Size: {x: 3.7513642, y: 1.9361753, z: 6.355857}
+  m_Center: {x: 0.0000010728836, y: 1.0357895, z: -0.18787003}
 --- !u!1 &7737118341145435587
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-// Bullet.cs
+
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -18,7 +18,6 @@ public class Bullet : MonoBehaviour
         col = GetComponent<Collider>();
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        // по умолчанию гравитация выключена — будет включена в Initialize если нужно
         rb.useGravity = true;
     }
 
@@ -34,27 +33,24 @@ public class Bullet : MonoBehaviour
     {
         if (collision == null) return;
 
-        // Проверка команды по цели
+
         TeamComponent hitTeam = collision.collider.GetComponentInParent<TeamComponent>();
         if (hitTeam != null && hitTeam.team == shooterTeam)
         {
-            // Попали по своему — постарайся игнорировать дальнейшие столкновения с этим коллайдером
+
             if (col != null && collision.collider != null)
             {
                 Physics.IgnoreCollision(col, collision.collider, true);
             }
-            // не уничтожаем пулю сразу — она продолжит путь и может попасть по врагу
+
             return;
         }
 
-        // Попытка нанести урон через IDamageable
-        IDamageable dmg = collision.collider.GetComponentInParent<IDamageable>();
-        if (dmg != null)
-        {
-            dmg.TakeDamage(damage);
-        }
 
-        // Можно добавить эффекты взрыва тут
+        IDamageable dmg = collision.collider.GetComponentInParent<IDamageable>();
+        dmg?.TakeDamage(damage);
+
+
         Destroy(gameObject);
     }
 }

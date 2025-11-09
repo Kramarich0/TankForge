@@ -1,4 +1,4 @@
-// HealthAiDisplay.cs
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -9,8 +9,8 @@ public class HealthAiDisplay : MonoBehaviour
     public TankHealth target;
     public TeamComponent targetTeam;
 
-    public TextMeshProUGUI healthText; // TextMeshPro UI (в Canvas)
-    public Image healthBar; // Image (fill)
+    public TextMeshProUGUI healthText; 
+    public Image healthBar; 
     public float verticalOffset = 2.2f;
     public Color friendlyColor = Color.green;
     public Color enemyColor = Color.red;
@@ -43,8 +43,8 @@ public class HealthAiDisplay : MonoBehaviour
 
     public void SetMaxHealth(float max)
     {
-        // just ensure text shows correct value
-        if (healthBar != null) { } // nothing to setup here except fillAmount usage
+        
+        if (healthBar != null) { } 
     }
 
     public void UpdateDisplay()

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - PausePanel
+  - EnemyTank
   layers:
   - Default
   - TransparentFX

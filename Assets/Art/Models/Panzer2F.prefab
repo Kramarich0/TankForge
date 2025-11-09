@@ -671,7 +671,7 @@ GameObject:
   - component: {fileID: 6851493366426089184}
   m_Layer: 12
   m_Name: Panzer2F
-  m_TagString: Untagged
+  m_TagString: EnemyTank
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -720,7 +720,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 2377131968068272437}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 1.1
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -729,7 +729,7 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 2
+  m_Height: 1.95
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
@@ -780,7 +780,7 @@ MonoBehaviour:
   fireRate: 9
   minGunAngle: -5
   maxGunAngle: 20
-  projectileSpeed: 80
+  projectileSpeed: 400
   bulletUseGravity: 1
   idleSound: {fileID: 0}
   driveSound: {fileID: 0}
@@ -789,8 +789,8 @@ MonoBehaviour:
   debugLogs: 0
   invertBodyForward: 0
   invertTurretForward: 0
-  gunUsesLocalXForPitch: 1
-  detectionRadius: 120
+  gunUsesLocalXForPitch: 0
+  detectionRadius: 500
   fieldOfView: 140
   detectionMask:
     serializedVersion: 2
@@ -803,10 +803,10 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2377131968068272437}
   serializedVersion: 5
-  m_Mass: 800
+  m_Mass: 12
   m_LinearDamping: 0.2
   m_AngularDamping: 0.3
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_CenterOfMass: {x: 0, y: -0.4, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
@@ -815,13 +815,13 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &6851493366426089184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2725,8 +2725,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.1553078, y: 1.2328742, z: 4.8966746}
-  m_Center: {x: 0.0000106096295, y: 0.85703516, z: -0.10968092}
+  m_Size: {x: 2.1553078, y: 1.4444841, z: 4.8966746}
+  m_Center: {x: 0.000010609627, y: 0.7512302, z: -0.10968089}
 --- !u!1 &7821771746214559813
 GameObject:
   m_ObjectHideFlags: 0

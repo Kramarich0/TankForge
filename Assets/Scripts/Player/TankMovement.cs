@@ -41,7 +41,7 @@ public class TankMovement : MonoBehaviour
     private float currentBlend = 0f;
     private float targetBlend = 0f;
 
-    // PHYSICS STATE
+    
     private float currentSpeed = 0f;
     private float targetSpeed = 0f;
     private float targetTurnInput = 0f;
@@ -62,17 +62,17 @@ public class TankMovement : MonoBehaviour
             return;
         }
 
-        // ===== КЛЮЧЕВЫЕ НАСТРОЙКИ RIGIDBODY =====
+        
         rb.isKinematic = false;
-        rb.useGravity = true; // важно для коллизий!
+        rb.useGravity = true; 
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
-        // Заморозим только вращение по X и Z (поворот только по Y)
+        
         rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        // ВАЖНО: drag заставляет физику "тормозить" и сглаживать движение
-        rb.linearDamping = 0.5f;  // был 0, нужно чтобы не было рывков
+        
+        rb.linearDamping = 0.5f;  
         rb.angularDamping = 5f;
 
         if (rotationPivot != null && adjustRigidbodyCenterOfMass)
@@ -134,7 +134,7 @@ public class TankMovement : MonoBehaviour
         float moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
         float turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
 
-        // Целевая скорость
+        
         if (moveInput > 0)
             targetSpeed = moveInput * forwardSpeed;
         else if (moveInput < 0)
@@ -144,7 +144,7 @@ public class TankMovement : MonoBehaviour
 
         targetTurnInput = turnInput;
 
-        // Звуки
+        
         float absMove = Mathf.Abs(moveInput);
         targetBlend = Mathf.Clamp01(absMove);
         currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
@@ -174,25 +174,25 @@ public class TankMovement : MonoBehaviour
     {
         if (!useRigidbody || rb == null) return;
 
-        // ===== 1) СКОРОСТЬ =====
+        
         float rate = (Mathf.Abs(targetSpeed) > Mathf.Epsilon) ? acceleration : deceleration;
         currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, rate * Time.fixedDeltaTime);
 
-        // ===== 2) ДВИЖЕНИЕ через Velocity (КЛЮЧЕВОЕ ИЗМЕНЕНИЕ) =====
-        // Вместо MovePosition, устанавливаем velocity напрямую
-        // Это намного стабильнее и не вызывает дёрганья
+        
+        
+        
         Vector3 desiredVelocity = transform.forward * currentSpeed;
 
-        // Сохраняем Y компоненту (гравитация)
+        
         desiredVelocity.y = rb.linearVelocity.y;
 
         rb.linearVelocity = desiredVelocity;
 
-        // ===== 3) ПОВОРОТ =====
+        
         float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
         float desiredAngular = targetTurnInput * effectiveTurnSpeed;
 
-        // Применяем гладкий поворот
+        
         float smoothTime = rotationSmoothTime;
         if (Mathf.Abs(targetTurnInput) > 0.05f)
             smoothTime = rotationSmoothTime * 0.4f;

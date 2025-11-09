@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(AudioSource))]
 public class TankShoot : MonoBehaviour
 {
+    public System.Action onShotFired;
     [Header("Shooting")]
     public InputActionReference shootAction;
     public Transform gunEnd;
@@ -30,12 +31,12 @@ public class TankShoot : MonoBehaviour
     private Vector3 originalLocalPos;
 
     [Header("Recoil")]
-    public float recoilBack = 0.15f;   // сила отката назад
-    public float recoilUp = 0.05f;     // небольшой подъем ствола вверх
-    public float recoilSpeed = 20f;    // скорость движения к точке отдачи
-    public float recoilReturnSpeed = 7f; // скорость возврата в исходное положение
+    public float recoilBack = 0.15f;   
+    public float recoilUp = 0.05f;     
+    public float recoilSpeed = 20f;    
+    public float recoilReturnSpeed = 7f; 
 
-    private Vector3 recoilVelocity;      // для SmoothDamp
+    private Vector3 recoilVelocity;      
 
 
     void Start()
@@ -54,21 +55,21 @@ public class TankShoot : MonoBehaviour
         if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
         if (shootAction?.action == null) return;
 
-        // Обновляем UI перезарядки
+        
         if (reloadDisplay != null)
         {
             float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
             reloadDisplay.SetReload(remainingTime, 1f / fireRate);
         }
 
-        // Стрельба
+        
         if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
         {
             Shoot();
             reloadSoundPlaying = false;
         }
 
-        // Звуки перезарядки
+        
         if (Time.time < nextFireTime)
         {
             if (!reloadSoundPlaying && reloadSound != null)
@@ -86,7 +87,7 @@ public class TankShoot : MonoBehaviour
             reloadSoundPlaying = false;
         }
 
-        // Вычисляем цель отдачи
+        
         Vector3 targetPos = isRecoiling ?
          originalLocalPos - transform.forward * recoilBack + transform.up * recoilUp :
          originalLocalPos;
@@ -119,7 +120,7 @@ public class TankShoot : MonoBehaviour
         {
             GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
 
-            // Передаём стартовые данные через Initialize()
+            
             if (bullet.TryGetComponent<Bullet>(out var bulletScript))
             {
                 TeamComponent teamComp = GetComponentInParent<TeamComponent>();
@@ -128,10 +129,11 @@ public class TankShoot : MonoBehaviour
             }
             else if (bullet.TryGetComponent<Rigidbody>(out var rb))
             {
-                // fallback, если Bullet отсутствует
+                
                 rb.linearVelocity = gunEnd.forward * bulletSpeed;
             }
         }
+        onShotFired?.Invoke();
     }
 
     void HideMuzzleSmoke()

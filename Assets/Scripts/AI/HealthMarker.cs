@@ -12,14 +12,14 @@ public class HealthMarkerSimple : MonoBehaviour
     public float height = 0.15f;
 
     private Transform fillBar;
-    private Transform fillBarBack; // копия
+    private Transform fillBarBack; 
     private Transform background;
 
     void Start()
     {
         if (!targetHealth) return;
 
-        // Фон
+        
         background = GameObject.CreatePrimitive(PrimitiveType.Quad).transform;
         background.SetParent(transform, false);
         background.localScale = new Vector3(width, height, 1f);
@@ -28,12 +28,12 @@ public class HealthMarkerSimple : MonoBehaviour
         {
             var bgMat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
             bgMat.color = Color.black;
-            bgMat.SetInt("_CullMode", 0); // двустороннее
+            bgMat.SetInt("_CullMode", 0); 
             bgRenderer.material = bgMat;
         }
         DestroyImmediate(background.GetComponent<Collider>());
 
-        // Основной fillBar
+        
         fillBar = GameObject.CreatePrimitive(PrimitiveType.Quad).transform;
         fillBar.SetParent(transform, false);
         fillBar.localScale = new Vector3(width, height, 1f);
@@ -43,21 +43,21 @@ public class HealthMarkerSimple : MonoBehaviour
         {
             var mat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
             mat.color = (targetTeam != null && targetTeam.team == Team.Friendly) ? Color.green : Color.red;
-            mat.SetInt("_CullMode", 0); // двустороннее
+            mat.SetInt("_CullMode", 0); 
             fillRenderer.material = mat;
         }
         DestroyImmediate(fillBar.GetComponent<Collider>());
 
-        // Копия для задней стороны
+        
         fillBarBack = GameObject.CreatePrimitive(PrimitiveType.Quad).transform;
         fillBarBack.SetParent(transform, false);
         fillBarBack.localScale = fillBar.localScale;
-        fillBarBack.localPosition = fillBar.localPosition + new Vector3(0, 0, 0.001f); // чуть вперёд
-        fillBarBack.localRotation = Quaternion.Euler(0, 180f, 0); // повернули задом
+        fillBarBack.localPosition = fillBar.localPosition + new Vector3(0, 0, 0.001f); 
+        fillBarBack.localRotation = Quaternion.Euler(0, 180f, 0); 
 
         var backMat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
         backMat.color = fillRenderer.material.color;
-        backMat.SetInt("_CullMode", 0); // двустороннее
+        backMat.SetInt("_CullMode", 0); 
         var fillBackRenderer = fillBarBack.GetComponent<MeshRenderer>();
         if (fillBackRenderer != null)
         {
@@ -80,7 +80,7 @@ public class HealthMarkerSimple : MonoBehaviour
             fillBarBack.localScale = fillBar.localScale;
             fillBarBack.localPosition = fillBar.localPosition + new Vector3(0, 0, 0.001f);
 
-            // цвет
+            
             Color newColor = (targetTeam != null && targetTeam.team == Team.Friendly) ? Color.green : Color.red;
             fillBar.GetComponent<MeshRenderer>().material.color = newColor;
             fillBarBack.GetComponent<MeshRenderer>().material.color = newColor;
