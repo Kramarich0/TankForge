@@ -6,8 +6,14 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     public int score = 0;
-    private int enemiesRemaining = 0;
-    public System.Action<int> OnScoreChanged;
+    public int friendlyTickets;
+    public int enemyTickets;
+    public System.Action<int, int> OnTicketsChanged;
+    private int aliveEnemyTanks = 0;
+    public bool IsLevelInitialized { get; private set; }
+    private bool isGameFinished = false;
+    public int InitialFriendly { get; private set; }
+    public int InitialEnemy { get; private set; }
 
     void Awake()
     {
@@ -23,46 +29,93 @@ public class GameManager : MonoBehaviour
 
     public void InitializeLevel()
     {
-        TankAI[] enemies = FindObjectsOfType<TankAI>();
-        enemiesRemaining = 0;
-        foreach (var enemy in enemies)
+        int enemyBase = 0;
+        int friendlyBase = 0;
+        aliveEnemyTanks = 0;
+
+        TankAI[] allTanks = FindObjectsByType<TankAI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        foreach (var tank in allTanks)
         {
-            if (enemy.GetComponent<TeamComponent>()?.team == Team.Enemy)
+            if (tank.GetComponent<TeamComponent>() is TeamComponent tc)
             {
-                enemiesRemaining++;
+                int cost = GetTankCost(tank.tankClass);
+                if (tc.team == Team.Enemy)
+                {
+                    enemyBase += cost;
+                    aliveEnemyTanks++;
+                }
+                else if (tc.team == Team.Friendly)
+                {
+                    friendlyBase += cost;
+                }
             }
         }
 
-        score = 0;
-        Debug.Log($"[GameManager] Уровень запущен. Врагов: {enemiesRemaining}");
+        if (GameObject.FindGameObjectWithTag("Player") != null)
+        {
+            friendlyBase += 200;
+        }
+
+        enemyTickets = enemyBase + 1000;
+        friendlyTickets = friendlyBase + 1000;
+
+        OnTicketsChanged?.Invoke(friendlyTickets, enemyTickets);
+        Debug.Log($"[GameManager] Билеты: Союзники {friendlyTickets} | Враги {enemyTickets}");
+        InitialFriendly = friendlyTickets;
+        InitialEnemy = enemyTickets;
+
+        IsLevelInitialized = true;
     }
 
-    public void OnEnemyDestroyed(GameObject enemy)
+    int GetTankCost(TankAI.TankClass tankClass)
     {
-        int scoreValue = 200;
-
-        if (enemy.TryGetComponent<TankAI>(out TankAI ai))
+        return tankClass switch
         {
-            switch (ai.tankClass)
-            {
-                case TankAI.TankClass.Light: scoreValue = 100; break;
-                case TankAI.TankClass.Medium: scoreValue = 200; break;
-                case TankAI.TankClass.Heavy: scoreValue = 300; break;
-            }
+            TankAI.TankClass.Light => 100,
+            TankAI.TankClass.Medium => 200,
+            TankAI.TankClass.Heavy => 300,
+            _ => 150
+        };
+    }
+
+    public void OnTankDestroyed(Team team, int ticketCost)
+    {
+        if (isGameFinished) return;
+
+        if (team == Team.Friendly)
+        {
+            friendlyTickets = Mathf.Max(0, friendlyTickets - ticketCost);
+        }
+        else if (team == Team.Enemy)
+        {
+            enemyTickets = Mathf.Max(0, enemyTickets - ticketCost);
+            aliveEnemyTanks = Mathf.Max(0, aliveEnemyTanks - 1);
+            score += ticketCost;
         }
 
-        score += scoreValue;
-        OnScoreChanged?.Invoke(score);
-        enemiesRemaining--;
+        OnTicketsChanged?.Invoke(friendlyTickets, enemyTickets);
+        CheckVictory();
+    }
 
-        Debug.Log($"Враг уничтожен! Осталось: {enemiesRemaining}, Счёт: {score}");
+    void CheckVictory()
+    {
+        if (isGameFinished) return;
 
-        if (enemiesRemaining <= 0)
+        if (friendlyTickets <= 0)
         {
+            Debug.Log("ПОРАЖЕНИЕ! Союзники уничтожены.");
+            isGameFinished = true;
+            GameUIManager.Instance?.ShowDefeatScreen();
+        }
+        else if (enemyTickets <= 0 || aliveEnemyTanks <= 0)
+        {
+            Debug.Log("ПОБЕДА! Враги уничтожены.");
+            isGameFinished = true;
             CompleteLevel();
         }
-
     }
+
     void CompleteLevel()
     {
         int stars = CalculateStars(score);
@@ -75,17 +128,15 @@ public class GameManager : MonoBehaviour
             if (int.TryParse(numPart, out int idx)) levelIndex = idx;
         }
 
-        // Сохраняем результат
         PlayerPrefs.SetInt($"Level{levelIndex}_Score", score);
         PlayerPrefs.SetInt($"Level{levelIndex}_Stars", stars);
         PlayerPrefs.SetInt($"Level{levelIndex}_Completed", 1);
         PlayerPrefs.SetInt($"Level{levelIndex + 1}_Unlocked", 1);
         PlayerPrefs.Save();
 
-        Debug.Log($"✅ Уровень {levelIndex} завершён! Звёзд: {stars}, Счёт: {score}");
+        Debug.Log($"Уровень {levelIndex} завершён! Звёзд: {stars}, Счёт: {score}");
 
-        // Позже сюда можно добавить: загрузку экрана победы
-        // SceneManager.LoadScene("VictoryScreen");
+        GameUIManager.Instance?.ShowVictoryScreen(score, stars);
     }
 
     int CalculateStars(int score)
@@ -98,14 +149,11 @@ public class GameManager : MonoBehaviour
 
     public void OnPlayerTankDestroyed()
     {
-        Debug.Log("💀 Игрок уничтожен. Игра окончена.");
+        if (isGameFinished) return;
 
-        // Здесь можно:
-        // - показать экран поражения
-        // - перезапустить уровень
-        // - вернуться в меню
-
-        // Например, перезапуск текущего уровня:
-        // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Debug.Log("Игрок уничтожен. Игра окончена.");
+        isGameFinished = true;
+        GameUIManager.Instance?.ShowDefeatScreen();
     }
+
 }

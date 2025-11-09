@@ -35,21 +35,29 @@ public class TankHealth : MonoBehaviour, IDamageable
 
     void Die()
     {
-        Debug.Log($"{gameObject.name} уничтожен!");
+        bool isPlayer = gameObject.CompareTag("Player");
 
         if (teamComp != null)
         {
-            if (teamComp.team == Team.Enemy)
+            int ticketCost = 200;
+            if (TryGetComponent(out TankAI ai))
             {
-                GameManager.Instance?.OnEnemyDestroyed(gameObject);
-            }
-            else if (teamComp.team == Team.Friendly)
-            {
-                if (CompareTag("Player"))
+                ticketCost = ai.tankClass switch
                 {
-                    GameManager.Instance?.OnPlayerTankDestroyed();
-                }
-                else { Debug.Log("Союзник погиб!"); }
+                    TankAI.TankClass.Light => 100,
+                    TankAI.TankClass.Medium => 200,
+                    TankAI.TankClass.Heavy => 300,
+                    _ => 150
+                };
+            }
+
+            if (!isPlayer)
+            {
+                GameManager.Instance?.OnTankDestroyed(teamComp.team, ticketCost);
+            }
+            else
+            {
+                GameManager.Instance?.OnPlayerTankDestroyed();
             }
         }
 

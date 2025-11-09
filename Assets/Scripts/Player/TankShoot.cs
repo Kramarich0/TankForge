@@ -38,7 +38,6 @@ public class TankShoot : MonoBehaviour
 
     private Vector3 recoilVelocity;      
 
-
     void Start()
     {
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
@@ -52,7 +51,7 @@ public class TankShoot : MonoBehaviour
 
     void Update()
     {
-        if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
+        if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
         if (shootAction?.action == null) return;
 
         

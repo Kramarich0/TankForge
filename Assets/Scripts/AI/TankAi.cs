@@ -167,7 +167,7 @@ public class TankAI : MonoBehaviour
 
     void Update()
     {
-        if (GamePauseManager.Instance != null && GamePauseManager.Instance.IsPaused) return;
+        if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
 
         scanTimer -= Time.deltaTime;
         if (scanTimer <= 0f)
@@ -256,7 +256,7 @@ public class TankAI : MonoBehaviour
 
     void FindNearestEnemy()
     {
-        TeamComponent[] all = FindObjectsOfType<TeamComponent>();
+        TeamComponent[] all = FindObjectsByType<TeamComponent>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         float bestDist = float.MaxValue;
         Transform best = null;
         foreach (var tc in all)
