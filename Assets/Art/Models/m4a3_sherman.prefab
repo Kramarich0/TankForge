@@ -1054,6 +1054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 0
+  displayName: M4A3 Sherman
 --- !u!82 &4588363113449324173
 AudioSource:
   m_ObjectHideFlags: 0

@@ -2007,6 +2007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 1
+  displayName: Leopard 2
 --- !u!1 &6002131571207418770
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,3 @@
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -363,6 +360,8 @@ public class TankAI : MonoBehaviour
         bullet.damage = bulletDamage;
         bullet.shooterTeam = teamComp != null ? teamComp.team : TeamEnum.Neutral;
 
+        string shooterDisplay = (teamComp != null && !string.IsNullOrEmpty(teamComp.displayName)) ? teamComp.displayName : gameObject.name;
+
         Rigidbody rb = bgo.GetComponent<Rigidbody>();
         if (rb == null) rb = bgo.AddComponent<Rigidbody>();
 
@@ -384,17 +383,17 @@ public class TankAI : MonoBehaviour
                 Vector3 flatDir = horizontal.normalized;
                 Vector3 launchDir = Quaternion.AngleAxis(chosen * Mathf.Rad2Deg, Vector3.Cross(flatDir, Vector3.up)) * flatDir;
                 Vector3 initVel = launchDir * v;
-                bullet.Initialize(initVel, bullet.shooterTeam);
+                bullet.Initialize(initVel, bullet.shooterTeam, shooterDisplay);
             }
             else
             {
 
-                bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam);
+                bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam, shooterDisplay);
             }
         }
         else
         {
-            bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam);
+            bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam, shooterDisplay);
         }
     }
 

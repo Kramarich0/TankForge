@@ -14,7 +14,6 @@ public class TeamMarker : MonoBehaviour
     public Vector3 localOffset = Vector3.zero;
     public bool faceCamera = false;
 
-
     Mesh mesh;
     MeshRenderer mr;
 
@@ -22,11 +21,9 @@ public class TeamMarker : MonoBehaviour
     {
         mr = GetComponent<MeshRenderer>();
 
-
         var shader = Shader.Find("Universal Render Pipeline/Unlit") ??
                      Shader.Find("Unlit/Color") ??
                      Shader.Find("Standard");
-
 
         if (mr.sharedMaterial == null)
             mr.material = new Material(shader);

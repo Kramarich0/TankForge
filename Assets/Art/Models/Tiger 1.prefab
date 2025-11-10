@@ -1028,6 +1028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 1
+  displayName: Tiger 1
 --- !u!1 &3969974525106247612
 GameObject:
   m_ObjectHideFlags: 0

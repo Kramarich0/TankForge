@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,11 +10,16 @@ public class GameManager : MonoBehaviour
     public int friendlyTickets;
     public int enemyTickets;
     public System.Action<int, int> OnTicketsChanged;
+    public System.Action<int, int> OnTankCountChanged;
     private int aliveEnemyTanks = 0;
+    private int aliveFriendlyTanks = 0;
     public bool IsLevelInitialized { get; private set; }
-    private bool isGameFinished = false;
     public int InitialFriendly { get; private set; }
     public int InitialEnemy { get; private set; }
+    private bool isGameFinished = false;
+    public System.Action<string> OnKillLogUpdated;
+    private readonly List<string> killLog = new();
+    public int maxKillLogEntries = 5;
 
     void Awake()
     {
@@ -32,6 +38,7 @@ public class GameManager : MonoBehaviour
         int enemyBase = 0;
         int friendlyBase = 0;
         aliveEnemyTanks = 0;
+        aliveFriendlyTanks = 1;
 
         TankAI[] allTanks = FindObjectsByType<TankAI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
@@ -48,6 +55,7 @@ public class GameManager : MonoBehaviour
                 else if (tc.team == TeamEnum.Friendly)
                 {
                     friendlyBase += cost;
+                    aliveFriendlyTanks++;
                 }
             }
         }
@@ -61,7 +69,11 @@ public class GameManager : MonoBehaviour
         friendlyTickets = friendlyBase + 1000;
 
         OnTicketsChanged?.Invoke(friendlyTickets, enemyTickets);
+        OnTankCountChanged?.Invoke(aliveFriendlyTanks, aliveEnemyTanks);
+
         Debug.Log($"[GameManager] Билеты: Союзники {friendlyTickets} | Враги {enemyTickets}");
+        Debug.Log($"[GameManager] Танков: Союзники {aliveFriendlyTanks} | Враги {aliveEnemyTanks}");
+
         InitialFriendly = friendlyTickets;
         InitialEnemy = enemyTickets;
 
@@ -79,13 +91,35 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    public void OnTankDestroyed(TeamEnum team, int ticketCost)
+    public void OnTankDestroyed(TeamEnum team, int ticketCost, string killerName = null, string victimName = null)
     {
         if (isGameFinished) return;
+
+        string victimColor = team == TeamEnum.Friendly ? "#00FF00" : "#FF0000";
+        string victimDisplay = victimName ?? (team == TeamEnum.Friendly ? "Союзник" : "Враг");
+        victimDisplay = $"<color={victimColor}>{victimDisplay}</color>";
+
+        string entry;
+
+        if (!string.IsNullOrEmpty(killerName))
+        {
+            TeamEnum killerTeam = (killerName == null) ? TeamEnum.Neutral : (team == TeamEnum.Friendly ? TeamEnum.Enemy : TeamEnum.Friendly); 
+            string killerColor = killerTeam == TeamEnum.Friendly ? "#00FF00" : "#FF0000";
+            string killerDisplay = $"<color={killerColor}>{killerName}</color>";
+
+            entry = $"{killerDisplay} уничтожил {victimDisplay}";
+        }
+        else
+        {
+            entry = $"{victimDisplay} уничтожен";
+        }
+
+        AddKillLog(entry);
 
         if (team == TeamEnum.Friendly)
         {
             friendlyTickets = Mathf.Max(0, friendlyTickets - ticketCost);
+            aliveFriendlyTanks = Mathf.Max(0, aliveFriendlyTanks - 1);
         }
         else if (team == TeamEnum.Enemy)
         {
@@ -95,6 +129,8 @@ public class GameManager : MonoBehaviour
         }
 
         OnTicketsChanged?.Invoke(friendlyTickets, enemyTickets);
+        OnTankCountChanged?.Invoke(aliveFriendlyTanks, aliveEnemyTanks);
+
         CheckVictory();
     }
 
@@ -135,6 +171,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
 
         Debug.Log($"Уровень {levelIndex} завершён! Звёзд: {stars}, Счёт: {score}");
+
         score += friendlyTickets;
         GameUIManager.Instance?.ShowVictoryScreen(score, stars);
     }
@@ -164,8 +201,17 @@ public class GameManager : MonoBehaviour
             enemyTickets = Mathf.Max(0, enemyTickets - amount);
 
         OnTicketsChanged?.Invoke(friendlyTickets, enemyTickets);
-        CheckVictory(); 
+        CheckVictory();
     }
 
+    private void AddKillLog(string entry)
+    {
+        killLog.Add(entry);
+
+        if (killLog.Count > maxKillLogEntries)
+            killLog.RemoveAt(0);
+
+        OnKillLogUpdated?.Invoke(entry);
+    }
 
 }

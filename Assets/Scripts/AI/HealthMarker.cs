@@ -26,8 +26,10 @@ public class HealthMarkerSimple : MonoBehaviour
         var bgRenderer = background.GetComponent<MeshRenderer>();
         if (bgRenderer != null)
         {
-            var bgMat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
-            bgMat.color = Color.black;
+            var bgMat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"))
+            {
+                color = Color.black
+            };
             bgMat.SetInt("_CullMode", 0);
             bgRenderer.material = bgMat;
         }
@@ -41,13 +43,14 @@ public class HealthMarkerSimple : MonoBehaviour
         var fillRenderer = fillBar.GetComponent<MeshRenderer>();
         if (fillRenderer != null)
         {
-            var mat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
-            mat.color = (targetTeam != null && targetTeam.team == TeamEnum.Friendly) ? Color.green : Color.red;
+            var mat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"))
+            {
+                color = (targetTeam != null && targetTeam.team == TeamEnum.Friendly) ? Color.green : Color.red
+            };
             mat.SetInt("_CullMode", 0);
             fillRenderer.material = mat;
         }
         DestroyImmediate(fillBar.GetComponent<Collider>());
-
 
         fillBarBack = GameObject.CreatePrimitive(PrimitiveType.Quad).transform;
         fillBarBack.SetParent(transform, false);
@@ -55,8 +58,10 @@ public class HealthMarkerSimple : MonoBehaviour
         fillBarBack.localPosition = fillBar.localPosition + new Vector3(0, 0, 0.001f);
         fillBarBack.localRotation = Quaternion.Euler(0, 180f, 0);
 
-        var backMat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
-        backMat.color = fillRenderer.material.color;
+        var backMat = new Material(Shader.Find("Unlit/Color") ?? Shader.Find("Standard"))
+        {
+            color = fillRenderer.material.color
+        };
         backMat.SetInt("_CullMode", 0);
         var fillBackRenderer = fillBarBack.GetComponent<MeshRenderer>();
         if (fillBackRenderer != null)
@@ -75,7 +80,7 @@ public class HealthMarkerSimple : MonoBehaviour
         if (fillBar != null)
         {
             fillBar.localScale = new Vector3(width * ratio, height, 1f);
-            fillBar.localPosition = new Vector3(-width / 2f + (width * ratio) / 2f, 0, -0.01f);
+            fillBar.localPosition = new Vector3(-width / 2f + width * ratio / 2f, 0, -0.01f);
 
             fillBarBack.localScale = fillBar.localScale;
             fillBarBack.localPosition = fillBar.localPosition + new Vector3(0, 0, 0.001f);

@@ -1988,6 +1988,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 0
+  displayName: m4 Sherman
 --- !u!54 &6543952335926597029
 Rigidbody:
   m_ObjectHideFlags: 0

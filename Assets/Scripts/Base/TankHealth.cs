@@ -12,6 +12,7 @@ public class TankHealth : MonoBehaviour, IDamageable
     public GameObject healthDisplay;
 
     private TeamComponent teamComp;
+    private string lastAttackerName = null;
 
     void Awake()
     {
@@ -29,11 +30,18 @@ public class TankHealth : MonoBehaviour, IDamageable
 
         if (currentHealth <= 0f)
         {
-            Die();
+            Die(killerName: lastAttackerName);
         }
     }
 
-    void Die()
+
+    public void SetAttacker(string attackerName)
+    {
+        lastAttackerName = attackerName;
+    }
+
+
+    void Die(string killerName = null)
     {
         bool isPlayer = gameObject.CompareTag("Player");
 
@@ -53,7 +61,8 @@ public class TankHealth : MonoBehaviour, IDamageable
 
             if (!isPlayer)
             {
-                GameManager.Instance?.OnTankDestroyed(teamComp.team, ticketCost);
+                string victimName = !string.IsNullOrEmpty(teamComp.displayName) ? teamComp.displayName : gameObject.name;
+                GameManager.Instance?.OnTankDestroyed(teamComp.team, ticketCost, killerName, victimName);
             }
             else
             {

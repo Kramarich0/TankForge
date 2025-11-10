@@ -257,7 +257,7 @@ public class GameUIManager : MonoBehaviour
             victoryScoreText.text = $"Очки: {score}";
 
         if (victoryStarsText != null)
-            victoryStarsText.text = $"Звёзды: {new string('⭐', stars)}";
+            victoryStarsText.text = $"Звёзды: {new string('★', stars)}";
 
         cursorWasVisible = Cursor.visible;
         cursorWasLockState = Cursor.lockState;

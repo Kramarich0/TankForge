@@ -834,6 +834,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 1
+  displayName: Panzer II F
 --- !u!1 &2411091379665770527
 GameObject:
   m_ObjectHideFlags: 0
