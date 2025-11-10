@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour
 {
     public int damage = 20;
     public float lifeTime = 8f;
-    public Team shooterTeam = Team.Neutral;
+    public TeamEnum shooterTeam = TeamEnum.Neutral;
 
     Rigidbody rb;
     Collider col;
@@ -21,7 +21,7 @@ public class Bullet : MonoBehaviour
         rb.useGravity = true;
     }
 
-    public void Initialize(Vector3 velocity, Team shooter)
+    public void Initialize(Vector3 velocity, TeamEnum shooter)
     {
         shooterTeam = shooter;
         rb.linearVelocity = velocity;

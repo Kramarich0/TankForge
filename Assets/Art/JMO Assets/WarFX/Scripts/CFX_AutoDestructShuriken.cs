@@ -4,7 +4,7 @@ using System.Collections;
 [RequireComponent(typeof(ParticleSystem))]
 public class CFX_AutoDestructShuriken : MonoBehaviour
 {
-    private static WaitForSeconds _waitForSeconds0_5 = new WaitForSeconds(0.5f);
+    private static WaitForSeconds _waitForSeconds0_5 = new(0.5f);
     public bool OnlyDeactivate;
 	
 	void OnEnable()

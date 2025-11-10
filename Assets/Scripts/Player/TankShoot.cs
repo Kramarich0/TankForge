@@ -31,12 +31,12 @@ public class TankShoot : MonoBehaviour
     private Vector3 originalLocalPos;
 
     [Header("Recoil")]
-    public float recoilBack = 0.15f;   
-    public float recoilUp = 0.05f;     
-    public float recoilSpeed = 20f;    
-    public float recoilReturnSpeed = 7f; 
+    public float recoilBack = 0.15f;
+    public float recoilUp = 0.05f;
+    public float recoilSpeed = 20f;
+    public float recoilReturnSpeed = 7f;
 
-    private Vector3 recoilVelocity;      
+    private Vector3 recoilVelocity;
 
     void Start()
     {
@@ -54,21 +54,21 @@ public class TankShoot : MonoBehaviour
         if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
         if (shootAction?.action == null) return;
 
-        
+
         if (reloadDisplay != null)
         {
             float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
             reloadDisplay.SetReload(remainingTime, 1f / fireRate);
         }
 
-        
+
         if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
         {
             Shoot();
             reloadSoundPlaying = false;
         }
 
-        
+
         if (Time.time < nextFireTime)
         {
             if (!reloadSoundPlaying && reloadSound != null)
@@ -86,7 +86,7 @@ public class TankShoot : MonoBehaviour
             reloadSoundPlaying = false;
         }
 
-        
+
         Vector3 targetPos = isRecoiling ?
          originalLocalPos - transform.forward * recoilBack + transform.up * recoilUp :
          originalLocalPos;
@@ -119,16 +119,16 @@ public class TankShoot : MonoBehaviour
         {
             GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
 
-            
+
             if (bullet.TryGetComponent<Bullet>(out var bulletScript))
             {
                 TeamComponent teamComp = GetComponentInParent<TeamComponent>();
-                Team team = teamComp ? teamComp.team : Team.Neutral;
+                TeamEnum team = teamComp ? teamComp.team : TeamEnum.Neutral;
                 bulletScript.Initialize(gunEnd.forward * bulletSpeed, team);
             }
             else if (bullet.TryGetComponent<Rigidbody>(out var rb))
             {
-                
+
                 rb.linearVelocity = gunEnd.forward * bulletSpeed;
             }
         }

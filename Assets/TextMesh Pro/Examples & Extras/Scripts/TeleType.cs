@@ -7,7 +7,7 @@ namespace TMPro.Examples
 
     public class TeleType : MonoBehaviour
     {
-        private static WaitForSeconds _waitForSeconds1_0 = new WaitForSeconds(1.0f);
+        private static WaitForSeconds _waitForSeconds1_0 = new(1.0f);
 
 
         //[Range(0, 100)]

@@ -1,4 +1,4 @@
-public enum Team
+public enum TeamEnum
 {
     Friendly,
     Enemy,

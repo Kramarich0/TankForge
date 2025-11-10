@@ -6,7 +6,7 @@ namespace TMPro.Examples
 {
     public class TextConsoleSimulator : MonoBehaviour
     {
-        private static WaitForSeconds _waitForSeconds1_0 = new WaitForSeconds(1.0f);
+        private static WaitForSeconds _waitForSeconds1_0 = new(1.0f);
 
         private TMP_Text m_TextComponent;
         private bool hasTextChanged;

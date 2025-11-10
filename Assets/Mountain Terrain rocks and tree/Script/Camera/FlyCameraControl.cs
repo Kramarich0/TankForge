@@ -39,7 +39,7 @@ public class FlyCameraControl : MonoBehaviour
         // Add these lines to make the camera fly around
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        Vector3 movement = new(moveHorizontal, 0.0f, moveVertical);
         movement = transform.TransformDirection(movement); // Transform the movement vector to world space
         targetPosition = transform.position + movement * moveSpeed * Time.deltaTime;
     }
@@ -61,7 +61,7 @@ public class FlyCameraControl : MonoBehaviour
         // Add these lines to make the camera fly around
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+        Vector3 movement = new(moveHorizontal, 0.0f, moveVertical);
         movement = transform.TransformDirection(movement); // Transform the movement vector to world space
         targetPosition = transform.position + movement * moveSpeed * Time.deltaTime;
 

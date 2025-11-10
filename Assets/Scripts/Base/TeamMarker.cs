@@ -9,12 +9,12 @@ public class TeamMarker : MonoBehaviour
     public Transform pivot;
 
     [Header("Appearance")]
-    public TeamComponent teamComp;       
-    public float size = 0.7f;           
-    public Vector3 localOffset = Vector3.zero; 
-    public bool faceCamera = false;      
+    public TeamComponent teamComp;
+    public float size = 0.7f;
+    public Vector3 localOffset = Vector3.zero;
+    public bool faceCamera = false;
 
-    
+
     Mesh mesh;
     MeshRenderer mr;
 
@@ -22,31 +22,31 @@ public class TeamMarker : MonoBehaviour
     {
         mr = GetComponent<MeshRenderer>();
 
-        
+
         var shader = Shader.Find("Universal Render Pipeline/Unlit") ??
                      Shader.Find("Unlit/Color") ??
                      Shader.Find("Standard");
 
-        
+
         if (mr.sharedMaterial == null)
             mr.material = new Material(shader);
         else
             mr.material = new Material(mr.sharedMaterial);
 
-        
+
         mr.sharedMaterial.doubleSidedGI = true;
         mr.sharedMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
 
         CreateMeshIfNeeded();
         GetComponent<MeshFilter>().sharedMesh = mesh;
 
-        
+
         if (teamComp == null) teamComp = GetComponentInParent<TeamComponent>();
 
-        
+
         if (pivot != null && pivot.IsChildOf(transform))
         {
-            
+
             transform.SetParent(pivot.parent, true);
         }
 
@@ -62,11 +62,11 @@ public class TeamMarker : MonoBehaviour
 
         if (faceCamera && Camera.main != null)
         {
-            
+
             Vector3 dirToCam = Camera.main.transform.position - transform.position;
             if (dirToCam != Vector3.zero)
             {
-                
+
                 transform.rotation = Quaternion.LookRotation(dirToCam, Vector3.up);
             }
         }
@@ -90,7 +90,7 @@ public class TeamMarker : MonoBehaviour
         }
         else
         {
-            mr.sharedMaterial.color = (teamComp.team == Team.Friendly) ? Color.green : Color.red;
+            mr.sharedMaterial.color = (teamComp.team == TeamEnum.Friendly) ? Color.green : Color.red;
         }
     }
 
@@ -103,24 +103,24 @@ public class TeamMarker : MonoBehaviour
             name = "MarkerTriangle",
             vertices = new[]
             {
-                new Vector3(0f, 1f, 0f),    
-                new Vector3(-0.5f, 0f, 0f), 
-                new Vector3(0.5f, 0f, 0f),  
-                new Vector3(0f, 1f, 0f),    
-                new Vector3(-0.5f, 0f, 0f), 
-                new Vector3(0.5f, 0f, 0f)   
+                new Vector3(0f, 1f, 0f),
+                new Vector3(-0.5f, 0f, 0f),
+                new Vector3(0.5f, 0f, 0f),
+                new Vector3(0f, 1f, 0f),
+                new Vector3(-0.5f, 0f, 0f),
+                new Vector3(0.5f, 0f, 0f)
             },
             triangles = new[]
             {
-                0, 2, 1, 
-                3, 4, 5  
+                0, 2, 1,
+                3, 4, 5
             }
         };
 
         mesh.RecalculateNormals();
     }
 
-    
+
     void OnDrawGizmosSelected()
     {
         if (pivot != null)

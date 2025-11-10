@@ -7,7 +7,7 @@ namespace TMPro.Examples
 
     public class WarpTextExample : MonoBehaviour
     {
-        private static WaitForSeconds _waitForSeconds0_025 = new WaitForSeconds(0.025f);
+        private static WaitForSeconds _waitForSeconds0_025 = new(0.025f);
         private TMP_Text m_TextComponent;
 
         public AnimationCurve VertexCurve = new(new Keyframe(0, 0), new Keyframe(0.25f, 2.0f), new Keyframe(0.5f, 0), new Keyframe(0.75f, 2.0f), new Keyframe(1, 0f));

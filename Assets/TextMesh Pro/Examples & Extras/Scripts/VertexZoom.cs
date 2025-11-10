@@ -9,7 +9,7 @@ namespace TMPro.Examples
 
     public class VertexZoom : MonoBehaviour
     {
-        private static WaitForSeconds _waitForSeconds0_25 = new WaitForSeconds(0.25f);
+        private static WaitForSeconds _waitForSeconds0_25 = new(0.25f);
 
         public float AngleMultiplier = 1.0f;
         public float SpeedMultiplier = 1.0f;

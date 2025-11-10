@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CoolLevelSelectManager : MonoBehaviour
 {
-    private static WaitForSeconds _waitForSeconds0_1 = new WaitForSeconds(0.1f);
+    private static WaitForSeconds _waitForSeconds0_1 = new(0.1f);
     [Header("Level Select")]
     public GameObject levelSelectCanvas;
     public Button[] levelButtons;

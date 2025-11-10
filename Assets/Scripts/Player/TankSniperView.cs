@@ -99,7 +99,6 @@ public class TankSniperView : MonoBehaviour
     {
         if (!isSniperView || sniperCamera == null || gunEnd == null) return;
 
-
         accumulatedRecoilAngle = Mathf.SmoothDamp(accumulatedRecoilAngle, 0f, ref recoilAngleVelocity, 1f / Mathf.Max(recoilDecay, 0.1f));
         recoilPositionOffset = Vector3.SmoothDamp(
             recoilPositionOffset,
@@ -108,13 +107,13 @@ public class TankSniperView : MonoBehaviour
             1f / Mathf.Max(recoilDecay, 0.1f)
         );
         driveSwayTimer += Time.deltaTime;
-        Vector3 noiseVector = new Vector3(
+        Vector3 noiseVector = new(
          Mathf.PerlinNoise(driveSwayTimer * 3.7f, 0) * 2f - 1f,
          Mathf.PerlinNoise(0, driveSwayTimer * 2.9f) * 2f - 1f,
          0
         );
 
-        Vector3 driveSway = new Vector3(
+        Vector3 driveSway = new(
             noiseVector.x * driveSwayAmountX,
             noiseVector.y * driveSwayAmountY,
             0
@@ -137,6 +136,7 @@ public class TankSniperView : MonoBehaviour
 
     void ToggleSniperView()
     {
+        if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
         isSniperView = !isSniperView;
 
         if (mainCamera != null) mainCamera.enabled = !isSniperView;

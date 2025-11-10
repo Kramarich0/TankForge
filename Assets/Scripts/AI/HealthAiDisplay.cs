@@ -9,8 +9,8 @@ public class HealthAiDisplay : MonoBehaviour
     public TankHealth target;
     public TeamComponent targetTeam;
 
-    public TextMeshProUGUI healthText; 
-    public Image healthBar; 
+    public TextMeshProUGUI healthText;
+    public Image healthBar;
     public float verticalOffset = 2.2f;
     public Color friendlyColor = Color.green;
     public Color enemyColor = Color.red;
@@ -43,8 +43,8 @@ public class HealthAiDisplay : MonoBehaviour
 
     public void SetMaxHealth(float max)
     {
-        
-        if (healthBar != null) { } 
+
+        if (healthBar != null) { }
     }
 
     public void UpdateDisplay()
@@ -61,6 +61,6 @@ public class HealthAiDisplay : MonoBehaviour
             healthBar.fillAmount = Mathf.Clamp01(max > 0f ? cur / max : 0f);
 
         if (targetTeam != null && healthBar != null)
-            healthBar.color = (targetTeam.team == Team.Friendly) ? friendlyColor : enemyColor;
+            healthBar.color = (targetTeam.team == TeamEnum.Friendly) ? friendlyColor : enemyColor;
     }
 }

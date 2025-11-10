@@ -40,12 +40,12 @@ public class GameManager : MonoBehaviour
             if (tank.GetComponent<TeamComponent>() is TeamComponent tc)
             {
                 int cost = GetTankCost(tank.tankClass);
-                if (tc.team == Team.Enemy)
+                if (tc.team == TeamEnum.Enemy)
                 {
                     enemyBase += cost;
                     aliveEnemyTanks++;
                 }
-                else if (tc.team == Team.Friendly)
+                else if (tc.team == TeamEnum.Friendly)
                 {
                     friendlyBase += cost;
                 }
@@ -79,15 +79,15 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    public void OnTankDestroyed(Team team, int ticketCost)
+    public void OnTankDestroyed(TeamEnum team, int ticketCost)
     {
         if (isGameFinished) return;
 
-        if (team == Team.Friendly)
+        if (team == TeamEnum.Friendly)
         {
             friendlyTickets = Mathf.Max(0, friendlyTickets - ticketCost);
         }
-        else if (team == Team.Enemy)
+        else if (team == TeamEnum.Enemy)
         {
             enemyTickets = Mathf.Max(0, enemyTickets - ticketCost);
             aliveEnemyTanks = Mathf.Max(0, aliveEnemyTanks - 1);
@@ -155,5 +155,17 @@ public class GameManager : MonoBehaviour
         isGameFinished = true;
         GameUIManager.Instance?.ShowDefeatScreen();
     }
+
+    public void DrainTickets(TeamEnum team, int amount)
+    {
+        if (team == TeamEnum.Friendly)
+            friendlyTickets = Mathf.Max(0, friendlyTickets - amount);
+        else if (team == TeamEnum.Enemy)
+            enemyTickets = Mathf.Max(0, enemyTickets - amount);
+
+        OnTicketsChanged?.Invoke(friendlyTickets, enemyTickets);
+        CheckVictory(); 
+    }
+
 
 }

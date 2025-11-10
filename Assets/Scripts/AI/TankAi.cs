@@ -304,7 +304,7 @@ public class TankAI : MonoBehaviour
         if (gun != null && gunEnd != null)
         {
             Vector3 predicted = PredictTargetPosition(t);
-            Vector3 adjustedTarget = new Vector3(predicted.x, gun.position.y, predicted.z);
+            Vector3 adjustedTarget = new(predicted.x, gun.position.y, predicted.z);
             Vector3 localDir = turret.InverseTransformDirection(adjustedTarget - gun.position);
 
             float pitch;
@@ -352,7 +352,7 @@ public class TankAI : MonoBehaviour
 
         Vector3 predicted = PredictTargetPosition(t);
         Vector3 aim = predicted - gunEnd.position;
-        Vector3 horizontal = new Vector3(aim.x, 0f, aim.z);
+        Vector3 horizontal = new(aim.x, 0f, aim.z);
         float distance = horizontal.magnitude;
         float dy = aim.y;
 
@@ -361,7 +361,7 @@ public class TankAI : MonoBehaviour
         if (bullet == null) bullet = bgo.AddComponent<Bullet>();
 
         bullet.damage = bulletDamage;
-        bullet.shooterTeam = teamComp != null ? teamComp.team : Team.Neutral;
+        bullet.shooterTeam = teamComp != null ? teamComp.team : TeamEnum.Neutral;
 
         Rigidbody rb = bgo.GetComponent<Rigidbody>();
         if (rb == null) rb = bgo.AddComponent<Rigidbody>();
