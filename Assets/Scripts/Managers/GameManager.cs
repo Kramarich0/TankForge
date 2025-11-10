@@ -135,7 +135,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.Save();
 
         Debug.Log($"Уровень {levelIndex} завершён! Звёзд: {stars}, Счёт: {score}");
-
+        score += friendlyTickets;
         GameUIManager.Instance?.ShowVictoryScreen(score, stars);
     }
 
