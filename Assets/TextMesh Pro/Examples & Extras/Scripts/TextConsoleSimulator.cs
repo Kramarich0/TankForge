@@ -6,6 +6,8 @@ namespace TMPro.Examples
 {
     public class TextConsoleSimulator : MonoBehaviour
     {
+        private static WaitForSeconds _waitForSeconds1_0 = new WaitForSeconds(1.0f);
+
         private TMP_Text m_TextComponent;
         private bool hasTextChanged;
 
@@ -64,7 +66,7 @@ namespace TMPro.Examples
 
                 if (visibleCount > totalVisibleCharacters)
                 {
-                    yield return new WaitForSeconds(1.0f);
+                    yield return _waitForSeconds1_0;
                     visibleCount = 0;
                 }
 
@@ -108,7 +110,7 @@ namespace TMPro.Examples
                 // Once the last character has been revealed, wait 1.0 second and start over.
                 if (visibleCount >= totalVisibleCharacters)
                 {
-                    yield return new WaitForSeconds(1.0f);
+                    yield return _waitForSeconds1_0;
                 }
 
                 counter += 1;

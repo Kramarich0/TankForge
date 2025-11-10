@@ -41,7 +41,7 @@ public class TankMovement : MonoBehaviour
     private float currentBlend = 0f;
     private float targetBlend = 0f;
 
-    
+
     private float currentSpeed = 0f;
     private float targetSpeed = 0f;
     private float targetTurnInput = 0f;
@@ -62,18 +62,14 @@ public class TankMovement : MonoBehaviour
             return;
         }
 
-        
         rb.isKinematic = false;
-        rb.useGravity = true; 
+        rb.useGravity = true;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        // rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
-        
-        rb.linearDamping = 0.5f;  
-        rb.angularDamping = 5f;
+        // rb.linearDamping = 0.5f;
+        // rb.angularDamping = 5f;
 
         if (rotationPivot != null && adjustRigidbodyCenterOfMass)
         {
@@ -134,7 +130,7 @@ public class TankMovement : MonoBehaviour
         float moveInput = Mathf.Abs(rawMoveInput) < inputDeadzone ? 0f : rawMoveInput;
         float turnInput = Mathf.Abs(rawTurnInput) < inputDeadzone ? 0f : rawTurnInput;
 
-        
+
         if (moveInput > 0)
             targetSpeed = moveInput * forwardSpeed;
         else if (moveInput < 0)
@@ -144,7 +140,7 @@ public class TankMovement : MonoBehaviour
 
         targetTurnInput = turnInput;
 
-        
+
         float absMove = Mathf.Abs(moveInput);
         targetBlend = Mathf.Clamp01(absMove);
         currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
@@ -174,25 +170,25 @@ public class TankMovement : MonoBehaviour
     {
         if (!useRigidbody || rb == null) return;
 
-        
+
         float rate = (Mathf.Abs(targetSpeed) > Mathf.Epsilon) ? acceleration : deceleration;
         currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, rate * Time.fixedDeltaTime);
 
-        
-        
-        
+
+
+
         Vector3 desiredVelocity = transform.forward * currentSpeed;
 
-        
+
         desiredVelocity.y = rb.linearVelocity.y;
 
         rb.linearVelocity = desiredVelocity;
 
-        
+
         float effectiveTurnSpeed = turnSpeed * (currentSpeed < 0 ? turnWhileReverseFactor : 1f);
         float desiredAngular = targetTurnInput * effectiveTurnSpeed;
 
-        
+
         float smoothTime = rotationSmoothTime;
         if (Mathf.Abs(targetTurnInput) > 0.05f)
             smoothTime = rotationSmoothTime * 0.4f;

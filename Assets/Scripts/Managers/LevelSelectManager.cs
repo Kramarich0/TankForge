@@ -1,36 +1,36 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LevelSelectManager : MonoBehaviour
+public class CoolLevelSelectManager : MonoBehaviour
 {
+    private static WaitForSeconds _waitForSeconds0_1 = new WaitForSeconds(0.1f);
     [Header("Level Select")]
-    public GameObject levelSelectCanvas;   // Canvas с кнопками выбора уровней
+    public GameObject levelSelectCanvas;
     public Button[] levelButtons;
     public Image[] levelCheckmarks;
 
     [Header("Loading Screen")]
-    public GameObject loadingScreen;       // панель загрузки с картинкой
-    public Slider progressBar;             // прогресс-бар
+    public GameObject loadingScreen;
+    public Slider progressBar;
+    public TextMeshProUGUI loadingText;
 
-    void Awake()
+    private void Awake()
     {
-        // Деактивируем кнопки и чекмарки до загрузки
         foreach (var btn in levelButtons)
             btn.interactable = false;
 
         if (levelCheckmarks != null)
-        {
             foreach (var chk in levelCheckmarks)
                 chk.gameObject.SetActive(false);
-        }
 
         if (loadingScreen != null)
-            loadingScreen.SetActive(false); // скрываем экран загрузки
+            loadingScreen.SetActive(false);
     }
 
-    void Start()
+    private void Start()
     {
         UpdateLevelButtons();
     }
@@ -38,52 +38,43 @@ public class LevelSelectManager : MonoBehaviour
     public void PlayLevel(int level)
     {
         if (!IsLevelUnlocked(level)) return;
-
-        string sceneName = $"Level{level}";
-        StartCoroutine(LoadLevelAsync(sceneName));
+        StartCoroutine(LoadLevelWithStyle($"Level{level}"));
     }
 
-    private IEnumerator LoadLevelAsync(string sceneName)
+    private IEnumerator LoadLevelWithStyle(string sceneName)
     {
         if (levelSelectCanvas != null)
             levelSelectCanvas.SetActive(false);
 
-        if (loadingScreen != null)
-            loadingScreen.SetActive(true);
+        loadingScreen.SetActive(true);
 
-        if (progressBar != null)
-        {
-            progressBar.gameObject.SetActive(true);
-            progressBar.value = 0f;
-        }
+        float displayedProgress = 0f;
+        float timer = 0f;
+        float minDisplayTime = 3f;
 
         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
-
-        float displayedProgress = 0f;
-        float minDisplayTime = 1.5f; // Минимальное время отображения прогресса
-        float timer = 0f;
 
         while (!op.isDone)
         {
             timer += Time.unscaledDeltaTime;
 
-            // Целевой прогресс до 0.9 (Unity так считает загрузку)
             float targetProgress = Mathf.Clamp01(op.progress / 0.9f);
-
-            // Плавное движение прогресс-бара
-            displayedProgress = Mathf.MoveTowards(displayedProgress, targetProgress, Time.unscaledDeltaTime * 1.5f);
+            displayedProgress = Mathf.MoveTowards(displayedProgress, targetProgress, Time.unscaledDeltaTime * .25f);
 
             if (progressBar != null)
                 progressBar.value = displayedProgress;
 
-            // Когда загрузка почти завершена и прошло минимальное время
+            if (loadingText != null)
+            {
+                int dots = Mathf.FloorToInt(Time.time % 3) + 1;
+                loadingText.text = "Загрузка" + new string('.', dots);
+            }
+
             if (displayedProgress >= 0.99f && timer >= minDisplayTime)
             {
-                if (progressBar != null)
-                    progressBar.value = 1f;
-
-                yield return new WaitForSeconds(0.1f);
+                if (progressBar != null) progressBar.value = 1f;
+                yield return _waitForSeconds0_1;
                 op.allowSceneActivation = true;
             }
 
@@ -91,34 +82,20 @@ public class LevelSelectManager : MonoBehaviour
         }
     }
 
-
-    void UpdateLevelButtons()
+    private void UpdateLevelButtons()
     {
         for (int i = 0; i < levelButtons.Length; i++)
         {
             int level = i + 1;
-            bool unlocked = IsLevelUnlocked(level);
-            bool completed = IsLevelCompleted(level);
-
-            levelButtons[i].interactable = unlocked;
+            levelButtons[i].interactable = IsLevelUnlocked(level);
 
             if (levelCheckmarks != null && levelCheckmarks.Length > i)
-                levelCheckmarks[i].gameObject.SetActive(completed);
+                levelCheckmarks[i].gameObject.SetActive(IsLevelCompleted(level));
         }
     }
 
-    private bool IsLevelUnlocked(int level)
-    {
-        return level == 1 || PlayerPrefs.GetInt($"Level{level}_Unlocked", 0) == 1;
-    }
+    private bool IsLevelUnlocked(int level) => level == 1 || PlayerPrefs.GetInt($"Level{level}_Unlocked", 0) == 1;
+    private bool IsLevelCompleted(int level) => PlayerPrefs.GetInt($"Level{level}_Completed", 0) == 1;
 
-    private bool IsLevelCompleted(int level)
-    {
-        return PlayerPrefs.GetInt($"Level{level}_Completed", 0) == 1;
-    }
-
-    public void BackToMainMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
+    public void BackToMainMenu() => SceneManager.LoadScene("MainMenu");
 }

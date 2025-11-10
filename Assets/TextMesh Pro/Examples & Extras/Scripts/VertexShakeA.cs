@@ -7,7 +7,7 @@ namespace TMPro.Examples
 
     public class VertexShakeA : MonoBehaviour
     {
-
+        private static WaitForSeconds _waitForSeconds0_25 = new WaitForSeconds(0.25f);
         public float AngleMultiplier = 1.0f;
         public float SpeedMultiplier = 1.0f;
         public float ScaleMultiplier = 1.0f;
@@ -86,7 +86,7 @@ namespace TMPro.Examples
                 // If No Characters then just yield and wait for some text to be added
                 if (characterCount == 0)
                 {
-                    yield return new WaitForSeconds(0.25f);
+                    yield return _waitForSeconds0_25;
                     continue;
                 }
 

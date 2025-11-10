@@ -10,7 +10,8 @@ using System.Text.RegularExpressions;
 
 public class WFX_Demo_New : MonoBehaviour
 {
-	public Renderer groundRenderer;
+    private static WaitForSeconds _waitForSeconds5_0 = new WaitForSeconds(5.0f);
+    public Renderer groundRenderer;
 	public Collider groundCollider;
 	[Space]
 	[Space]
@@ -219,7 +220,7 @@ public class WFX_Demo_New : MonoBehaviour
 	{
 		while(true)
 		{
-			yield return new WaitForSeconds(5.0f);
+			yield return _waitForSeconds5_0;
 			for(int i = onScreenParticles.Count - 1; i >= 0; i--)
 			{
 				if(onScreenParticles[i] == null)

@@ -1945,7 +1945,6 @@ MonoBehaviour:
   maxHealth: 10
   currentHealth: 0
   healthDisplay: {fileID: 0}
-  aiHealthDisplay: {fileID: 0}
 --- !u!195 &3351642093755439465
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1977,8 +1976,8 @@ Rigidbody:
   m_GameObject: {fileID: 5814213489443158634}
   serializedVersion: 5
   m_Mass: 75
-  m_LinearDamping: 0.4
-  m_AngularDamping: 0.7
+  m_LinearDamping: 0.1
+  m_AngularDamping: 0.3
   m_CenterOfMass: {x: 0, y: -0.6, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1988,7 +1987,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 0
+  m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0

@@ -7,10 +7,12 @@ namespace TMPro.Examples
 
     public class TeleType : MonoBehaviour
     {
+        private static WaitForSeconds _waitForSeconds1_0 = new WaitForSeconds(1.0f);
 
 
         //[Range(0, 100)]
         //public int RevealSpeed = 50;
+
 
         private string label01 = "Example <sprite=2> of using <sprite=7> <#ffa000>Graphics Inline</color> <sprite=5> with Text in <font=\"Bangers SDF\" material=\"Bangers SDF - Drop Shadow\">TextMesh<#40a0ff>Pro</color></font><sprite=0> and Unity<sprite=1>";
         private string label02 = "Example <sprite=2> of using <sprite=7> <#ffa000>Graphics Inline</color> <sprite=5> with Text in <font=\"Bangers SDF\" material=\"Bangers SDF - Drop Shadow\">TextMesh<#40a0ff>Pro</color></font><sprite=0> and Unity<sprite=2>";
@@ -64,9 +66,9 @@ namespace TMPro.Examples
                 // Once the last character has been revealed, wait 1.0 second and start over.
                 if (visibleCount >= totalVisibleCharacters)
                 {
-                    yield return new WaitForSeconds(1.0f);
+                    yield return _waitForSeconds1_0;
                     m_textMeshPro.text = label02;
-                    yield return new WaitForSeconds(1.0f);
+                    yield return _waitForSeconds1_0;
                     m_textMeshPro.text = label01;
                     yield return new WaitForSeconds(1.0f);
                 }
