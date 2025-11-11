@@ -6,19 +6,39 @@ public class TankCountDisplay : MonoBehaviour
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI TanksCountText;
 
-    void Start()
+    private void Start()
     {
-        if (GameManager.Instance == null)
+        TryInitialize();
+    }
+
+    private void TryInitialize()
+    {
+        if (GameManager.Instance != null)
         {
-            Debug.LogError("[TankCounterUI] GameManager.Instance не найден!");
-            enabled = false;
+            SetupListeners();
             return;
         }
 
-        GameManager.Instance.OnTankCountChanged += UpdateTankCounters;
+        var existingManager = FindFirstObjectByType<GameManager>(); 
+        if (existingManager != null)
+        {
+            SetupListeners();
+            return;
+        }
 
+        // Если GameManager отсутствует — создаём временный объект
+        Debug.LogWarning("[TankCountDisplay] GameManager не найден! Попытка автосоздания...");
+        GameObject gmObject = new GameObject("GameManager");
+        gmObject.AddComponent<GameManager>();
+        SetupListeners();
+    }
+
+    private void SetupListeners()
+    {
+        GameManager.Instance.OnTankCountChanged += UpdateTankCounters;
         UpdateTankCounters(0, 0);
     }
+
 
     void OnDestroy()
     {

@@ -20,9 +20,9 @@ public class TankAI : MonoBehaviour
 
     [Header("Class")]
     public TankClass tankClass = TankClass.Medium;
-    public TankStats lightStats = new() { health = 75f, moveSpeed = 5f, rotationSpeed = 60f, fireRate = 1f, shootRange = 80f, bulletDamage = 100 };
-    public TankStats mediumStats = new() { health = 150f, moveSpeed = 3f, rotationSpeed = 40f, fireRate = .5f, shootRange = 100f, bulletDamage = 50 };
-    public TankStats heavyStats = new() { health = 300f, moveSpeed = 2f, rotationSpeed = 30f, fireRate = .2f, shootRange = 120f, bulletDamage = 10 };
+    public TankStats lightStats = new() { health = 75f, moveSpeed = 7f, rotationSpeed = 60f, fireRate = 1f, shootRange = 80f, bulletDamage = 10 };
+    public TankStats mediumStats = new() { health = 150f, moveSpeed = 4.3f, rotationSpeed = 40f, fireRate = .5f, shootRange = 100f, bulletDamage = 100 };
+    public TankStats heavyStats = new() { health = 300f, moveSpeed = 2f, rotationSpeed = 30f, fireRate = .2f, shootRange = 120f, bulletDamage = 200 };
 
     [Header("Health")]
     private TankHealth tankHealth;

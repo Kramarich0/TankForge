@@ -3688,7 +3688,7 @@ MonoBehaviour:
   tankShoot: {fileID: 6945161926540087329}
   zoomStep: 1
   zoomSpeed: 8
-  zoomFOVReduction: 65
+  zoomFOVReduction: 100
   maxZoomOffset: 0.35
   positionOffset: 0
   followSpeed: 10

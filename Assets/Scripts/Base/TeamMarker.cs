@@ -1,122 +1,99 @@
 using UnityEngine;
 
 [ExecuteAlways]
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+[RequireComponent(typeof(SpriteRenderer))]
 public class TeamMarker : MonoBehaviour
 {
     [Header("Target / Pivot")]
-    [Tooltip("Кастомный пустой объект (pivot) — маркер будет ровно на нём")]
     public Transform pivot;
 
-    [Header("Appearance")]
+    [Header("References")]
     public TeamComponent teamComp;
-    public float size = 0.7f;
-    public Vector3 localOffset = Vector3.zero;
-    public bool faceCamera = false;
+    public TankAI tankAI;
 
-    Mesh mesh;
-    MeshRenderer mr;
+    [Header("Sprites by Tank Class")]
+    public Sprite lightSprite;
+    public Sprite mediumSprite;
+    public Sprite heavySprite;
+
+    [Header("Appearance")]
+    public float size = 1f;
+    public Vector3 localOffset = Vector3.zero;
+    public bool faceCamera = true;
+    private SpriteRenderer sr;
+    private Camera mainCamera;
 
     void OnEnable()
     {
-        mr = GetComponent<MeshRenderer>();
-
-        var shader = Shader.Find("Universal Render Pipeline/Unlit") ??
-                     Shader.Find("Unlit/Color") ??
-                     Shader.Find("Standard");
-
-        if (mr.sharedMaterial == null)
-            mr.material = new Material(shader);
-        else
-            mr.material = new Material(mr.sharedMaterial);
-
-
-        mr.sharedMaterial.doubleSidedGI = true;
-        mr.sharedMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-
-        CreateMeshIfNeeded();
-        GetComponent<MeshFilter>().sharedMesh = mesh;
-
-
-        if (teamComp == null) teamComp = GetComponentInParent<TeamComponent>();
-
-
-        if (pivot != null && pivot.IsChildOf(transform))
-        {
-
-            transform.SetParent(pivot.parent, true);
-        }
-
-        UpdateColor();
+        sr = GetComponent<SpriteRenderer>();
+        FindMainCamera();
+        UpdateReferences();
+        UpdateAppearance();
     }
 
     void Update()
     {
         if (pivot == null) return;
-        if (teamComp == null) teamComp = GetComponentInParent<TeamComponent>();
+        FindMainCamera();
 
-        transform.position = pivot.position + (pivot.rotation * localOffset);
+        transform.position = pivot.position + pivot.TransformDirection(localOffset);
+        transform.localScale = Vector3.one * Mathf.Max(0.001f, size);
 
-        if (faceCamera && Camera.main != null)
+        if (faceCamera && mainCamera != null)
         {
-
-            Vector3 dirToCam = Camera.main.transform.position - transform.position;
-            if (dirToCam != Vector3.zero)
-            {
-
-                transform.rotation = Quaternion.LookRotation(dirToCam, Vector3.up);
-            }
+            transform.rotation = Quaternion.LookRotation(
+                     transform.position - mainCamera.transform.position,
+                     Vector3.up
+                 );
         }
         else
         {
             transform.rotation = Quaternion.identity;
         }
 
-        transform.localScale = Vector3.one * Mathf.Max(0.0001f, size);
-        UpdateColor();
+        UpdateAppearance();
     }
 
-    void UpdateColor()
+    void UpdateReferences()
     {
-        if (mr == null) mr = GetComponent<MeshRenderer>();
-        if (mr == null) return;
-
         if (teamComp == null)
-        {
-            mr.sharedMaterial.color = Color.white;
-        }
-        else
-        {
-            mr.sharedMaterial.color = (teamComp.team == TeamEnum.Friendly) ? Color.green : Color.red;
-        }
+            teamComp = GetComponentInParent<TeamComponent>(true);
+
+        if (tankAI == null)
+            tankAI = GetComponentInParent<TankAI>(true);
     }
 
-    private void CreateMeshIfNeeded()
+    void UpdateAppearance()
     {
-        if (mesh != null) return;
+        if (sr == null || teamComp == null || tankAI == null)
+            return;
 
-        mesh = new Mesh
+        sr.sprite = tankAI.tankClass switch
         {
-            name = "MarkerTriangle",
-            vertices = new[]
-            {
-                new Vector3(0f, 1f, 0f),
-                new Vector3(-0.5f, 0f, 0f),
-                new Vector3(0.5f, 0f, 0f),
-                new Vector3(0f, 1f, 0f),
-                new Vector3(-0.5f, 0f, 0f),
-                new Vector3(0.5f, 0f, 0f)
-            },
-            triangles = new[]
-            {
-                0, 2, 1,
-                3, 4, 5
-            }
+            TankAI.TankClass.Light => lightSprite,
+            TankAI.TankClass.Medium => mediumSprite,
+            TankAI.TankClass.Heavy => heavySprite,
+            _ => null,
         };
-
-        mesh.RecalculateNormals();
+        sr.color = (teamComp.team == TeamEnum.Friendly) ? Color.green : Color.red;
     }
 
+    void FindMainCamera()
+    {
+        if (Camera.main != null)
+        {
+            mainCamera = Camera.main;
+            return;
+        }
+
+        var brain = FindFirstObjectByType<Unity.Cinemachine.CinemachineBrain>(); if (brain != null && brain.OutputCamera != null)
+        {
+            mainCamera = brain.OutputCamera;
+            return;
+        }
+
+        mainCamera = Camera.current != null ? Camera.current : Camera.allCameras.Length > 0 ? Camera.allCameras[0] : null;
+    }
 
     void OnDrawGizmosSelected()
     {
