@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(TeamComponent))]
@@ -7,6 +8,7 @@ public class TankHealth : MonoBehaviour, IDamageable
     [Header("Health")]
     public float maxHealth = 100f;
     [HideInInspector] public float currentHealth;
+    public Action<float, float> OnHealthChanged;
 
     [Header("UI")]
     public GameObject healthDisplay;
@@ -18,14 +20,17 @@ public class TankHealth : MonoBehaviour, IDamageable
     {
         teamComp = GetComponent<TeamComponent>();
         currentHealth = maxHealth;
-
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage(int damage)
     {
+        if (currentHealth <= 0) return;
+
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0f);
 
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log($"{gameObject.name} получил {damage} урона, осталось HP: {currentHealth}");
 
         if (currentHealth <= 0f)
@@ -34,12 +39,10 @@ public class TankHealth : MonoBehaviour, IDamageable
         }
     }
 
-
     public void SetAttacker(string attackerName)
     {
         lastAttackerName = attackerName;
     }
-
 
     void Die(string killerName = null)
     {

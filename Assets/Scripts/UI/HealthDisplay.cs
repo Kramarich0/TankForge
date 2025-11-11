@@ -4,36 +4,47 @@ using TMPro;
 
 public class HealthDisplay : MonoBehaviour
 {
-    public TextMeshProUGUI healthText; 
-    public Image healthBar;            
+    [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private Image healthBar;
 
-    private float currentHealth = 0f;
-    private float maxHealth = 100f;
+    private TankHealth playerHealth;
 
-    void Awake()
+    void Start()
     {
-        if (healthText == null) Debug.LogError("Health Text не назначен!", this);
-        if (healthBar == null) Debug.LogError("Health Bar не назначен!", this);
+        var playerObject = GameObject.FindGameObjectWithTag("Player");
+        if (playerObject == null)
+        {
+            Debug.LogError("[HealthDisplay] Игрок с тегом 'Player' не найден!", this);
+            enabled = false;
+            return;
+        }
+
+        playerHealth = playerObject.GetComponent<TankHealth>();
+        if (playerHealth == null)
+        {
+            Debug.LogError("[HealthDisplay] На игроке нет компонента TankHealth!", this);
+            enabled = false;
+            return;
+        }
+
+        playerHealth.OnHealthChanged += UpdateDisplay;
+        UpdateDisplay(playerHealth.currentHealth, playerHealth.maxHealth);
     }
 
-    public void SetMaxHealth(float max)
+    void UpdateDisplay(float current, float max)
     {
-        maxHealth = Mathf.Max(0.0001f, max);
-        SetHealth(maxHealth);
-    }
+        float fill = max > 0.001f ? current / max : 0f;
 
-    public void SetHealth(float health)
-    {
-        currentHealth = Mathf.Clamp(health, 0f, maxHealth);
-        UpdateDisplay();
-    }
-
-    private void UpdateDisplay()
-    {
         if (healthText != null)
-            healthText.text = $"{Mathf.RoundToInt(currentHealth)} / {Mathf.RoundToInt(maxHealth)} HP";
+            healthText.text = $"{Mathf.RoundToInt(current)} / {Mathf.RoundToInt(max)}";
 
         if (healthBar != null)
-            healthBar.fillAmount = currentHealth / maxHealth;
+            healthBar.fillAmount = fill;
+    }
+
+    void OnDestroy()
+    {
+        if (playerHealth != null)
+            playerHealth.OnHealthChanged -= UpdateDisplay;
     }
 }

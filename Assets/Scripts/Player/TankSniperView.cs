@@ -175,12 +175,13 @@ public class TankSniperView : MonoBehaviour
     {
         if (!isSniperView || sniperCamera == null || gunEnd == null) return;
 
-        recoilPositionOffset += -gunEnd.forward * 0.18f;
+        float minFOV = Mathf.Clamp(normalFOV - zoomFOVReduction, 15f, normalFOV - 2f);
+        float currentFOV = Mathf.Lerp(normalFOV, minFOV, zoomCurrent);
+        float recoilScale = currentFOV / normalFOV;
 
-        float sideKick = Random.Range(-0.05f, 0.05f);
-        recoilPositionOffset += gunEnd.right * sideKick;
-
-        accumulatedRecoilAngle -= Random.Range(5.5f, 6f);
+        recoilPositionOffset += 0.18f * recoilScale * -gunEnd.forward;
+        recoilPositionOffset += Random.Range(-0.05f, 0.05f) * recoilScale * gunEnd.right;
+        accumulatedRecoilAngle -= Random.Range(5.5f, 6f) * recoilScale;
 
         recoilDecay = 2f;
     }

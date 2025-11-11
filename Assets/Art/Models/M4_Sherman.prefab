@@ -1031,7 +1031,7 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 5612779968204697617}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  bulletSpeed: 1000
+  bulletSpeed: 800
   fireRate: 0.167
   muzzleSmoke: {fileID: 1394061989147044565}
   audioSource: {fileID: 0}

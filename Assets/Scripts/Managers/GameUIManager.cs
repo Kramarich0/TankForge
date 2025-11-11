@@ -295,4 +295,27 @@ public class GameUIManager : MonoBehaviour
     public void ContinueGame() => ResumeGame();
     public void RestartLevel() => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     public void BackToMainMenu() => SceneManager.LoadScene("MainMenu");
+    public void NextLevel()
+    {
+        string currentScene = SceneManager.GetActiveScene().name;
+
+        if (!currentScene.StartsWith("Level"))
+        {
+            Debug.LogError($"[NextLevel] Текущая сцена '{currentScene}' не соответствует формату 'LevelN'");
+            return;
+        }
+
+        string numPart = currentScene[5..];
+        if (!int.TryParse(numPart, out int currentLevel))
+        {
+            Debug.LogError($"[NextLevel] Не удалось распознать номер уровня в '{currentScene}'");
+            return;
+        }
+
+        int nextLevel = currentLevel + 1;
+        string nextSceneName = $"Level{nextLevel}";
+
+        SceneManager.LoadScene(nextSceneName);
+    }
+
 }
