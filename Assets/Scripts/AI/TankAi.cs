@@ -7,6 +7,8 @@ using UnityEngine.AI;
 public class TankAI : MonoBehaviour
 {
     public enum TankClass { Light, Medium, Heavy }
+    public enum AIState { Idle, Patrolling, Moving, Capturing, Fighting }
+
     [System.Serializable]
     public struct TankStats
     {
@@ -28,7 +30,6 @@ public class TankAI : MonoBehaviour
     private TankHealth tankHealth;
 
     [Header("UI")]
-
     public HealthAiDisplay enemyHealthDisplayPrefab;
 
     [Header("Transforms")]
@@ -54,7 +55,6 @@ public class TankAI : MonoBehaviour
     public float projectileSpeed = 80f;
     public bool bulletUseGravity = true;
 
-
     [Header("Audio")]
     public AudioClip idleSound;
     public AudioClip driveSound;
@@ -75,6 +75,12 @@ public class TankAI : MonoBehaviour
     public float fieldOfView = 140f;
     public LayerMask detectionMask = -1;
 
+    [Header("Capture Points")]
+    public LayerMask capturePointsLayer = -1;
+    public float capturePointDetectionRadius = 60f;
+    private CapturePoint currentCapturePointTarget = null;
+    private bool isCapturing = false;
+
     private NavMeshAgent agent;
     private float nextFireTime = 0f;
     private bool navAvailable = false;
@@ -82,16 +88,16 @@ public class TankAI : MonoBehaviour
     TeamComponent teamComp;
     Transform currentTarget;
     NavMeshAgent targetAgent;
+    private AIState currentState = AIState.Idle;
 
     float scanTimer = 0f;
-    float scanInterval = 0.4f;
+    readonly float scanInterval = 0.4f;
 
     void Awake()
     {
         tankHealth = GetComponent<TankHealth>();
         agent = GetComponent<NavMeshAgent>();
         teamComp = GetComponent<TeamComponent>();
-
 
         if (idleSound != null)
         {
@@ -170,18 +176,79 @@ public class TankAI : MonoBehaviour
         if (scanTimer <= 0f)
         {
             scanTimer = scanInterval;
-            if (player == null) FindNearestEnemy();
+            FindNearestEnemy();
+            FindNearestCapturePoint();
         }
 
         agent.speed = moveSpeed;
 
-        Transform effectiveTarget = player != null ? player : currentTarget;
+        // ЛОГИКА ПРИОРИТЕТА ЦЕЛЕЙ
+        Transform effectiveTarget = null;
+        AIState nextState = AIState.Patrolling;
 
-        if (effectiveTarget != null)
+        // 1. Сначала проверяем — находимся ли мы на точке захвата?
+        if (currentCapturePointTarget != null && Vector3.Distance(transform.position, currentCapturePointTarget.transform.position) < 3f)
+        {
+            // Мы на точке захвата — стоим и захватываем
+            if (navAvailable && agent.isOnNavMesh) agent.isStopped = true;
+            isCapturing = true;
+            nextState = AIState.Capturing;
+
+            if (debugLogs) Debug.Log($"[AI] Capturing point at {currentCapturePointTarget.gameObject.name}");
+        }
+        else if (currentCapturePointTarget != null)
+        {
+            // Идём к ближайшей точке захвата
+            float distToCapturePoint = Vector3.Distance(transform.position, currentCapturePointTarget.transform.position);
+            float distToEnemy = currentTarget != null ? Vector3.Distance(transform.position, currentTarget.position) : float.MaxValue;
+            agent.stoppingDistance = 0f;
+            // Точка ближе или враг далеко — идём к точке
+            if (distToCapturePoint < distToEnemy || distToEnemy > shootRange * 1.5f)
+            {
+                effectiveTarget = currentCapturePointTarget.transform;
+                isCapturing = false;
+                nextState = AIState.Moving;
+            }
+            // Враг ближе — сражаемся
+            else if (distToEnemy < shootRange)
+            {
+                effectiveTarget = currentTarget;
+                agent.stoppingDistance = shootRange * 0.85f;
+                currentCapturePointTarget = null; // Забываем про точку временно
+                isCapturing = false;
+                nextState = AIState.Fighting;
+            }
+        }
+        // else if (player != null)
+        // {
+        //     agent.stoppingDistance = shootRange * 0.85f;
+        //     effectiveTarget = player;
+        //     isCapturing = false;
+        //     nextState = AIState.Fighting;
+        // }
+        else if (currentTarget != null)
+        {
+            effectiveTarget = currentTarget;
+            agent.stoppingDistance = shootRange * 0.85f;
+            isCapturing = false;
+            nextState = AIState.Moving;
+        }
+
+        currentState = nextState;
+
+        // ИСПОЛНЕНИЕ ЦЕЛЕЙ
+        if (isCapturing)
+        {
+            // При захвате просто стоим и ждём, пока CapturePoint сделает своё
+            AlignBodyToVector((currentCapturePointTarget.transform.position - transform.position).normalized);
+        }
+        else if (effectiveTarget != null)
         {
             float dist = Vector3.Distance(transform.position, effectiveTarget.position);
-            if (dist < shootRange)
+
+            if (dist < shootRange && nextState == AIState.Fighting)
             {
+                // РЕЖИМ БОЯ
                 if (navAvailable && agent.isOnNavMesh) agent.isStopped = true;
                 AimAt(effectiveTarget);
 
@@ -193,6 +260,7 @@ public class TankAI : MonoBehaviour
             }
             else
             {
+                // РЕЖИМ ДВИЖЕНИЯ
                 if (navAvailable && agent.isOnNavMesh)
                 {
                     agent.isStopped = false;
@@ -201,7 +269,6 @@ public class TankAI : MonoBehaviour
                 }
                 else
                 {
-
                     Vector3 toTarget = effectiveTarget.position - transform.position;
                     toTarget.y = 0f;
                     if (toTarget.sqrMagnitude > 0.001f)
@@ -215,10 +282,9 @@ public class TankAI : MonoBehaviour
         }
         else
         {
-
+            // НЕТ ЦЕЛЕЙ — ПАТРУЛЬ
             if (navAvailable && agent.isOnNavMesh && !agent.hasPath)
             {
-
                 Vector3 rand = transform.position + Random.insideUnitSphere * 8f;
                 if (NavMesh.SamplePosition(rand, out NavMeshHit hit, 3f, NavMesh.AllAreas))
                     agent.SetDestination(hit.position);
@@ -269,6 +335,31 @@ public class TankAI : MonoBehaviour
         }
         currentTarget = best;
         if (currentTarget != null) targetAgent = currentTarget.GetComponent<NavMeshAgent>();
+    }
+
+    void FindNearestCapturePoint()
+    {
+        Collider[] captureColliders = Physics.OverlapSphere(transform.position, capturePointDetectionRadius, capturePointsLayer);
+        float bestDist = float.MaxValue;
+        CapturePoint best = null;
+
+        foreach (var col in captureColliders)
+        {
+            CapturePoint cp = col.GetComponent<CapturePoint>();
+            if (cp == null) continue;
+
+            if (cp.GetControllingTeam() == teamComp.team) continue;
+
+            float d = Vector3.SqrMagnitude(cp.transform.position - transform.position);
+            if (d < bestDist)
+            {
+                bestDist = d;
+                best = cp;
+            }
+        }
+
+        currentCapturePointTarget = best;
+        if (debugLogs && best != null) Debug.Log($"[AI] Found capture point: {best.gameObject.name} at distance {Mathf.Sqrt(bestDist):F1}");
     }
 
     bool HasLineOfSight(Transform t)
@@ -324,7 +415,6 @@ public class TankAI : MonoBehaviour
         if (targetAgent != null) targetVel = targetAgent.velocity;
         else
         {
-
             if (t.TryGetComponent<Rigidbody>(out var rb)) targetVel = rb.linearVelocity;
         }
 
@@ -365,7 +455,6 @@ public class TankAI : MonoBehaviour
         Rigidbody rb = bgo.GetComponent<Rigidbody>();
         if (rb == null) rb = bgo.AddComponent<Rigidbody>();
 
-
         if (bulletUseGravity)
         {
             float v = projectileSpeed;
@@ -387,7 +476,6 @@ public class TankAI : MonoBehaviour
             }
             else
             {
-
                 bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam, shooterDisplay);
             }
         }
@@ -403,11 +491,19 @@ public class TankAI : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRadius);
 
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, capturePointDetectionRadius);
+
         if (gunEnd != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawRay(gunEnd.position, gunEnd.forward * 5f);
         }
-    }
 
+        if (currentCapturePointTarget != null)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(transform.position, currentCapturePointTarget.transform.position);
+        }
+    }
 }
