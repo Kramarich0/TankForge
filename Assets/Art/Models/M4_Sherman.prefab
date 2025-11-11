@@ -1988,7 +1988,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 0
-  displayName: m4 Sherman
+  displayName: M4 Sherman
 --- !u!54 &6543952335926597029
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1998,8 +1998,8 @@ Rigidbody:
   m_GameObject: {fileID: 3328934320471145314}
   serializedVersion: 5
   m_Mass: 45
-  m_LinearDamping: 0.1
-  m_AngularDamping: 0.3
+  m_LinearDamping: 1.5
+  m_AngularDamping: 0.6
   m_CenterOfMass: {x: 0, y: -0.5, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}

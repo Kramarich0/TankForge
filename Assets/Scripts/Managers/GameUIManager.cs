@@ -16,17 +16,17 @@ public class GameUIManager : MonoBehaviour
     public string victoryPanelTag = "VictoryPanel";
     private GameObject victoryPanel;
     public TextMeshProUGUI victoryScoreText;
-    public TextMeshProUGUI victoryStarsText;
     private GameObject defeatPanel;
     [Header("Input")]
     public InputActionReference pauseAction;
-
     private bool isPaused = false;
     public bool IsPaused => isPaused;
     private readonly List<PlayerInput> disabledPlayerInputs = new();
     private readonly List<AudioSource> pausedAudioSources = new();
     private bool cursorWasVisible;
     private CursorLockMode cursorWasLockState;
+    [Header("Victory")]
+    public StarsDisplay victoryStarsDisplay;
 
     private void Awake()
     {
@@ -255,9 +255,8 @@ public class GameUIManager : MonoBehaviour
 
         if (victoryScoreText != null)
             victoryScoreText.text = $"Очки: {score}";
-
-        if (victoryStarsText != null)
-            victoryStarsText.text = $"Звёзды: {new string('★', stars)}";
+        Debug.Log($"stars: {stars}");
+        victoryStarsDisplay?.SetStars(stars);
 
         cursorWasVisible = Cursor.visible;
         cursorWasLockState = Cursor.lockState;

@@ -119,9 +119,6 @@ namespace TMPro.Examples
             Vector3 start_pos = m_floatingText_Transform.position;
             Color32 start_color = m_textMeshPro.color;
             float alpha = 255;
-            int int_counter = 0;
-
-
             float fadeDuration = 3 / starting_Count * CountDuration;
 
             while (current_Count > 0)
@@ -134,7 +131,8 @@ namespace TMPro.Examples
                     alpha = Mathf.Clamp(alpha - Time.deltaTime / fadeDuration * 255, 0, 255);
                 }
 
-                int_counter = (int)current_Count;
+                int int_counter = (int)current_Count;
+
                 m_textMeshPro.text = int_counter.ToString();
                 //m_textMeshPro.SetText("{0}", (int)current_Count);
 
@@ -175,7 +173,6 @@ namespace TMPro.Examples
             Vector3 start_pos = m_floatingText_Transform.position;
             Color32 start_color = m_textMesh.color;
             float alpha = 255;
-            int int_counter = 0;
 
             float fadeDuration = 3 / starting_Count * CountDuration;
 
@@ -189,7 +186,8 @@ namespace TMPro.Examples
                     alpha = Mathf.Clamp(alpha - Time.deltaTime / fadeDuration * 255, 0, 255);
                 }
 
-                int_counter = (int)current_Count;
+                int int_counter = (int)current_Count;
+
                 m_textMesh.text = int_counter.ToString();
                 //Debug.Log("Current Count:" + current_Count.ToString("f2"));
 

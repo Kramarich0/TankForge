@@ -32,8 +32,8 @@ public class CFX_SpawnSystem : MonoBehaviour
 		}
 		
 		int cursor = instance.poolCursors[uniqueId];
-		GameObject returnObj = null;
-		if(instance.onlyGetInactiveObjects)
+        GameObject returnObj;
+        if (instance.onlyGetInactiveObjects)
 		{
 			int loop = cursor;
 			while(true)

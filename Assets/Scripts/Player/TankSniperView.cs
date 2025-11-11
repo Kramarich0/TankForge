@@ -73,7 +73,7 @@ public class TankSniperView : MonoBehaviour
 
     void HandleZoom()
     {
-        float scroll = 0f;
+        float scroll;
         if (zoomAction != null && zoomAction.action != null)
         {
             Vector2 v = zoomAction.action.ReadValue<Vector2>();
@@ -105,22 +105,26 @@ public class TankSniperView : MonoBehaviour
             ref recoilPositionVelocity,
             1f / Mathf.Max(recoilDecay, 0.1f)
         );
-        driveSwayTimer += Time.deltaTime;
-        Vector3 noiseVector = new(
-         Mathf.PerlinNoise(driveSwayTimer * 3.7f, 0) * 2f - 1f,
-         Mathf.PerlinNoise(0, driveSwayTimer * 2.9f) * 2f - 1f,
-         0
-        );
 
-        Vector3 driveSway = new(
-            noiseVector.x * driveSwayAmountX,
-            noiseVector.y * driveSwayAmountY,
-            0
-        );
+        // если нужна тряска в камере раскоменть
+        // driveSwayTimer += Time.deltaTime;
+        // Vector3 noiseVector = new(
+        //  Mathf.PerlinNoise(driveSwayTimer * 3.7f, 0) * 2f - 1f,
+        //  Mathf.PerlinNoise(0, driveSwayTimer * 2.9f) * 2f - 1f,
+        //  0
+        // );
+
+        // если нужна тряска в камере раскоменть
+        // Vector3 driveSway = new(
+        //     noiseVector.x * driveSwayAmountX,
+        //     noiseVector.y * driveSwayAmountY,
+        //     0
+        // );
 
 
         Vector3 zoomOffset = gunEnd.forward * (maxZoomOffset * zoomCurrent);
-        Vector3 basePos = gunEnd.position + stableOffset + gunEnd.forward * positionOffset + zoomOffset + recoilPositionOffset + driveSway;
+        // Vector3 basePos = gunEnd.position + stableOffset + gunEnd.forward * positionOffset + zoomOffset + recoilPositionOffset + driveSway; // если нужна тряска в камере раскоменть
+        Vector3 basePos = gunEnd.position + stableOffset + gunEnd.forward * positionOffset + zoomOffset + recoilPositionOffset; // а ето заккоменть
         sniperCamera.transform.position = Vector3.Lerp(sniperCamera.transform.position, basePos, Time.deltaTime * followSpeed);
 
         Quaternion baseRot = Quaternion.LookRotation(gunEnd.forward, gunEnd.up);

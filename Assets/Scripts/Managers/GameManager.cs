@@ -103,11 +103,12 @@ public class GameManager : MonoBehaviour
 
         if (!string.IsNullOrEmpty(killerName))
         {
-            TeamEnum killerTeam = (killerName == null) ? TeamEnum.Neutral : (team == TeamEnum.Friendly ? TeamEnum.Enemy : TeamEnum.Friendly); 
+            TeamEnum killerTeam = (killerName == null) ? TeamEnum.Neutral : (team == TeamEnum.Friendly ? TeamEnum.Enemy : TeamEnum.Friendly);
             string killerColor = killerTeam == TeamEnum.Friendly ? "#00FF00" : "#FF0000";
             string killerDisplay = $"<color={killerColor}>{killerName}</color>";
+            bool isPlayer = gameObject.CompareTag("Player");
 
-            entry = $"{killerDisplay} уничтожил {victimDisplay}";
+            entry = $"{killerDisplay} {(isPlayer ? "(Вы)" : "")} уничтожил {victimDisplay}";
         }
         else
         {
