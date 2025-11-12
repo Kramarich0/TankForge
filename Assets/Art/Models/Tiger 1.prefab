@@ -988,6 +988,10 @@ MonoBehaviour:
   detectionMask:
     serializedVersion: 2
     m_Bits: 10240
+  capturePointsLayer:
+    serializedVersion: 2
+    m_Bits: 16384
+  capturePointDetectionRadius: 60
 --- !u!54 &2509401565897758532
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1556,7 +1560,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6203774618367266060}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00009284266, y: 0.988748, z: -0.00061366556, w: -0.14958963}
+  m_LocalRotation: {x: -0.00014539057, y: 0.96609193, z: -0.00054400385, w: -0.2581979}
   m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

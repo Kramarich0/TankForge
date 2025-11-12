@@ -12,7 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/SelectLevel.unity
     guid: 9059bd50c18959142a90db0852609d04
   - enabled: 1
-    path: Assets/Scenes/Levels/Level1.unity
+    path: Assets/Scenes/Single/Levels/Level1.unity
     guid: f86e79e0dd9cb6349a7ba9ccc2def194
+  - enabled: 1
+    path: Assets/Scenes/Coop/Levels_coop/Level1_coop.unity
+    guid: ba0f9126b0463284882dcbe37242290e
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0

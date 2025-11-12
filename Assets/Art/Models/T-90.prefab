@@ -1440,6 +1440,8 @@ GameObject:
   - component: {fileID: 1159757686218018535}
   - component: {fileID: 1497104701857071043}
   - component: {fileID: 846727354553475939}
+  - component: {fileID: 8669610538618956727}
+  - component: {fileID: 6922748483138075808}
   m_Layer: 0
   m_Name: T-90
   m_TagString: Player
@@ -1548,6 +1550,12 @@ MonoBehaviour:
   acceleration: 1.5
   deceleration: 8
   turnSpeed: 37
+  turnWhileReverseFactor: 0.6
+  rotationPivot: {fileID: 0}
+  adjustRigidbodyCenterOfMass: 1
+  useRigidbody: 1
+  inputDeadzone: 0.02
+  rotationSmoothTime: 0.06
   idleSound: {fileID: 8300000, guid: 424fa93cf23ad364491b37aef2a2cb38, type: 3}
   driveSound: {fileID: 8300000, guid: ff4a19a8ba7e622489b396ca9fe6ff5c, type: 3}
   minVolume: 0.2
@@ -1571,7 +1579,45 @@ MonoBehaviour:
   maxHealth: 1000
   currentHealth: 0
   healthDisplay: {fileID: 0}
-  aiHealthDisplay: {fileID: 0}
+--- !u!114 &8669610538618956727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2879329716186075028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
+  team: 2
+  displayName: Tank
+--- !u!114 &6922748483138075808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2879329716186075028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &2951029461762412941
 GameObject:
   m_ObjectHideFlags: 0
@@ -2113,11 +2159,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankSniperView
   toggleViewAction: {fileID: 1647088302594120134, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
+  zoomAction: {fileID: 0}
   gunEnd: {fileID: 4874249112395537688}
   mainCamera: {fileID: 0}
   sniperCamera: {fileID: 70927241016815913}
-  crosshairUI: {fileID: 0}
+  crosshairAimUI: {fileID: 0}
+  crosshairSniperUI: {fileID: 0}
   sniperVignette: {fileID: 0}
+  tankShoot: {fileID: 0}
+  zoomStep: 2
+  zoomSpeed: 8
+  zoomFOVReduction: 15
+  maxZoomOffset: 0.35
+  positionOffset: -0.2
+  followSpeed: 10
 --- !u!1 &4240819432437610369
 GameObject:
   m_ObjectHideFlags: 0
@@ -3797,9 +3852,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 836a80bade71a5b4db9622a32c6fa123, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GunElevation
-  lookAction: {fileID: -5456195109082554791, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  sensitivity: 0.05
-  maxDegreesPerSecond: 10
+  cameraTransform: {fileID: 0}
+  smoothSpeed: 8
   minAngle: -4
   maxAngle: 20
 --- !u!114 &4873104517429866319
@@ -3817,6 +3871,7 @@ MonoBehaviour:
   shootAction: {fileID: -4329931653391804024, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
   gunEnd: {fileID: 4874249112395537688}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
+  bulletSpeed: 800
   fireRate: 0.0975
   muzzleSmoke: {fileID: 0}
   audioSource: {fileID: 0}
@@ -3824,8 +3879,11 @@ MonoBehaviour:
   reloadSound: {fileID: 8300000, guid: c105999fa8579cf458be59ad56674a31, type: 3}
   reloadDisplay: {fileID: 0}
   recoilAmount: 0.1
-  recoilSpeed: 1
   returnSpeed: 2
+  recoilBack: 0.15
+  recoilUp: 0.05
+  recoilSpeed: 1
+  recoilReturnSpeed: 7
 --- !u!82 &8540135907127830429
 AudioSource:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 836162411992103540}
   - component: {fileID: 8898719982251777250}
   - component: {fileID: 5797111078022311551}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Turret
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 4304785262697105861}
   - component: {fileID: 3261238701930315770}
   - component: {fileID: 4791733948423830216}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel4_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 4896138447592320611}
   - component: {fileID: 105261974999667941}
   - component: {fileID: 3678375309401451182}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -303,7 +303,7 @@ GameObject:
   - component: {fileID: 8736172783374060452}
   - component: {fileID: 6749558277758836024}
   - component: {fileID: 2433894371234594558}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel4_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,8 +485,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamMarker
   pivot: {fileID: 1744691670736060517}
-  teamComp: {fileID: 62971683839857363}
-  tankAI: {fileID: 6310025947854341790}
+  teamComp: {fileID: 0}
+  tankAI: {fileID: 0}
   lightSprite: {fileID: 21300000, guid: 922fdc92c6869b24f8980ee3b8bbe6ed, type: 3}
   mediumSprite: {fileID: 21300000, guid: c5764947cf2547e4dbfa0c28030cc023, type: 3}
   heavySprite: {fileID: 21300000, guid: b5c942927194d3e40915e0e63da568b0, type: 3}
@@ -504,7 +504,7 @@ GameObject:
   - component: {fileID: 5662505057870917691}
   - component: {fileID: 7968754518275791480}
   - component: {fileID: 8682100230049488244}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel5_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -593,7 +593,7 @@ GameObject:
   - component: {fileID: 8317971545565800552}
   - component: {fileID: 4914754285703937682}
   - component: {fileID: 3758395826452200722}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel6_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -773,8 +773,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 594060e893a7f4649900190d5c498d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthMarkerSimple
-  targetHealth: {fileID: 6074745128718472985}
-  targetTeam: {fileID: 62971683839857363}
+  targetHealth: {fileID: 0}
+  targetTeam: {fileID: 0}
   width: 1
   height: 0.15
 --- !u!1 &1594871046762841514
@@ -788,7 +788,7 @@ GameObject:
   - component: {fileID: 8351021657761916702}
   - component: {fileID: 4083878841189248769}
   - component: {fileID: 7471282638572412613}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Idler_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -875,7 +875,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 728044722205155219}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Exhaust_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -908,7 +908,7 @@ GameObject:
   - component: {fileID: 6201241007373569656}
   - component: {fileID: 5163451909591696021}
   - component: {fileID: 4177301964878266056}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel2_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -995,13 +995,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 91706448242340373}
-  - component: {fileID: 6074745128718472985}
-  - component: {fileID: 8489948446680324052}
-  - component: {fileID: 6310025947854341790}
   - component: {fileID: 8453794299781087703}
-  - component: {fileID: 62971683839857363}
-  - component: {fileID: 4588363113449324173}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: m4a3_sherman_destroyed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1028,109 +1023,6 @@ Transform:
   - {fileID: 4003154749638333030}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6074745128718472985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d93b28653ce0d814d883abd4fb7cff8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankHealth
-  maxHealth: 100
-  currentHealth: 0
-  healthDisplay: {fileID: 0}
---- !u!195 &8489948446680324052
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 0
-  m_AgentTypeID: 0
-  m_Radius: 1.4
-  m_Speed: 1
-  m_Acceleration: 6
-  avoidancePriority: 50
-  m_AngularSpeed: 80
-  m_StoppingDistance: 8.5
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2.7
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &6310025947854341790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankAI
-  tankClass: 1
-  lightStats:
-    health: 75
-    moveSpeed: 5
-    rotationSpeed: 60
-    fireRate: 1
-    shootRange: 80
-    bulletDamage: 100
-  mediumStats:
-    health: 150
-    moveSpeed: 4.3
-    rotationSpeed: 40
-    fireRate: 0.1
-    shootRange: 100
-    bulletDamage: 50
-  heavyStats:
-    health: 300
-    moveSpeed: 2
-    rotationSpeed: 30
-    fireRate: 0.5
-    shootRange: 120
-    bulletDamage: 10
-  enemyHealthDisplayPrefab: {fileID: 0}
-  player: {fileID: 0}
-  turret: {fileID: 9007876570790468700}
-  gun: {fileID: 8750642076954178279}
-  gunEnd: {fileID: 5422209462523803796}
-  body: {fileID: 2883153919416591581}
-  bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  shootRange: 1000
-  moveSpeed: 3
-  rotationSpeed: 40
-  fireRate: 9
-  minGunAngle: -5
-  maxGunAngle: 20
-  projectileSpeed: 80
-  bulletUseGravity: 1
-  idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
-  driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
-  shootSound: {fileID: 8300000, guid: 62505f6711ea120428991ed5cf386584, type: 3}
-  debugGizmos: 1
-  debugLogs: 0
-  invertBodyForward: 0
-  invertTurretForward: 0
-  gunUsesLocalXForPitch: 0
-  detectionRadius: 500
-  fieldOfView: 140
-  detectionMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  capturePointsLayer:
-    serializedVersion: 2
-    m_Bits: 16384
-  capturePointDetectionRadius: 60
 --- !u!54 &8453794299781087703
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1158,117 +1050,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &62971683839857363
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
-  team: 0
-  displayName: M4a3 Sherman
---- !u!82 &4588363113449324173
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!1 &2153568777276391244
 GameObject:
   m_ObjectHideFlags: 0
@@ -1280,7 +1061,7 @@ GameObject:
   - component: {fileID: 8822534377406605599}
   - component: {fileID: 4180437386061478324}
   - component: {fileID: 6637398852752419674}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel2_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1369,7 +1150,7 @@ GameObject:
   - component: {fileID: 7539209748523072569}
   - component: {fileID: 6007318727435358307}
   - component: {fileID: 2063109517826802805}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Track_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1458,7 +1239,7 @@ GameObject:
   - component: {fileID: 5881412858923821138}
   - component: {fileID: 6925603966079708278}
   - component: {fileID: 4305914397749301830}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel6_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1548,7 +1329,7 @@ GameObject:
   - component: {fileID: 7220531785067939300}
   - component: {fileID: 4251076079139258277}
   - component: {fileID: 5787382758132284555}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1665,7 +1446,7 @@ GameObject:
   - component: {fileID: 8301961646604002662}
   - component: {fileID: 706708036459019710}
   - component: {fileID: 4722601214400201994}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel3_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1754,7 +1535,7 @@ GameObject:
   - component: {fileID: 5904651697406441604}
   - component: {fileID: 6332583869446596459}
   - component: {fileID: 962898281975786133}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel1_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1841,7 +1622,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3206106429626225508}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheels_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1885,7 +1666,7 @@ GameObject:
   - component: {fileID: 6969253019104070162}
   - component: {fileID: 201525080070504993}
   - component: {fileID: 4905459704317917142}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel3_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1974,7 +1755,7 @@ GameObject:
   - component: {fileID: 4920011698987968164}
   - component: {fileID: 379117208730463574}
   - component: {fileID: 4972375737188231137}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Sprocket_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2061,7 +1842,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5422209462523803796}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Muzzle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2094,7 +1875,7 @@ GameObject:
   - component: {fileID: 405737622065540977}
   - component: {fileID: 1867642184874412948}
   - component: {fileID: 763338131217206328}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel5_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2181,7 +1962,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8750642076954178279}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2214,7 +1995,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3901021437064550326}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheels_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2258,7 +2039,7 @@ GameObject:
   - component: {fileID: 526304019716098759}
   - component: {fileID: 9200088569451251625}
   - component: {fileID: 2672676237917153655}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Track_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2347,7 +2128,7 @@ GameObject:
   - component: {fileID: 8579620169441844377}
   - component: {fileID: 106195567208661283}
   - component: {fileID: 3758745287843206052}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Mantlet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2437,7 +2218,7 @@ GameObject:
   - component: {fileID: 8241696312521367271}
   - component: {fileID: 745062426541491383}
   - component: {fileID: 2627600049430409885}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Roller1_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2524,7 +2305,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2621334657159906467}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Muzzle_MG3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2557,7 +2338,7 @@ GameObject:
   - component: {fileID: 7398066611653654803}
   - component: {fileID: 385789085263784876}
   - component: {fileID: 3925402486686347454}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Roller3_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2646,7 +2427,7 @@ GameObject:
   - component: {fileID: 8998040017430296052}
   - component: {fileID: 758143973835802412}
   - component: {fileID: 7954426783845504046}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Idler_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2735,7 +2516,7 @@ GameObject:
   - component: {fileID: 8241437781623674031}
   - component: {fileID: 7390706730334850630}
   - component: {fileID: 2151563525570400344}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Roller3_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2824,7 +2605,7 @@ GameObject:
   - component: {fileID: 3021957302413737489}
   - component: {fileID: 1789109173034383390}
   - component: {fileID: 8895362721826189325}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Sprocket_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2913,7 +2694,7 @@ GameObject:
   - component: {fileID: 4002560795511989150}
   - component: {fileID: 1790256388335067274}
   - component: {fileID: 6622737235302453725}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Roller2_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3002,7 +2783,7 @@ GameObject:
   - component: {fileID: 7610699771830882019}
   - component: {fileID: 4246620622037236742}
   - component: {fileID: 6123330095188241261}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Wheel1_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3091,7 +2872,7 @@ GameObject:
   - component: {fileID: 6106465886442367738}
   - component: {fileID: 1551878443063968851}
   - component: {fileID: 7297774053772375934}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Roller1_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3178,7 +2959,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8647490001821082425}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Muzzle_MG2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3209,7 +2990,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5311712253719025863}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Muzzle_MG1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3242,7 +3023,7 @@ GameObject:
   - component: {fileID: 5367791851451216951}
   - component: {fileID: 4036103418758198994}
   - component: {fileID: 7801925422198656422}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Roller2_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3329,7 +3110,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1828826403499189042}
-  m_Layer: 13
+  m_Layer: 0
   m_Name: M4A3(75)_Sherman_Exhaust_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
