@@ -38,7 +38,7 @@ public class TankHealth : MonoBehaviour, IDamageable
         lastAttackerName = source;
 
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
-о к        Debug.Log($"[TankHealth] {gameObject.name} TakeDamage {amount} from {source}. HP before: {currentHealth}");
+        Debug.Log($"[TankHealth] {gameObject.name} TakeDamage {amount} from {source}. HP before: {currentHealth}");
 
         if (currentHealth <= 0f)
         {
