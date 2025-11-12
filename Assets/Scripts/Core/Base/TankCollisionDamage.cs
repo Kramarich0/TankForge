@@ -10,7 +10,7 @@ public class TankCollisionDamage : MonoBehaviour
     public float minCollisionSpeed = 3f;
     [Tooltip("Multiplier to tune damage scale. Start with 0.01 - 0.1 and tune.")]
     public float damageMultiplier = 0.02f;
-    public bool debugLogs = true;
+    public bool debugLogs = false;
 
 
     private HashSet<int> processedCollisionIds = new HashSet<int>();

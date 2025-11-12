@@ -28,25 +28,22 @@ public class TankHealth : MonoBehaviour, IDamageable
 
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(int amount, string source = null)
     {
         if (currentHealth <= 0) return;
 
-        currentHealth -= damage;
+        currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0f);
 
+        lastAttackerName = source;
+
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
-        Debug.Log($"{gameObject.name} получил {damage} урона, осталось HP: {currentHealth}");
+о к        Debug.Log($"[TankHealth] {gameObject.name} TakeDamage {amount} from {source}. HP before: {currentHealth}");
 
         if (currentHealth <= 0f)
         {
             Die(killerName: lastAttackerName);
         }
-    }
-
-    public void SetAttacker(string attackerName)
-    {
-        lastAttackerName = attackerName;
     }
 
     void Die(string killerName = null)
@@ -86,12 +83,10 @@ public class TankHealth : MonoBehaviour, IDamageable
 
             if (TryGetComponent<Rigidbody>(out var rbOriginal) && hull.TryGetComponent<Rigidbody>(out var rbHull))
             {
-                rbHull.linearVelocity = rbOriginal.linearVelocity;      
-                rbHull.angularVelocity = rbOriginal.angularVelocity; 
+                rbHull.linearVelocity = rbOriginal.linearVelocity;
+                rbHull.angularVelocity = rbOriginal.angularVelocity;
             }
         }
-
-
 
         Destroy(gameObject);
     }

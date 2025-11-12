@@ -8,7 +8,7 @@ public class TankShoot : MonoBehaviour
     [Header("Shooting")]
     public InputActionReference shootAction;
     public Transform gunEnd;
-    public GameObject bulletPrefab;
+    public BulletPool bulletPool;
     public float bulletSpeed = 800f;
     public float fireRate = 0.5f;
 
@@ -35,6 +35,7 @@ public class TankShoot : MonoBehaviour
     public float recoilUp = 0.05f;
     public float recoilSpeed = 20f;
     public float recoilReturnSpeed = 7f;
+    public int bulletDamage = 20;
 
     private Vector3 recoilVelocity;
 
@@ -60,7 +61,6 @@ public class TankShoot : MonoBehaviour
             float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
             reloadDisplay.SetReload(remainingTime, 1f / fireRate);
         }
-
 
         if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
         {
@@ -115,26 +115,24 @@ public class TankShoot : MonoBehaviour
             Invoke(nameof(HideMuzzleSmoke), 1.2f);
         }
 
-        if (bulletPrefab != null && gunEnd != null)
+        if (bulletPool != null && gunEnd != null)
         {
-            GameObject bullet = Instantiate(bulletPrefab, gunEnd.position, gunEnd.rotation);
+            TeamComponent teamComp = GetComponentInParent<TeamComponent>();
+            TeamEnum team = teamComp ? teamComp.team : TeamEnum.Neutral;
+            string shooterDisplay = teamComp != null && !string.IsNullOrEmpty(teamComp.displayName)
+             ? teamComp.displayName
+             : gameObject.name;
 
+            Collider[] shooterColliders = GetComponentsInParent<Collider>();
 
-            if (bullet.TryGetComponent<Bullet>(out var bulletScript))
-            {
-                TeamComponent teamComp = GetComponentInParent<TeamComponent>();
-                TeamEnum team = teamComp ? teamComp.team : TeamEnum.Neutral;
-                string shooterDisplay = teamComp != null && !string.IsNullOrEmpty(teamComp.displayName)
-                    ? teamComp.displayName
-                    : gameObject.name;
-
-                bulletScript.Initialize(gunEnd.forward * bulletSpeed, team, shooterDisplay);
-            }
-            else if (bullet.TryGetComponent<Rigidbody>(out var rb))
-            {
-
-                rb.linearVelocity = gunEnd.forward * bulletSpeed;
-            }
+            bulletPool.SpawnBullet(
+                gunEnd.position,
+                gunEnd.forward * bulletSpeed,
+                team,
+                shooterDisplay,
+                bulletDamage,
+                shooterColliders
+            );
         }
         onShotFired?.Invoke();
     }

@@ -271,7 +271,7 @@ MonoBehaviour:
   RecenteringTarget: 2
   HorizontalAxis:
     Value: 0
-    Center: -0
+    Center: 0
     Range: {x: -180, y: 180}
     Wrap: 1
     Recentering:
@@ -11872,17 +11872,9 @@ PrefabInstance:
       value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6945161926540087329, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
-      propertyPath: fireRate
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6945161926540087329, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
       propertyPath: bulletPool
       value: 
       objectReference: {fileID: 702589404}
-    - target: {fileID: 6945161926540087329, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
-      propertyPath: bulletSpeed
-      value: 1000
-      objectReference: {fileID: 0}
     - target: {fileID: 6945161926540087329, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
       propertyPath: reloadDisplay
       value: 

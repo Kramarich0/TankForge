@@ -84,6 +84,8 @@ public class TankAI : MonoBehaviour
     Transform currentTarget;
     NavMeshAgent targetAgent;
     private AIState currentState = AIState.Idle;
+    public BulletPool bulletPool;
+
 
     float scanTimer = 0f;
     readonly float scanInterval = 0.4f;
@@ -506,28 +508,15 @@ public class TankAI : MonoBehaviour
 
     void ShootAt(Transform t)
     {
-        if (bulletPrefab == null || gunEnd == null) return;
+        if (bulletPool == null || gunEnd == null) return;
 
         Vector3 predicted = PredictTargetPosition(t);
         Vector3 aim = predicted - gunEnd.position;
-        Vector3 horizontal = new(aim.x, 0f, aim.z);
+        Vector3 horizontal = new Vector3(aim.x, 0f, aim.z);
         float distance = horizontal.magnitude;
         float dy = aim.y;
 
-        GameObject bgo = Instantiate(bulletPrefab, gunEnd.position, Quaternion.LookRotation(aim.normalized, Vector3.up));
-        Bullet bullet = bgo.GetComponent<Bullet>();
-        if (bullet == null) bullet = bgo.AddComponent<Bullet>();
-
-        bullet.damage = bulletDamage;
-        bullet.shooterTeam = teamComp != null ? teamComp.team : TeamEnum.Neutral;
-
-        string shooterDisplay = (teamComp != null && !string.IsNullOrEmpty(teamComp.displayName)) ? teamComp.displayName : gameObject.name;
-        if (!bgo.TryGetComponent<Rigidbody>(out _)) _ = bgo.AddComponent<Rigidbody>();
-
-        if (shootSource != null)
-        {
-            shootSource.Play();
-        }
+        Vector3 initVelocity;
 
         if (bulletUseGravity)
         {
@@ -541,23 +530,38 @@ public class TankAI : MonoBehaviour
                 float sq = Mathf.Sqrt(under);
                 float lowAngle = Mathf.Atan2(v * v - sq, g * d);
                 float highAngle = Mathf.Atan2(v * v + sq, g * d);
-
                 float chosen = Mathf.Min(lowAngle, highAngle);
+
                 Vector3 flatDir = horizontal.normalized;
                 Vector3 launchDir = Quaternion.AngleAxis(chosen * Mathf.Rad2Deg, Vector3.Cross(flatDir, Vector3.up)) * flatDir;
-                Vector3 initVel = launchDir * v;
-
-                bullet.Initialize(initVel, bullet.shooterTeam, shooterDisplay);
+                initVelocity = launchDir * v;
             }
             else
             {
-                bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam, shooterDisplay);
+                initVelocity = aim.normalized * projectileSpeed;
             }
         }
         else
         {
-            bullet.Initialize(aim.normalized * projectileSpeed, bullet.shooterTeam, shooterDisplay);
+            initVelocity = aim.normalized * projectileSpeed;
         }
+
+        string shooterDisplay = (teamComp != null && !string.IsNullOrEmpty(teamComp.displayName))
+            ? teamComp.displayName
+            : gameObject.name;
+
+        Collider[] shooterColliders = GetComponentsInParent<Collider>();
+
+        bulletPool.SpawnBullet(
+            gunEnd.position,
+            initVelocity,
+            teamComp != null ? teamComp.team : TeamEnum.Neutral,
+            shooterDisplay,
+            bulletDamage,
+            shooterColliders
+        );
+
+        shootSource?.Play();
     }
 
     void OnDrawGizmos()
