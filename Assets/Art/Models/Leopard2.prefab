@@ -1949,6 +1949,7 @@ MonoBehaviour:
   maxHealth: 10
   currentHealth: 0
   healthDisplay: {fileID: 0}
+  deathPrefab: {fileID: 5814213489443158634, guid: 9f1fcfbcc24fbdc499b005bdfe3aee9a, type: 3}
 --- !u!195 &3351642093755439465
 NavMeshAgent:
   m_ObjectHideFlags: 0

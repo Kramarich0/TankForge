@@ -112,9 +112,18 @@ public class GameManager : MonoBehaviour
         };
     }
 
-    public void OnTankDestroyed(TeamEnum team, int ticketCost, string killerName = null, string victimName = null, bool killerIsPlayer = false)
+    public void OnTankDestroyed(TeamComponent victimTeamComponent, int ticketCost, string killerName = null, string victimName = null, bool killerIsPlayer = false)
     {
-        if (isGameFinished) return;
+        if (isGameFinished || victimTeamComponent == null) return;
+
+        TeamEnum team = victimTeamComponent.team;
+        if (team == TeamEnum.Neutral) return;
+
+        CapturePoint[] allPoints = FindObjectsOfType<CapturePoint>();
+        foreach (CapturePoint point in allPoints)
+        {
+            point.RemoveTeamComponent(victimTeamComponent);
+        }
 
         string victimColor = team == TeamEnum.Friendly ? "#00FF00" : "#FF0000";
         string victimDisplay = victimName ?? (team == TeamEnum.Friendly ? "Союзник" : "Враг");

@@ -822,6 +822,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthDisplay: {fileID: 0}
+  deathPrefab: {fileID: 2377131968068272437, guid: b963691fd0dcb544cb696f4ff1cba611, type: 3}
 --- !u!195 &2588661511699522136
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -896,7 +897,7 @@ MonoBehaviour:
   idleSound: {fileID: 0}
   driveSound: {fileID: 0}
   shootSound: {fileID: 0}
-  debugGizmos: 1
+  debugGizmos: 0
   debugLogs: 0
   invertBodyForward: 0
   invertTurretForward: 0

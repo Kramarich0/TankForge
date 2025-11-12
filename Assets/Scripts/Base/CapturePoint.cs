@@ -8,26 +8,35 @@ public class CapturePoint : MonoBehaviour
 {
     [Header("Capture Settings")]
     public float captureTime = 10f;
+    public float captureRatePerPlayer = 1f;
+    public float neutralDecaySpeed = 1f;
+    public float contestDecaySpeed = 4f;
     public int ticketsPerInterval = 10;
     public float ticketInterval = 1f;
-    [Header("UI Elements")]
+
+    [Header("UI")]
     public Image captureBackgroundUI;
     public Image captureProgressUI;
-    [Header("Audio")]
+
+    [Header("Audio / Setup")]
     public CapturePointEnum pointType = CapturePointEnum.Neutral;
     public TeamEnum startingTeam = TeamEnum.Neutral;
+
     private TeamEnum controllingTeam = TeamEnum.Neutral;
+
+    
     private float captureProgress = 0f;
+
     private Coroutine ticketCoroutine;
 
     private readonly Dictionary<TeamEnum, HashSet<TeamComponent>> present = new()
     {
         { TeamEnum.Friendly, new HashSet<TeamComponent>() },
-        { TeamEnum.Enemy, new HashSet<TeamComponent>() }
+        { TeamEnum.Enemy,    new HashSet<TeamComponent>() }
     };
 
-    private TeamEnum pendingCapturer = TeamEnum.Neutral;
-    private TeamEnum currentFillTeam = TeamEnum.Neutral;
+    
+    private const float EPS = 0.001f;
 
     void Start()
     {
@@ -38,10 +47,11 @@ public class CapturePoint : MonoBehaviour
         else
             controllingTeam = startingTeam;
 
-        captureProgress = (controllingTeam == TeamEnum.Neutral) ? 0f : captureTime;
-        currentFillTeam = (controllingTeam == TeamEnum.Neutral) ? TeamEnum.Neutral : controllingTeam;
+        if (controllingTeam == TeamEnum.Friendly) captureProgress = captureTime;
+        else if (controllingTeam == TeamEnum.Enemy) captureProgress = -captureTime;
+        else captureProgress = 0f;
 
-        Debug.Log($"[CapturePoint] Start: controllingTeam={controllingTeam}, pointType={pointType}, startingTeam={startingTeam}");
+        UpdateUI();
     }
 
     void Awake()
@@ -56,7 +66,6 @@ public class CapturePoint : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Some Enter");
         if (!other.TryGetComponent<TeamComponent>(out var tc))
             tc = other.GetComponentInParent<TeamComponent>();
 
@@ -76,7 +85,6 @@ public class CapturePoint : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        Debug.Log("Some Exit");
         if (!other.TryGetComponent<TeamComponent>(out var tc))
             tc = other.GetComponentInParent<TeamComponent>();
 
@@ -94,98 +102,134 @@ public class CapturePoint : MonoBehaviour
     {
         int friendlyCount = present[TeamEnum.Friendly].Count;
         int enemyCount = present[TeamEnum.Enemy].Count;
+        int net = friendlyCount - enemyCount;
 
-        TeamEnum dominantTeam = TeamEnum.Neutral;
-        if (friendlyCount > enemyCount) dominantTeam = TeamEnum.Friendly;
-        else if (enemyCount > friendlyCount) dominantTeam = TeamEnum.Enemy;
-
-
-        if (controllingTeam == TeamEnum.Neutral)
+        
+        
+        
+        if (controllingTeam != TeamEnum.Neutral)
         {
-            if (friendlyCount > 0 && enemyCount > 0)
-            {
+            
 
-                captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * 0.5f);
-                pendingCapturer = TeamEnum.Neutral;
-                if (captureProgress <= 0f)
-                    currentFillTeam = TeamEnum.Neutral;
+            
+            if (friendlyCount == 0 && enemyCount == 0)
+            {
+                
             }
-            else if (dominantTeam != TeamEnum.Neutral)
+            
+            else if (friendlyCount == enemyCount)
             {
-
-                if (pendingCapturer != dominantTeam)
-                    pendingCapturer = dominantTeam;
-
-                float speed = Mathf.Max(1, (dominantTeam == TeamEnum.Friendly ? friendlyCount : enemyCount));
-                captureProgress += Time.deltaTime * speed;
-
-                currentFillTeam = pendingCapturer;
-
-                if (captureProgress >= captureTime)
+                
+                if ((controllingTeam == TeamEnum.Friendly && friendlyCount > 0) ||
+                    (controllingTeam == TeamEnum.Enemy && enemyCount > 0))
                 {
-
-                    SetControllingTeam(pendingCapturer);
-                    pendingCapturer = TeamEnum.Neutral;
+                    if (controllingTeam == TeamEnum.Friendly)
+                    {
+                        float speed = Mathf.Max(1, friendlyCount) * captureRatePerPlayer;
+                        captureProgress = Mathf.MoveTowards(captureProgress, captureTime, Time.deltaTime * speed);
+                    }
+                    else
+                    {
+                        float speed = Mathf.Max(1, enemyCount) * captureRatePerPlayer;
+                        captureProgress = Mathf.MoveTowards(captureProgress, -captureTime, Time.deltaTime * speed);
+                    }
+                }
+                else
+                {
+                    
+                    captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * neutralDecaySpeed);
                 }
             }
-            else
+            
+            else if (net > 0) 
             {
-
-                captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * 0.5f);
-                if (captureProgress <= 0f)
-                {
-                    pendingCapturer = TeamEnum.Neutral;
-                    currentFillTeam = TeamEnum.Neutral;
-                }
+                float speed = Mathf.Max(1, net) * captureRatePerPlayer;
+                captureProgress = Mathf.MoveTowards(captureProgress, captureTime, Time.deltaTime * speed);
+            }
+            else 
+            {
+                float speed = Mathf.Max(1, -net) * captureRatePerPlayer;
+                captureProgress = Mathf.MoveTowards(captureProgress, -captureTime, Time.deltaTime * speed);
             }
         }
-
         else
         {
-            if (friendlyCount > 0 && enemyCount > 0)
+            
+            if (friendlyCount == 0 && enemyCount == 0)
             {
-
-                captureProgress = captureTime;
-                currentFillTeam = controllingTeam;
-                pendingCapturer = TeamEnum.Neutral;
+                captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * neutralDecaySpeed);
             }
-            else if (dominantTeam != TeamEnum.Neutral && dominantTeam != controllingTeam)
+            else if (friendlyCount == enemyCount)
             {
-
-                float speed = Mathf.Max(1, (dominantTeam == TeamEnum.Friendly ? friendlyCount : enemyCount));
-                captureProgress -= Time.deltaTime * speed;
-
-
-                currentFillTeam = controllingTeam;
-
-
-                if (captureProgress <= 0f)
-                {
-                    StartNeutralCaptureBy(dominantTeam);
-                }
+                captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * neutralDecaySpeed);
+            }
+            else if (net > 0)
+            {
+                float speed = Mathf.Max(1, net) * captureRatePerPlayer;
+                captureProgress = Mathf.MoveTowards(captureProgress, captureTime, Time.deltaTime * speed);
             }
             else
             {
-
-                captureProgress = captureTime;
-                currentFillTeam = controllingTeam;
-                pendingCapturer = TeamEnum.Neutral;
+                float speed = Mathf.Max(1, -net) * captureRatePerPlayer;
+                captureProgress = Mathf.MoveTowards(captureProgress, -captureTime, Time.deltaTime * speed);
             }
         }
 
-        captureProgress = Mathf.Clamp(captureProgress, 0f, captureTime);
+        
+        
+        
+        
+        if (controllingTeam != TeamEnum.Neutral)
+        {
+            bool stillFullyOwned =
+                (controllingTeam == TeamEnum.Friendly && captureProgress >= captureTime - EPS) ||
+                (controllingTeam == TeamEnum.Enemy && captureProgress <= -captureTime + EPS);
+
+            if (!stillFullyOwned)
+            {
+                
+                LoseControl();
+            }
+        }
+
+        
+        
+        
+        if (captureProgress >= captureTime && controllingTeam != TeamEnum.Friendly)
+        {
+            SetControllingTeam(TeamEnum.Friendly);
+        }
+        else if (captureProgress <= -captureTime && controllingTeam != TeamEnum.Enemy)
+        {
+            SetControllingTeam(TeamEnum.Enemy);
+        }
+
+        captureProgress = Mathf.Clamp(captureProgress, -captureTime, captureTime);
         UpdateUI();
+    }
+
+    
+    private void LoseControl()
+    {
+        if (ticketCoroutine != null)
+        {
+            StopCoroutine(ticketCoroutine);
+            ticketCoroutine = null;
+        }
+        Debug.Log($"[CapturePoint] Владелец потерян (прогресс {captureProgress}). Контроль снимается.");
+        controllingTeam = TeamEnum.Neutral;
     }
 
     private void UpdateUI()
     {
         if (captureProgressUI == null || captureBackgroundUI == null) return;
 
-        float normalizedProgress = captureTime > 0f ? captureProgress / captureTime : 0f;
-        captureProgressUI.fillAmount = normalizedProgress;
+        float normalized = captureTime > 0f ? Mathf.Abs(captureProgress) / captureTime : 0f;
+        captureProgressUI.fillAmount = normalized;
 
-        captureProgressUI.color = currentFillTeam == TeamEnum.Friendly ? Color.green :
-                                currentFillTeam == TeamEnum.Enemy ? Color.red : Color.clear;
+        if (captureProgress > 0.001f) captureProgressUI.color = Color.green;
+        else if (captureProgress < -0.001f) captureProgressUI.color = Color.red;
+        else captureProgressUI.color = Color.clear;
 
         captureBackgroundUI.fillAmount = 1f;
         captureBackgroundUI.color = Color.gray;
@@ -194,36 +238,33 @@ public class CapturePoint : MonoBehaviour
     private void SetControllingTeam(TeamEnum team)
     {
         controllingTeam = team;
-        captureProgress = captureTime;
-        currentFillTeam = team;
-        pendingCapturer = TeamEnum.Neutral;
+        captureProgress = (team == TeamEnum.Friendly) ? captureTime : -captureTime;
 
+        
         if (ticketCoroutine != null) StopCoroutine(ticketCoroutine);
         ticketCoroutine = StartCoroutine(TicketDrainRoutine());
 
         Debug.Log($"[CapturePoint] Точка захвачена командой: {team}");
     }
 
-
-
-    private void StartNeutralCaptureBy(TeamEnum capturer)
-    {
-
-        if (ticketCoroutine != null) StopCoroutine(ticketCoroutine);
-        ticketCoroutine = null;
-
-        controllingTeam = TeamEnum.Neutral;
-        captureProgress = 0f;
-        pendingCapturer = capturer;
-        currentFillTeam = TeamEnum.Neutral;
-        Debug.Log($"[CapturePoint] Владелец потерян — нейтральная. Начинает захват: {capturer}");
-    }
-
     private IEnumerator TicketDrainRoutine()
     {
+        
         while (controllingTeam != TeamEnum.Neutral)
         {
             yield return new WaitForSeconds(ticketInterval);
+
+            
+            bool fullyCaptured =
+                (controllingTeam == TeamEnum.Friendly && captureProgress >= captureTime - EPS) ||
+                (controllingTeam == TeamEnum.Enemy && captureProgress <= -captureTime + EPS);
+
+            if (!fullyCaptured)
+            {
+                
+                Debug.Log("[CapturePoint] TicketDrain: владение больше не полностью — останавливаем слив.");
+                yield break;
+            }
 
             TeamEnum enemyTeam = controllingTeam == TeamEnum.Friendly ? TeamEnum.Enemy : TeamEnum.Friendly;
             if (GameManager.Instance != null)
@@ -234,6 +275,17 @@ public class CapturePoint : MonoBehaviour
         }
     }
 
+    public void RemoveTeamComponent(TeamComponent tc)
+    {
+        if (tc == null || tc.team == TeamEnum.Neutral) return;
+
+        if (present.ContainsKey(tc.team))
+        {
+            present[tc.team].Remove(tc);
+            Debug.Log($"[CapturePoint] Removed destroyed tank: {tc.name}");
+        }
+    }
+
     public TeamEnum GetControllingTeam() => controllingTeam;
-    public float GetCaptureProgressNormalized() => captureTime > 0f ? (captureProgress / captureTime) : 0f;
+    public float GetCaptureProgressNormalized() => captureTime > 0f ? Mathf.Abs(captureProgress) / captureTime : 0f;
 }

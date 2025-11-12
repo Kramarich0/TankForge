@@ -16,11 +16,15 @@ public class TankHealth : MonoBehaviour, IDamageable
     private TeamComponent teamComp;
     private string lastAttackerName = null;
 
+    [Header("Death Prefab")]
+    public GameObject deathPrefab;
+
     void Awake()
     {
         teamComp = GetComponent<TeamComponent>();
         currentHealth = maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
     }
 
     public void TakeDamage(int damage)
@@ -65,12 +69,17 @@ public class TankHealth : MonoBehaviour, IDamageable
             if (!isPlayer)
             {
                 string victimName = !string.IsNullOrEmpty(teamComp.displayName) ? teamComp.displayName : gameObject.name;
-                GameManager.Instance?.OnTankDestroyed(teamComp.team, ticketCost, killerName, victimName);
+                GameManager.Instance?.OnTankDestroyed(GetComponent<TeamComponent>(), ticketCost, killerName, victimName);
             }
             else
             {
                 GameManager.Instance?.OnPlayerTankDestroyed();
             }
+        }
+
+        if (deathPrefab != null)
+        {
+            Instantiate(deathPrefab, transform.position, transform.rotation);
         }
 
         Destroy(gameObject);

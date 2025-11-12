@@ -24,8 +24,8 @@ TagManager:
   - EnemyTank
   - FriendlyTank
   - PointLayer
-  - 
-  - 
+  - GroundLayer
+  - DestroyedTank
   - 
   - 
   - 

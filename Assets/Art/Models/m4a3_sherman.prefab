@@ -407,7 +407,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340394951633140056}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0001439289, y: 0.9667784, z: 0.0005443618, w: -0.25561553}
+  m_LocalRotation: {x: -0.00021719962, y: 0.9660917, z: -0.00081268966, w: -0.25819787}
   m_LocalPosition: {x: 0, y: 4.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1042,6 +1042,7 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthDisplay: {fileID: 0}
+  deathPrefab: {fileID: 2126485755847636676, guid: bb049f3b93570854bbe07281da1673ee, type: 3}
 --- !u!195 &8489948446680324052
 NavMeshAgent:
   m_ObjectHideFlags: 0
