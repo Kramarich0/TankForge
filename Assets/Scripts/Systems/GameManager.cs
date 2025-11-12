@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static WaitForSecondsRealtime _waitForSecondsRealtime2;
+
     public static GameManager Instance { get; private set; }
 
     public int score = 0;
@@ -28,6 +30,7 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            _waitForSecondsRealtime2 = new WaitForSecondsRealtime(2f);
         }
         else
         {
@@ -172,7 +175,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("ПОРАЖЕНИЕ! Союзники уничтожены.");
             isGameFinished = true;
-            GameUIManager.Instance?.ShowDefeatScreen();
+            StartCoroutine(ShowDefeatAfterDelay());
         }
         else if (enemyTickets <= 0 || aliveEnemyTanks <= 0)
         {
@@ -180,6 +183,12 @@ public class GameManager : MonoBehaviour
             isGameFinished = true;
             CompleteLevel();
         }
+    }
+
+    private IEnumerator ShowDefeatAfterDelay()
+    {
+        yield return _waitForSecondsRealtime2;
+        GameUIManager.Instance?.ShowDefeatScreen();
     }
 
     void CompleteLevel()
@@ -202,8 +211,14 @@ public class GameManager : MonoBehaviour
 
         Debug.Log($"Уровень {levelIndex} завершён! Звёзд: {stars}, Счёт: {score}");
 
-        GameUIManager.Instance?.ShowVictoryScreen(finalScore, stars);
+        StartCoroutine(ShowVictoryAfterDelay(finalScore, stars));
         StartCoroutine(DelayedSave());
+    }
+
+    private IEnumerator ShowVictoryAfterDelay(int finalScore, int stars)
+    {
+        yield return _waitForSecondsRealtime2;
+        GameUIManager.Instance?.ShowVictoryScreen(finalScore, stars);
     }
 
     IEnumerator DelayedSave()
@@ -231,7 +246,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Игрок уничтожен. Игра окончена.");
         isGameFinished = true;
-        GameUIManager.Instance?.ShowDefeatScreen();
+        StartCoroutine(ShowDefeatAfterDelay());
     }
 
     public void DrainTickets(TeamEnum team, int amount)

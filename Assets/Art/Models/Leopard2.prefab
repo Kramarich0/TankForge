@@ -1842,6 +1842,7 @@ GameObject:
   - component: {fileID: 3351642093755439465}
   - component: {fileID: 4585202906806677004}
   - component: {fileID: 5377059141490470958}
+  - component: {fileID: 6450933756838602120}
   m_Layer: 12
   m_Name: Leopard2
   m_TagString: EnemyTank
@@ -2013,6 +2014,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 1
   displayName: Leopard 2
+--- !u!114 &6450933756838602120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5814213489443158634}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51eb7dc7187fb8249a3a376f3f7b88ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankCollisionDamage
+  minCollisionSpeed: 3
+  damageMultiplier: 0.02
+  debugLogs: 1
 --- !u!1 &6002131571207418770
 GameObject:
   m_ObjectHideFlags: 0

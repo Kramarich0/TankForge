@@ -1001,6 +1001,7 @@ GameObject:
   - component: {fileID: 8453794299781087703}
   - component: {fileID: 62971683839857363}
   - component: {fileID: 4588363113449324173}
+  - component: {fileID: 8277409355107377060}
   m_Layer: 13
   m_Name: m4a3_sherman
   m_TagString: Untagged
@@ -1269,6 +1270,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8277409355107377060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126485755847636676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51eb7dc7187fb8249a3a376f3f7b88ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankCollisionDamage
+  minCollisionSpeed: 3
+  damageMultiplier: 0.02
+  debugLogs: 0
 --- !u!1 &2153568777276391244
 GameObject:
   m_ObjectHideFlags: 0

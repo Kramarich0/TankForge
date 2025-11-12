@@ -55,11 +55,6 @@ public class TankAI : MonoBehaviour
     public float projectileSpeed = 80f;
     public bool bulletUseGravity = true;
 
-    [Header("Audio")]
-    public AudioClip idleSound;
-    public AudioClip driveSound;
-    public AudioClip shootSound;
-
     [Header("Debug / Fixes")]
     public bool debugGizmos = true;
     public bool debugLogs = false;
@@ -93,20 +88,73 @@ public class TankAI : MonoBehaviour
     float scanTimer = 0f;
     readonly float scanInterval = 0.4f;
 
+    [Header("Audio")]
+    public AudioClip idleSound;
+    public AudioClip driveSound;
+    public AudioClip shootSound;
+
+    [Header("Engine Audio Settings")]
+    [Range(0f, 1f)] public float minIdleVolume = 0.2f;
+    [Range(0f, 1f)] public float maxIdleVolume = 0.5f;
+    [Range(0f, 1f)] public float minDriveVolume = 0f;
+    [Range(0f, 1f)] public float maxDriveVolume = 0.5f;
+    [Range(0.5f, 2f)] public float minIdlePitch = 0.8f;
+    [Range(0.5f, 2f)] public float maxIdlePitch = 1.2f;
+    [Range(0.5f, 2f)] public float minDrivePitch = 0.8f;
+    [Range(0.5f, 2f)] public float maxDrivePitch = 1.3f;
+
+    private AudioSource idleSource;
+    private AudioSource driveSource;
+    private AudioSource shootSource;
+
+
     void Awake()
     {
         tankHealth = GetComponent<TankHealth>();
         agent = GetComponent<NavMeshAgent>();
         teamComp = GetComponent<TeamComponent>();
 
+        SetupEngineAudio();
+    }
+
+    void SetupEngineAudio()
+    {
         if (idleSound != null)
         {
-            var idleSource = gameObject.AddComponent<AudioSource>();
+            idleSource = gameObject.AddComponent<AudioSource>();
             idleSource.clip = idleSound;
             idleSource.loop = true;
             idleSource.spatialBlend = 1f;
-            idleSource.volume = 0.4f;
+            idleSource.minDistance = 3f;
+            idleSource.maxDistance = 50f;
+            idleSource.rolloffMode = AudioRolloffMode.Logarithmic;
+            idleSource.volume = minIdleVolume;
             idleSource.Play();
+        }
+
+        if (driveSound != null)
+        {
+            driveSource = gameObject.AddComponent<AudioSource>();
+            driveSource.clip = driveSound;
+            driveSource.loop = true;
+            driveSource.spatialBlend = 1f;
+            driveSource.minDistance = 3f;
+            driveSource.maxDistance = 50f;
+            driveSource.rolloffMode = AudioRolloffMode.Logarithmic;
+            driveSource.volume = minDriveVolume;
+            driveSource.Play();
+        }
+
+        if (shootSound != null)
+        {
+            shootSource = gameObject.AddComponent<AudioSource>();
+            shootSource.clip = shootSound;
+            shootSource.loop = false;
+            shootSource.spatialBlend = 1f;
+            shootSource.minDistance = 3f;
+            shootSource.maxDistance = 50f;
+            shootSource.rolloffMode = AudioRolloffMode.Logarithmic;
+            shootSource.volume = 0.6f; // Можно подстроить громкость
         }
     }
 
@@ -171,6 +219,7 @@ public class TankAI : MonoBehaviour
     void Update()
     {
         if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
+        UpdateEngineAudio();
 
         scanTimer -= Time.deltaTime;
         if (scanTimer <= 0f)
@@ -182,14 +231,11 @@ public class TankAI : MonoBehaviour
 
         agent.speed = moveSpeed;
 
-        // ЛОГИКА ПРИОРИТЕТА ЦЕЛЕЙ
         Transform effectiveTarget = null;
         AIState nextState = AIState.Patrolling;
 
-        // 1. Сначала проверяем — находимся ли мы на точке захвата?
         if (currentCapturePointTarget != null && Vector3.Distance(transform.position, currentCapturePointTarget.transform.position) < 3f)
         {
-            // Мы на точке захвата — стоим и захватываем
             if (navAvailable && agent.isOnNavMesh) agent.isStopped = true;
             isCapturing = true;
             nextState = AIState.Capturing;
@@ -198,34 +244,31 @@ public class TankAI : MonoBehaviour
         }
         else if (currentCapturePointTarget != null)
         {
-            // Идём к ближайшей точке захвата
             float distToCapturePoint = Vector3.Distance(transform.position, currentCapturePointTarget.transform.position);
             float distToEnemy = currentTarget != null ? Vector3.Distance(transform.position, currentTarget.position) : float.MaxValue;
             agent.stoppingDistance = 0f;
-            // Точка ближе или враг далеко — идём к точке
             if (distToCapturePoint < distToEnemy || distToEnemy > shootRange * 1.5f)
             {
                 effectiveTarget = currentCapturePointTarget.transform;
                 isCapturing = false;
                 nextState = AIState.Moving;
             }
-            // Враг ближе — сражаемся
             else if (distToEnemy < shootRange)
             {
                 effectiveTarget = currentTarget;
                 agent.stoppingDistance = shootRange * 0.85f;
-                currentCapturePointTarget = null; // Забываем про точку временно
+                currentCapturePointTarget = null;
                 isCapturing = false;
                 nextState = AIState.Fighting;
             }
         }
-        // else if (player != null)
-        // {
-        //     agent.stoppingDistance = shootRange * 0.85f;
-        //     effectiveTarget = player;
-        //     isCapturing = false;
-        //     nextState = AIState.Fighting;
-        // }
+        else if (player != null)
+        {
+            agent.stoppingDistance = shootRange * 0.85f;
+            effectiveTarget = player;
+            isCapturing = false;
+            nextState = AIState.Fighting;
+        }
         else if (currentTarget != null)
         {
             effectiveTarget = currentTarget;
@@ -236,10 +279,8 @@ public class TankAI : MonoBehaviour
 
         currentState = nextState;
 
-        // ИСПОЛНЕНИЕ ЦЕЛЕЙ
         if (isCapturing)
         {
-            // При захвате просто стоим и ждём, пока CapturePoint сделает своё
             AlignBodyToVector((currentCapturePointTarget.transform.position - transform.position).normalized);
         }
         else if (effectiveTarget != null)
@@ -248,19 +289,22 @@ public class TankAI : MonoBehaviour
 
             if (dist < shootRange && nextState == AIState.Fighting)
             {
-                // РЕЖИМ БОЯ
                 if (navAvailable && agent.isOnNavMesh) agent.isStopped = true;
                 AimAt(effectiveTarget);
 
                 if (Time.time >= nextFireTime && HasLineOfSight(effectiveTarget))
                 {
-                    ShootAt(effectiveTarget);
-                    nextFireTime = Time.time + 1f / Mathf.Max(0.0001f, fireRate);
+                    Vector3 aimDir = (effectiveTarget.position - gunEnd.position).normalized;
+                    float angle = Vector3.Angle(gunEnd.forward, aimDir);
+                    if (angle < 5f)
+                    {
+                        ShootAt(effectiveTarget);
+                        nextFireTime = Time.time + 1f / Mathf.Max(0.0001f, fireRate);
+                    }
                 }
             }
             else
             {
-                // РЕЖИМ ДВИЖЕНИЯ
                 if (navAvailable && agent.isOnNavMesh)
                 {
                     agent.isStopped = false;
@@ -282,7 +326,6 @@ public class TankAI : MonoBehaviour
         }
         else
         {
-            // НЕТ ЦЕЛЕЙ — ПАТРУЛЬ
             if (navAvailable && agent.isOnNavMesh && !agent.hasPath)
             {
                 Vector3 rand = transform.position + Random.insideUnitSphere * 8f;
@@ -290,6 +333,26 @@ public class TankAI : MonoBehaviour
                     agent.SetDestination(hit.position);
             }
             AlignBodyToVelocity();
+        }
+    }
+
+    void UpdateEngineAudio()
+    {
+        if (agent == null) return;
+
+        float speed = agent.velocity.magnitude;
+        float blend = Mathf.Clamp01(speed / moveSpeed);
+
+        if (idleSource != null)
+        {
+            idleSource.volume = Mathf.Lerp(maxIdleVolume, minIdleVolume, blend);
+            idleSource.pitch = Mathf.Lerp(maxIdlePitch, minIdlePitch, blend);
+        }
+
+        if (driveSource != null)
+        {
+            driveSource.volume = Mathf.Lerp(minDriveVolume, maxDriveVolume, blend);
+            driveSource.pitch = Mathf.Lerp(minDrivePitch, maxDrivePitch, blend);
         }
     }
 
@@ -368,13 +431,21 @@ public class TankAI : MonoBehaviour
         Vector3 from = gunEnd.position;
         Vector3 to = t.position + Vector3.up * 1.2f;
         Vector3 dir = to - from;
+
         if (Physics.Raycast(from, dir.normalized, out RaycastHit hit, shootRange))
         {
-            if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t)) return true;
+            if (hit.collider.transform.IsChildOf(transform))
+                return false;
+
+            if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t))
+                return true;
+
             return false;
         }
+
         return true;
     }
+
 
     void AimAt(Transform t)
     {
@@ -451,9 +522,12 @@ public class TankAI : MonoBehaviour
         bullet.shooterTeam = teamComp != null ? teamComp.team : TeamEnum.Neutral;
 
         string shooterDisplay = (teamComp != null && !string.IsNullOrEmpty(teamComp.displayName)) ? teamComp.displayName : gameObject.name;
+        if (!bgo.TryGetComponent<Rigidbody>(out _)) _ = bgo.AddComponent<Rigidbody>();
 
-        Rigidbody rb = bgo.GetComponent<Rigidbody>();
-        if (rb == null) rb = bgo.AddComponent<Rigidbody>();
+        if (shootSource != null)
+        {
+            shootSource.Play();
+        }
 
         if (bulletUseGravity)
         {
@@ -472,6 +546,7 @@ public class TankAI : MonoBehaviour
                 Vector3 flatDir = horizontal.normalized;
                 Vector3 launchDir = Quaternion.AngleAxis(chosen * Mathf.Rad2Deg, Vector3.Cross(flatDir, Vector3.up)) * flatDir;
                 Vector3 initVel = launchDir * v;
+
                 bullet.Initialize(initVel, bullet.shooterTeam, shooterDisplay);
             }
             else

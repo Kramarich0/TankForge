@@ -863,6 +863,7 @@ GameObject:
   - component: {fileID: 8751402106025691335}
   - component: {fileID: 2509401565897758532}
   - component: {fileID: 4550064695049263837}
+  - component: {fileID: 3369549077092873980}
   m_Layer: 12
   m_Name: Tiger 1
   m_TagString: EnemyTank
@@ -1034,6 +1035,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 1
   displayName: Tiger 1
+--- !u!114 &3369549077092873980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3792661680670055886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51eb7dc7187fb8249a3a376f3f7b88ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankCollisionDamage
+  collisionRadius: 2
+  damageMultiplier: 0.01
+  tankLayer:
+    serializedVersion: 2
+    m_Bits: 10240
 --- !u!1 &3969974525106247612
 GameObject:
   m_ObjectHideFlags: 0

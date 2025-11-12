@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(TeamComponent))]
+[RequireComponent(typeof(Rigidbody))]
 public class TankHealth : MonoBehaviour, IDamageable
 {
     [Header("Health")]
@@ -79,8 +80,18 @@ public class TankHealth : MonoBehaviour, IDamageable
 
         if (deathPrefab != null)
         {
-            Instantiate(deathPrefab, transform.position, transform.rotation);
+            GameObject hull = Instantiate(deathPrefab, transform.position, transform.rotation);
+
+            hull.transform.rotation = transform.rotation;
+
+            if (TryGetComponent<Rigidbody>(out var rbOriginal) && hull.TryGetComponent<Rigidbody>(out var rbHull))
+            {
+                rbHull.linearVelocity = rbOriginal.linearVelocity;      
+                rbHull.angularVelocity = rbOriginal.angularVelocity; 
+            }
         }
+
+
 
         Destroy(gameObject);
     }

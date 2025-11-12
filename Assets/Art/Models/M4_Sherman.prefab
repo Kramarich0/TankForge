@@ -1898,6 +1898,7 @@ GameObject:
   - component: {fileID: 646124022302727699}
   - component: {fileID: 5615422364906774958}
   - component: {fileID: 6543952335926597029}
+  - component: {fileID: 6087880497110696389}
   m_Layer: 11
   m_Name: M4_Sherman
   m_TagString: Player
@@ -1959,16 +1960,6 @@ MonoBehaviour:
   minPitch: 0.7
   maxPitch: 1.3
   blendSpeed: 5
-  groundCheck: {fileID: 2089185442318546144}
-  groundCheckDistance: -200
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  obstacleCheckDistance: 1
-  obstacleRadius: 1
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 0
   speedDisplay: {fileID: 0}
 --- !u!114 &646124022302727699
 MonoBehaviour:
@@ -2024,9 +2015,26 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!114 &6087880497110696389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3328934320471145314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51eb7dc7187fb8249a3a376f3f7b88ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankCollisionDamage
+  collisionRadius: 2
+  damageMultiplier: 0.01
+  tankLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &3758792498813145033
 GameObject:
   m_ObjectHideFlags: 0
