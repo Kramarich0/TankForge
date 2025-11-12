@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(TeamComponent))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(TankHealth))]
 public class TankCollisionDamage : MonoBehaviour
 {
     [Header("Collision damage settings")]
@@ -12,8 +13,7 @@ public class TankCollisionDamage : MonoBehaviour
     public float damageMultiplier = 0.02f;
     public bool debugLogs = false;
 
-
-    private HashSet<int> processedCollisionIds = new HashSet<int>();
+    private readonly HashSet<int> processedCollisionIds = new();
 
     Rigidbody rb;
     TeamComponent teamComp;
@@ -57,8 +57,6 @@ public class TankCollisionDamage : MonoBehaviour
         Rigidbody otherRb = collision.rigidbody;
         if (otherRb == null) { if (debugLogs) Debug.Log("[TC] other has no Rigidbody"); return; }
 
-
-
         float impactSpeed = collision.relativeVelocity.magnitude;
 
         if (impactSpeed < minCollisionSpeed)
@@ -67,27 +65,21 @@ public class TankCollisionDamage : MonoBehaviour
             return;
         }
 
-
-
         float massThis = rb.mass;
         float massOther = otherRb.mass;
-
 
         int damageToOther = Mathf.Max(1, Mathf.RoundToInt(0.5f * massThis * impactSpeed * impactSpeed * damageMultiplier));
 
         int damageToThis = Mathf.Max(1, Mathf.RoundToInt(0.5f * massOther * impactSpeed * impactSpeed * damageMultiplier));
-
 
         if (debugLogs)
         {
             Debug.Log($"[TC] Collide: {name} (m={massThis}) <-> {collision.collider.name} (m={massOther}) | v={impactSpeed:F2} => dmgToOther={damageToOther}, dmgToThis={damageToThis}");
         }
 
-
         otherHealth.TakeDamage(damageToOther);
 
-
-        selfHealth?.TakeDamage(damageToThis);
+        selfHealth.TakeDamage(damageToThis);
     }
 
     private IEnumerator RemoveProcessedAfterFixedUpdate(int id)

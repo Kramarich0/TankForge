@@ -768,7 +768,6 @@ MonoBehaviour:
   cameras:
   - {fileID: 2125207942}
   - {fileID: 44129073}
-  - {fileID: 940704608}
 --- !u!4 &150499267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7162602615162024691, guid: 520381c93e2f9734bab9f23f83618de2, type: 3}
@@ -11281,6 +11280,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1312980549}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &2130934120 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 7830692974354987563, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
+  m_PrefabInstance: {fileID: 6188638061093307934}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2142040845
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11836,6 +11840,10 @@ PrefabInstance:
       value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6087880497110696389, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6087880497110696389, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
       propertyPath: tankLayer.m_Bits
       value: 4096
       objectReference: {fileID: 0}
@@ -11879,6 +11887,10 @@ PrefabInstance:
       propertyPath: bulletPool
       value: 
       objectReference: {fileID: 702589404}
+    - target: {fileID: 6945161926540087329, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 2130934120}
     - target: {fileID: 6945161926540087329, guid: 4ffd007e262ff4949ab04c0b893015e2, type: 3}
       propertyPath: bulletSpeed
       value: 1000
