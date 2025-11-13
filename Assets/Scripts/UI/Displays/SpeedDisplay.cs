@@ -1,10 +1,10 @@
 using UnityEngine;
 using TMPro;
 
+[RequireComponent(typeof(TextMeshProUGUI))]
 public class SpeedDisplay : MonoBehaviour
 {
     private TextMeshProUGUI speedText;
-    private float currentSpeed = 0f;
 
     void Start()
     {
@@ -15,17 +15,10 @@ public class SpeedDisplay : MonoBehaviour
         }
     }
 
-    public void SetSpeed(float speed)
-    {
-        currentSpeed = speed;
-    }
-
-    void Update()
+    public void SetSpeed(int speedKmh)
     {
         if (speedText != null)
-        {
-            float speedKmh = Mathf.Abs(currentSpeed) *10.0f;
             speedText.text = Mathf.RoundToInt(speedKmh) + " км/ч";
-        }
     }
+
 }

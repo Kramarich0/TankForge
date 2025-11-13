@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 7298283109623496319}
   - component: {fileID: 1629653404719565018}
   - component: {fileID: 510621844767909319}
+  - component: {fileID: 6996404934927521047}
   m_Layer: 12
   m_Name: Panzer_II_F_Track_R
   m_TagString: Untagged
@@ -209,6 +210,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6996404934927521047
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 458662656870842173}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.3313155, y: 1.0620434, z: 4.570369}
+  m_Center: {x: 0.86418915, y: 0.530933, z: 0.0014358762}
 --- !u!1 &870005619751421714
 GameObject:
   m_ObjectHideFlags: 0
@@ -2252,6 +2274,7 @@ GameObject:
   - component: {fileID: 5560493960403172686}
   - component: {fileID: 839118356899916007}
   - component: {fileID: 4037608816827129553}
+  - component: {fileID: 1624207367263126545}
   m_Layer: 12
   m_Name: Panzer_II_F_Track_L
   m_TagString: Untagged
@@ -2330,6 +2353,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1624207367263126545
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7383388517557696102}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.33131525, y: 1.0620434, z: 4.570369}
+  m_Center: {x: -0.86419034, y: 0.530933, z: 0.0014356378}
 --- !u!1 &7532908601006155352
 GameObject:
   m_ObjectHideFlags: 0

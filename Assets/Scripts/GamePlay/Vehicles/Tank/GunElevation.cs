@@ -1,9 +1,5 @@
 using UnityEngine;
 
-
-
-
-
 public class GunElevation : MonoBehaviour
 {
     public Transform cameraTransform;      

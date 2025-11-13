@@ -2,87 +2,61 @@ using UnityEngine;
 
 public class TrackController : MonoBehaviour
 {
-    public Transform tankTransform; 
-    public float scrollSpeedFactor = 10.0f; 
-    public bool useWorldMovement = true; 
+    [Header("References")]
+    public Rigidbody tankRigidbody;
+    public Renderer leftTrackRenderer;
+    public Renderer rightTrackRenderer;
 
-    public Renderer[] trackRenderers; 
-    public string textureProperty = "_MainTex"; 
+    [Header("Settings")]
+    public string textureProperty = "_MainTex";
+    public float scrollSpeedFactor = 0.05f;
+    public float turnScrollFactor = 0.7f;
+    public float wheelRadius = 0.3f;
 
-    public Transform[] leftWheels;   
-    public Transform[] rightWheels;  
-    public float wheelRadius = 0.35f; 
+    [Header("Wheels (optional)")]
+    public Transform[] leftWheels;
+    public Transform[] rightWheels;
 
-    
-    private Vector3 lastPosition;
-    private Vector2[] currentOffsets;
+    private Vector2 leftOffset, rightOffset;
 
     void Start()
     {
-        if (tankTransform == null) tankTransform = transform;
-        lastPosition = tankTransform.position;
-
-        
-        if (trackRenderers != null && trackRenderers.Length > 0)
-        {
-            currentOffsets = new Vector2[trackRenderers.Length];
-            for (int i = 0; i < trackRenderers.Length; i++)
-            {
-                var mat = trackRenderers[i].material;
-                currentOffsets[i] = mat.mainTextureOffset;
-            }
-        }
+        if (!tankRigidbody) tankRigidbody = GetComponentInParent<Rigidbody>();
     }
 
     void Update()
     {
-        if (tankTransform == null) return;
+        if (!tankRigidbody) return;
 
-        
-        Vector3 deltaPos = tankTransform.position - lastPosition;
-        
-        float forwardMovement = Vector3.Dot(tankTransform.forward, deltaPos);
+        float forwardSpeed = Vector3.Dot(tankRigidbody.linearVelocity, tankRigidbody.transform.forward);
+        float turnSpeed = tankRigidbody.angularVelocity.y;
 
-        
-        if (trackRenderers != null && trackRenderers.Length > 0)
-        {
-            for (int i = 0; i < trackRenderers.Length; i++)
-            {
-                
-                
-                float scrollAmount = forwardMovement * scrollSpeedFactor;
-                float noise = Mathf.PerlinNoise(Time.time * 2f, 0f) * 0.01f;
-                currentOffsets[i].y += scrollAmount + noise;
-                trackRenderers[i].material.mainTextureOffset = currentOffsets[i];
-            }
-        }
+        float leftSpeed = forwardSpeed - turnSpeed * turnScrollFactor * tankRigidbody.transform.localScale.x;
+        float rightSpeed = forwardSpeed + turnSpeed * turnScrollFactor * tankRigidbody.transform.localScale.x;
 
-        
-        float distance = forwardMovement; 
-        float circumference = 2f * Mathf.PI * Mathf.Max(0.0001f, wheelRadius);
-        float rotationDegrees = distance / circumference * 360f;
+        leftOffset.y += leftSpeed * scrollSpeedFactor * Time.deltaTime;
+        rightOffset.y += rightSpeed * scrollSpeedFactor * Time.deltaTime;
 
-        if (leftWheels != null)
-        {
-            foreach (var w in leftWheels)
-            {
-                if (w != null) w.Rotate(Vector3.right, rotationDegrees, Space.Self);
-            }
-        }
-        if (rightWheels != null)
-        {
-            foreach (var w in rightWheels)
-            {
-                if (w != null) w.Rotate(Vector3.right, rotationDegrees, Space.Self);
-            }
-        }
+        if (leftTrackRenderer)
+            leftTrackRenderer.material.SetTextureOffset(textureProperty, leftOffset);
+        if (rightTrackRenderer)
+            rightTrackRenderer.material.SetTextureOffset(textureProperty, rightOffset);
 
-        lastPosition = tankTransform.position;
+        float avgSpeed = (forwardSpeed + (turnSpeed * 0.5f)) * Time.deltaTime;
+        float distance = avgSpeed;
+        float rotationDegrees = distance / (2f * Mathf.PI * wheelRadius) * 360f;
+
+        RotateWheels(leftWheels, rotationDegrees);
+        RotateWheels(rightWheels, rotationDegrees);
     }
 
-    void OnDestroy()
+    void RotateWheels(Transform[] wheels, float degrees)
     {
-        
-        
+        if (wheels == null) return;
+        foreach (var w in wheels)
+        {
+            if (w != null)
+                w.Rotate(Vector3.right, degrees, Space.Self);
+        }
     }
 }

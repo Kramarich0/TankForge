@@ -86,7 +86,6 @@ public class TankAI : MonoBehaviour
     private AIState currentState = AIState.Idle;
     public BulletPool bulletPool;
 
-
     float scanTimer = 0f;
     readonly float scanInterval = 0.4f;
 
@@ -108,7 +107,6 @@ public class TankAI : MonoBehaviour
     private AudioSource idleSource;
     private AudioSource driveSource;
     private AudioSource shootSource;
-
 
     void Awake()
     {
@@ -274,10 +272,15 @@ public class TankAI : MonoBehaviour
         else if (currentTarget != null)
         {
             effectiveTarget = currentTarget;
+            float distToEnemy = Vector3.Distance(transform.position, currentTarget.position);
+
             agent.stoppingDistance = shootRange * 0.85f;
             isCapturing = false;
-            nextState = AIState.Moving;
+
+            // если уже в зоне стрельбы — переход в Fighting, иначе — Moving
+            nextState = (distToEnemy <= shootRange) ? AIState.Fighting : AIState.Moving;
         }
+
 
         currentState = nextState;
 
@@ -437,10 +440,16 @@ public class TankAI : MonoBehaviour
         if (Physics.Raycast(from, dir.normalized, out RaycastHit hit, shootRange))
         {
             if (hit.collider.transform.IsChildOf(transform))
+            {
                 return false;
+            }
 
-            if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t))
-                return true;
+            if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t)) return true;
+
+            if (hit.collider.TryGetComponent<TeamComponent>(out var team))
+            {
+                return team.team != teamComp.team; 
+            }
 
             return false;
         }

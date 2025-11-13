@@ -279,6 +279,7 @@ GameObject:
   - component: {fileID: 1162819271039170069}
   - component: {fileID: 2888641956678744735}
   - component: {fileID: 488013966644100302}
+  - component: {fileID: 1368189669802381563}
   m_Layer: 11
   m_Name: SM_M4_Track_Full2
   m_TagString: Untagged
@@ -392,6 +393,27 @@ MonoBehaviour:
   - {fileID: 1036109035979453896}
   rightWheels: []
   wheelRadius: 0.35
+--- !u!65 &1368189669802381563
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 500541907233238728}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.57707, y: 1.1485367, z: 5.529094}
+  m_Center: {x: -0.00000023841858, y: 0.57426834, z: 0}
 --- !u!1 &603388907692465777
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,7 +1066,7 @@ MonoBehaviour:
   recoilUp: 0.05
   recoilSpeed: 10
   recoilReturnSpeed: 7
-  bulletDamage: 20
+  bulletDamage: 100
 --- !u!82 &7830692974354987563
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1655,7 +1677,6 @@ GameObject:
   - component: {fileID: 2089185442318546144}
   - component: {fileID: 7574226373082270196}
   - component: {fileID: 8205246134366858829}
-  - component: {fileID: 8272102856949626710}
   m_Layer: 11
   m_Name: SM_M4_Hull
   m_TagString: Untagged
@@ -1776,27 +1797,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8272102856949626710
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2769166960978812865}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3.025465, y: 1.5943248, z: 5.9465046}
-  m_Center: {x: -0.00000035762787, y: 0.79716206, z: 0.00010955334}
 --- !u!1 &3181741611327779533
 GameObject:
   m_ObjectHideFlags: 0
@@ -1943,10 +1943,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankMovement
   actionsAsset: {fileID: -944628639613478452, guid: a455f761d5c55f544a64bcf7eec3440c, type: 3}
-  forwardSpeed: 4.3
-  backwardSpeed: 0.4
-  acceleration: 1
-  deceleration: 1.5
+  forwardSpeed: 43
+  backwardSpeed: 4
+  acceleration: 4
+  deceleration: 2
   turnSpeed: 45
   turnWhileReverseFactor: 0.6
   rotationPivot: {fileID: 0}
@@ -1954,14 +1954,17 @@ MonoBehaviour:
   useRigidbody: 1
   inputDeadzone: 0.02
   rotationSmoothTime: 0.06
-  idleSound: {fileID: 0}
-  driveSound: {fileID: 0}
+  idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
+  driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
   minVolume: 0.2
   maxVolume: 1
   minPitch: 0.7
   maxPitch: 1.3
   blendSpeed: 5
   speedDisplay: {fileID: 0}
+  leftTrack: {fileID: 999304358585983673}
+  rightTrack: {fileID: 6580048388394628127}
+  groundCheckDistance: 7
 --- !u!114 &646124022302727699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2001,8 +2004,8 @@ Rigidbody:
   m_GameObject: {fileID: 3328934320471145314}
   serializedVersion: 5
   m_Mass: 45
-  m_LinearDamping: 1.5
-  m_AngularDamping: 0.6
+  m_LinearDamping: 0.3
+  m_AngularDamping: 0.5
   m_CenterOfMass: {x: 0, y: -0.5, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -2012,7 +2015,7 @@ Rigidbody:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
+  m_ImplicitCom: 0
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -3361,6 +3364,7 @@ GameObject:
   - component: {fileID: 7015705838041804150}
   - component: {fileID: 2749153861306165320}
   - component: {fileID: 1120741563474105881}
+  - component: {fileID: 3184378311819031364}
   m_Layer: 11
   m_Name: SM_M4_Track_Full
   m_TagString: Untagged
@@ -3473,6 +3477,27 @@ MonoBehaviour:
   - {fileID: 7965257187804964136}
   rightWheels: []
   wheelRadius: 0.35
+--- !u!65 &3184378311819031364
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5689327049222186923}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.57707, y: 1.1485367, z: 5.529094}
+  m_Center: {x: -0.00000029802322, y: 0.57426834, z: 0}
 --- !u!1 &5835570356628381740
 GameObject:
   m_ObjectHideFlags: 0

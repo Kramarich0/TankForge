@@ -52,7 +52,7 @@ public class TankCountDisplay : MonoBehaviour
     {
         if (TanksCountText == null) return;
 
-        TanksCountText.text = $"{friendly}:{enemy}";
+        TanksCountText.text = $"{enemy}:{friendly}";
     }
 
 }

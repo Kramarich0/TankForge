@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8284883616253908340}
   - component: {fileID: 3500383129314085693}
   - component: {fileID: 3801860786099400932}
+  - component: {fileID: 3666320964831775292}
   m_Layer: 12
   m_Name: Panzer_VI_E_Track_R
   m_TagString: Untagged
@@ -89,6 +90,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3666320964831775292
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 335965515379975282}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.7148876, y: 1.1536644, z: 5.7907653}
+  m_Center: {x: 1.3675508, y: 0.5768322, z: 0.08727479}
 --- !u!1 &720854140552592437
 GameObject:
   m_ObjectHideFlags: 0
@@ -1586,7 +1608,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6203774618367266060}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00021428283, y: 0.96677816, z: 0.00081045146, w: -0.2556155}
+  m_LocalRotation: {x: -0.00014539057, y: 0.96609193, z: -0.00054400385, w: -0.2581979}
   m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2988,6 +3010,7 @@ GameObject:
   - component: {fileID: 3094873574422638014}
   - component: {fileID: 2835855467121584003}
   - component: {fileID: 862747582544207110}
+  - component: {fileID: 7059007544840725613}
   m_Layer: 12
   m_Name: Panzer_VI_E_Track_L
   m_TagString: Untagged
@@ -3066,3 +3089,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &7059007544840725613
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9119965944913994945}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.71488786, y: 1.1536645, z: 5.7907653}
+  m_Center: {x: -1.3775492, y: 0.5768319, z: 0.08727431}

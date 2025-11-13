@@ -24,8 +24,6 @@ public class TurretAiming : MonoBehaviour
     public float aimDistance = 200f;      
     public bool invertPitch = false;      
 
-    
-    float yawVelocity;
     float currentYaw;
     float currentPitch;
 
@@ -84,8 +82,6 @@ public class TurretAiming : MonoBehaviour
             turretPivot.localEulerAngles = new Vector3(0f, currentYaw, 0f);
         }
 
-        
-        
         Vector3 localDirForPitch = turretPivot.InverseTransformDirection(worldDir);
         
         float targetPitch = Mathf.Atan2(localDirForPitch.y, localDirForPitch.z) * Mathf.Rad2Deg;
