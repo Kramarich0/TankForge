@@ -20730,10 +20730,10 @@ MonoBehaviour:
   moveResponse: 4
   turnResponse: 6
   maxMotorTorque: 400
-  maxTurnTorque: 5000
+  maxTurnTorque: 500
   maxBrakeTorque: 100
-  pivotTurnForce: 150
-  pivotAddRbTorque: 50
+  pivotTurnForce: 250
+  pivotAddRbTorque: 150
   rb: {fileID: 1095144906392064955}
   enforceMinimumMass: 1
   minRecommendedMass: 2000

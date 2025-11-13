@@ -174,38 +174,51 @@ public class TankMovement : MonoBehaviour
 
         float currentForwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
 
-        if (absMove < 0.05f && absTurn > 0.05f)
+        
+        float pivotThreshold = 0.05f; 
+        if (absMove < pivotThreshold && absTurn > 0.05f)
         {
+            
+            float leftPivot = turnInput * pivotTurnForce;
+            float rightPivot = -turnInput * pivotTurnForce;
 
-            float left = turnInput * pivotTurnForce;
-            float right = -turnInput * pivotTurnForce;
+            leftTrack.ApplyTorque(leftPivot, 0f);
+            rightTrack.ApplyTorque(rightPivot, 0f);
 
-            leftTrack.ApplyTorque(left, 0f);
-            rightTrack.ApplyTorque(right, 0f);
-
-
-            rb.AddRelativeTorque(pivotAddRbTorque * Time.fixedDeltaTime * turnInput * Vector3.up, ForceMode.Acceleration);
+            float angularFactor = Mathf.Clamp01(Mathf.Abs(turnInput));
+            rb.AddRelativeTorque(Vector3.up * pivotAddRbTorque * angularFactor * Time.fixedDeltaTime, ForceMode.Acceleration);
             return;
         }
 
-        float leftPower = Mathf.Clamp(moveInput + turnInput * turnSharpness, -1f, 1f);
-        float rightPower = Mathf.Clamp(moveInput - turnInput * turnSharpness, -1f, 1f);
+        
+        float speedFactor = Mathf.Clamp01(Mathf.Abs(currentForwardSpeed) / maxForwardSpeed);
+        float turnModifier = Mathf.Lerp(1f, 0.5f, speedFactor); 
+        float leftPower = Mathf.Clamp(moveInput + turnInput * turnSharpness * turnModifier, -1f, 1f);
+        float rightPower = Mathf.Clamp(moveInput - turnInput * turnSharpness * turnModifier, -1f, 1f);
 
-        float reverseFactor = 0.6f;
-        float leftMotor = leftPower * maxMotorTorque * (leftPower < 0f ? reverseFactor : 1f);
-        float rightMotor = rightPower * maxMotorTorque * (rightPower < 0f ? reverseFactor : 1f);
-
+        
         float desiredBrake = 0f;
         if (Mathf.Abs(currentForwardSpeed) > movingThreshold && Mathf.Sign(currentForwardSpeed) != Mathf.Sign(moveInput) && moveInput != 0f)
         {
             float speedRatio = Mathf.InverseLerp(0.5f, maxForwardSpeed, Mathf.Abs(currentForwardSpeed));
             desiredBrake = Mathf.Lerp(maxBrakeTorque * 0.2f, maxBrakeTorque, speedRatio);
-            leftMotor *= 0.2f;
-            rightMotor *= 0.2f;
+
+            leftPower *= 0.2f;
+            rightPower *= 0.2f;
         }
+
+        
+        float reverseFactor = 0.6f;
+        float leftMotor = leftPower * maxMotorTorque * (leftPower < 0f ? reverseFactor : 1f);
+        float rightMotor = rightPower * maxMotorTorque * (rightPower < 0f ? reverseFactor : 1f);
+
+        
         leftTrack.ApplyTorque(leftMotor, desiredBrake);
         rightTrack.ApplyTorque(rightMotor, desiredBrake);
 
+        
+        float bodyTurnFactor = Mathf.Clamp01(Mathf.Abs(turnInput) * absMove);
+        rb.AddRelativeTorque(bodyTurnFactor * maxTurnTorque * Time.fixedDeltaTime * Vector3.up, ForceMode.Acceleration);
     }
 
     void LimitSpeed()
