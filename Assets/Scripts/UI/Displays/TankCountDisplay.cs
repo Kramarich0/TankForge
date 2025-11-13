@@ -28,7 +28,7 @@ public class TankCountDisplay : MonoBehaviour
 
         // Если GameManager отсутствует — создаём временный объект
         Debug.LogWarning("[TankCountDisplay] GameManager не найден! Попытка автосоздания...");
-        GameObject gmObject = new GameObject("GameManager");
+        GameObject gmObject = new("GameManager");
         gmObject.AddComponent<GameManager>();
         SetupListeners();
     }

@@ -51,8 +51,6 @@ public class TankMovement : MonoBehaviour
     private AudioSource driveSource;
     private float currentBlend = 0f;
     private float targetBlend = 0f;
-
-
     private float rawMoveInput = 0f;
     private float rawTurnInput = 0f;
     private float smoothedMove = 0f;

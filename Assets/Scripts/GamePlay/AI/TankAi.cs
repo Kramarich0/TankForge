@@ -448,7 +448,7 @@ public class TankAI : MonoBehaviour
 
             if (hit.collider.TryGetComponent<TeamComponent>(out var team))
             {
-                return team.team != teamComp.team; 
+                return team.team != teamComp.team;
             }
 
             return false;
@@ -521,7 +521,7 @@ public class TankAI : MonoBehaviour
 
         Vector3 predicted = PredictTargetPosition(t);
         Vector3 aim = predicted - gunEnd.position;
-        Vector3 horizontal = new Vector3(aim.x, 0f, aim.z);
+        Vector3 horizontal = new(aim.x, 0f, aim.z);
         float distance = horizontal.magnitude;
         float dy = aim.y;
 
