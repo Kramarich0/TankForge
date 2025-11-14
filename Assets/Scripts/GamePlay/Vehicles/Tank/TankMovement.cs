@@ -46,11 +46,12 @@ public class TankMovement : MonoBehaviour
     [Range(0f, 1f)] public float maxVolume = 1f;
     [Range(0.5f, 2f)] public float minPitch = 0.7f;
     [Range(0.5f, 2f)] public float maxPitch = 1.3f;
-    public float blendSpeed = 5f;
+    private float currentBlend = 0f;
+    private float blendVelocity = 0f;
+    private float rawMoveSmoothed = 0f;
+    private float rawTurnSmoothed = 0f;
     private AudioSource idleSource;
     private AudioSource driveSource;
-    private float currentBlend = 0f;
-    private float targetBlend = 0f;
     private float rawMoveInput = 0f;
     private float rawTurnInput = 0f;
     private float smoothedMove = 0f;
@@ -136,13 +137,19 @@ public class TankMovement : MonoBehaviour
         rawMoveInput = Mathf.Abs(rMove) < inputDeadzone ? 0f : rMove;
         rawTurnInput = Mathf.Abs(rTurn) < inputDeadzone ? 0f : rTurn;
 
-        float absMove = Mathf.Abs(rawMoveInput);
-        targetBlend = Mathf.Clamp01(absMove);
-        currentBlend = Mathf.MoveTowards(currentBlend, targetBlend, blendSpeed * Time.deltaTime);
+        rawMoveSmoothed = Mathf.Lerp(rawMoveSmoothed, rMove, 5f * Time.deltaTime);
+        rawTurnSmoothed = Mathf.Lerp(rawTurnSmoothed, rTurn, 5f * Time.deltaTime);
+
+        float absMove = Mathf.Abs(rawMoveSmoothed);
+        float absTurn = Mathf.Abs(rawTurnSmoothed) * 0.5f; 
+        float targetBlend = Mathf.Clamp01(absMove + absTurn);
+
+        currentBlend = Mathf.SmoothDamp(currentBlend, targetBlend, ref blendVelocity, 0.2f);
         float idleVolume = Mathf.Lerp(maxVolume, minVolume, currentBlend);
         float driveVolume = Mathf.Lerp(0f, maxVolume, currentBlend);
         float idlePitch = Mathf.Lerp(maxPitch, minPitch, currentBlend);
         float drivePitch = Mathf.Lerp(minPitch, maxPitch, currentBlend);
+
 
         if (idleSource != null) { idleSource.volume = idleVolume; idleSource.pitch = idlePitch; }
         if (driveSource != null) { driveSource.volume = driveVolume; driveSource.pitch = drivePitch; }
@@ -172,11 +179,11 @@ public class TankMovement : MonoBehaviour
 
         float currentForwardSpeed = Vector3.Dot(rb.linearVelocity, transform.forward);
 
-        
-        float pivotThreshold = 0.05f; 
+
+        float pivotThreshold = 0.05f;
         if (absMove < pivotThreshold && absTurn > 0.05f)
         {
-            
+
             float leftPivot = turnInput * pivotTurnForce;
             float rightPivot = -turnInput * pivotTurnForce;
 
@@ -188,13 +195,13 @@ public class TankMovement : MonoBehaviour
             return;
         }
 
-        
+
         float speedFactor = Mathf.Clamp01(Mathf.Abs(currentForwardSpeed) / maxForwardSpeed);
-        float turnModifier = Mathf.Lerp(1f, 0.5f, speedFactor); 
+        float turnModifier = Mathf.Lerp(1f, 0.5f, speedFactor);
         float leftPower = Mathf.Clamp(moveInput + turnInput * turnSharpness * turnModifier, -1f, 1f);
         float rightPower = Mathf.Clamp(moveInput - turnInput * turnSharpness * turnModifier, -1f, 1f);
 
-        
+
         float desiredBrake = 0f;
         if (Mathf.Abs(currentForwardSpeed) > movingThreshold && Mathf.Sign(currentForwardSpeed) != Mathf.Sign(moveInput) && moveInput != 0f)
         {
@@ -205,16 +212,16 @@ public class TankMovement : MonoBehaviour
             rightPower *= 0.2f;
         }
 
-        
+
         float reverseFactor = 0.6f;
         float leftMotor = leftPower * maxMotorTorque * (leftPower < 0f ? reverseFactor : 1f);
         float rightMotor = rightPower * maxMotorTorque * (rightPower < 0f ? reverseFactor : 1f);
 
-        
+
         leftTrack.ApplyTorque(leftMotor, desiredBrake);
         rightTrack.ApplyTorque(rightMotor, desiredBrake);
 
-        
+
         float bodyTurnFactor = Mathf.Clamp01(Mathf.Abs(turnInput) * absMove);
         rb.AddRelativeTorque(bodyTurnFactor * maxTurnTorque * Time.fixedDeltaTime * Vector3.up, ForceMode.Acceleration);
     }

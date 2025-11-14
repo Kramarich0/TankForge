@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class TankShoot : MonoBehaviour
 {
     public System.Action onShotFired;
+
     [Header("Shooting")]
     public InputActionReference shootAction;
     public Transform gunEnd;
@@ -17,27 +18,20 @@ public class TankShoot : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip shootSound;
     public AudioClip reloadSound;
-    private bool reloadSoundPlaying = false;
 
     [Header("Reload UI")]
     public ReloadDisplay reloadDisplay;
 
     [Header("Recoil")]
-    public float recoilAmount = 0.12f;
-    public float returnSpeed = 7f;
-
-    private float nextFireTime = 0f;
-    private bool isRecoiling = false;
-    private Vector3 originalLocalPos;
-
-    [Header("Recoil")]
-    public float recoilBack = 0.15f;
-    public float recoilUp = 0.05f;
-    public float recoilSpeed = 20f;
-    public float recoilReturnSpeed = 7f;
+    public float recoilBack = 0.12f;
+    public float recoilDecay = 8f;
+    public float recoilJitter = 0.01f;
     public int bulletDamage = 20;
 
-    private Vector3 recoilVelocity;
+    private float nextFireTime = 0f;
+    private bool reloadClipPlayed = false;
+    private Vector3 originalLocalPos;
+    private Vector3 recoilOffset = Vector3.zero;
 
     void Start()
     {
@@ -47,14 +41,13 @@ public class TankShoot : MonoBehaviour
         originalLocalPos = transform.localPosition;
     }
 
-    void OnEnable() { shootAction?.action?.Enable(); }
-    void OnDisable() { shootAction?.action?.Disable(); }
+    void OnEnable() { shootAction.action?.Enable(); }
+    void OnDisable() { shootAction.action?.Disable(); }
 
     void Update()
     {
         if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
-        if (shootAction?.action == null) return;
-
+        if (shootAction.action == null) return;
 
         if (reloadDisplay != null)
         {
@@ -65,48 +58,56 @@ public class TankShoot : MonoBehaviour
         if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
         {
             Shoot();
-            reloadSoundPlaying = false;
         }
-
 
         if (Time.time < nextFireTime)
         {
-            if (!reloadSoundPlaying && reloadSound != null)
+            float remainingTime = nextFireTime - Time.time;
+
+            if (!reloadClipPlayed && remainingTime <= 2.5f && reloadSound != null)
             {
-                audioSource.clip = reloadSound;
-                audioSource.loop = true;
-                audioSource.Play();
-                reloadSoundPlaying = true;
+                audioSource.PlayOneShot(reloadSound);
+                reloadClipPlayed = true;
             }
         }
-        else if (reloadSoundPlaying)
+        else
         {
-            audioSource.Stop();
-            audioSource.loop = false;
-            reloadSoundPlaying = false;
+            reloadClipPlayed = false;
         }
 
+        recoilOffset = Vector3.Lerp(recoilOffset, Vector3.zero, recoilDecay * Time.deltaTime);
 
-        Vector3 targetPos = isRecoiling ?
-         originalLocalPos - transform.forward * recoilBack + transform.up * recoilUp :
-         originalLocalPos;
-
-        transform.localPosition = Vector3.SmoothDamp(transform.localPosition, targetPos, ref recoilVelocity, 1f / (isRecoiling ? recoilSpeed : recoilReturnSpeed));
-
-        if (isRecoiling && Vector3.Distance(transform.localPosition, targetPos) < 0.001f)
-        {
-            isRecoiling = false;
-        }
-
+        transform.localPosition = originalLocalPos + recoilOffset;
     }
 
     void Shoot()
     {
         nextFireTime = Time.time + (1f / fireRate);
-        isRecoiling = true;
+
+        recoilOffset += -transform.forward * recoilBack;
+
+        if (recoilJitter > 0f)
+        {
+            Vector3 jitter = Random.insideUnitSphere * recoilJitter;
+            jitter.y = 0f; 
+            recoilOffset += jitter;
+        }
 
         if (shootSound != null)
-            audioSource.PlayOneShot(shootSound);
+        {
+            var tempSource = gameObject.AddComponent<AudioSource>();
+            tempSource.clip = shootSound;
+            tempSource.volume = Random.Range(0.9f, 1.1f);
+            tempSource.pitch = Random.Range(0.95f, 1.05f);
+            tempSource.spatialBlend = 1f;
+
+            tempSource.minDistance = 10f;
+            tempSource.maxDistance = 500f;
+            tempSource.rolloffMode = AudioRolloffMode.Linear;
+
+            tempSource.Play();
+            Destroy(tempSource, shootSound.length + 0.1f);
+        }
 
         if (muzzleSmoke != null)
         {
