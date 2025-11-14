@@ -22,6 +22,22 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &-3981259924817617990
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: cc559a0141ed0e541a3a2e91da0deefd
+  m_EffectName: Highpass Simple
+  m_MixLevel: 5500b356afdfb2646844498b4d12cbf9
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: c61dec0610f97dd4a82753ddae7ec11f
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &-2210225763968151949
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -39,24 +55,6 @@ AudioMixerEffectController:
     m_GUID: 187c5a0f491dde243b002b8ba8af3e3a
   - m_ParameterName: Frequency gain
     m_GUID: e6c34fe9aaf9ad54b88b5230caa4c9f4
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
---- !u!244 &-2043195972335120592
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: 11b8c3e7b0962f84ba1bfa99cd6628ca
-  m_EffectName: Lowpass
-  m_MixLevel: d0e6690a996ba0244b9f4111207c88d9
-  m_Parameters:
-  - m_ParameterName: Cutoff freq
-    m_GUID: 7e5f8e6af2006de42b85081d24059fdb
-  - m_ParameterName: Resonance
-    m_GUID: f0e13f6b597d8314f89bceba82145f49
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
@@ -96,6 +94,22 @@ AudioMixerEffectController:
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
+--- !u!244 &-423511833770827532
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_EffectID: 09e40838b1b31994c88bec5dddbf89b7
+  m_EffectName: Lowpass Simple
+  m_MixLevel: 0d5a75e943cc65c47befa9c65bf97654
+  m_Parameters:
+  - m_ParameterName: Cutoff freq
+    m_GUID: deaf0bdee19a57a41a2343057f6be1d2
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!241 &24100000
 AudioMixerController:
   m_ObjectHideFlags: 0
@@ -118,7 +132,7 @@ AudioMixerController:
     - aee007e60ce3e6145b828f2cb305d950
     name: View
   m_CurrentViewIndex: 0
-  m_TargetSnapshot: {fileID: 4274512978165483636}
+  m_TargetSnapshot: {fileID: 8894349440905412768}
 --- !u!243 &24300002
 AudioMixerGroupController:
   m_ObjectHideFlags: 0
@@ -134,10 +148,9 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: 24400004}
-  - {fileID: 5133809210665987518}
-  - {fileID: -2043195972335120592}
   - {fileID: -7792116161703275519}
-  - {fileID: 4340919738508007334}
+  - {fileID: -423511833770827532}
+  - {fileID: -3981259924817617990}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -186,7 +199,7 @@ AudioMixerSnapshotController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sniper
+  m_Name: Normal
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: fcf6061ab54c4634eb2881b3d2c2dea4
   m_FloatValues:
@@ -209,64 +222,6 @@ AudioMixerSnapshotController:
     eb7cd4adc2a28a444a4c227238bc5010: 1.5
     631d6a6e5f260d04e9aca4303bff8b7a: 250
   m_TransitionOverrides: {}
---- !u!244 &4340919738508007334
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: 64ebe488e79b5174482085ac63048479
-  m_EffectName: SFX Reverb
-  m_MixLevel: cc443fa3a5636f14baf30954244c5505
-  m_Parameters:
-  - m_ParameterName: Dry Level
-    m_GUID: 824bdf2b58371ea4ebb4ed83da898c06
-  - m_ParameterName: Room
-    m_GUID: 4951f637121a0c542a47d18c2b691dc5
-  - m_ParameterName: Room HF
-    m_GUID: e1926c9f2addd78429f32908ef24d764
-  - m_ParameterName: Decay Time
-    m_GUID: d97f84763770ff6468f7b0869cee28ce
-  - m_ParameterName: Decay HF Ratio
-    m_GUID: c457bf31b19dc9248b3cb5c51be0e952
-  - m_ParameterName: Reflections
-    m_GUID: 27be9f4036f8a6f41b153398aea56a82
-  - m_ParameterName: Reflect Delay
-    m_GUID: 210e41ea1c92a7241bc2c04e4dc8266e
-  - m_ParameterName: Reverb
-    m_GUID: 40625e1a65d780c4ab59377071dc16ae
-  - m_ParameterName: Reverb Delay
-    m_GUID: 187c587e2a1585047af37a7732752c50
-  - m_ParameterName: Diffusion
-    m_GUID: 546c055a09078d3448c7a562ec18c8c4
-  - m_ParameterName: Density
-    m_GUID: fdc913bae5300864b99d6bcf607f96b6
-  - m_ParameterName: HF Reference
-    m_GUID: 63e914dc292acbf408423ce622aed9b3
-  - m_ParameterName: Room LF
-    m_GUID: 1a5993b1ae9e07148bbdf74a10420c4d
-  - m_ParameterName: LF Reference
-    m_GUID: 74c774432149b834694b515de07974c4
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
---- !u!244 &5133809210665987518
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: f3847f9df0c9e114fbc5469e6f080ea4
-  m_EffectName: Highpass Simple
-  m_MixLevel: 4026417cae06bad478b38edf494a85cc
-  m_Parameters:
-  - m_ParameterName: Cutoff freq
-    m_GUID: 1001f628f6dcbc740806e0115a792772
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
 --- !u!244 &7784013678383058168
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -315,13 +270,15 @@ AudioMixerSnapshotController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Normal
+  m_Name: Sniper
   m_AudioMixer: {fileID: 24100000}
   m_SnapshotID: 1ea10ae97c526834aa62dded621bb1a3
   m_FloatValues:
     67d9be500b532e749a310d264c0e33d6: -6
     b149f051ea922d14383f4adc9ab59172: 40
     b2cf04d4a2e6b024cb48300eaab6f7ac: 22000
+    c61dec0610f97dd4a82753ddae7ec11f: 10
+    2454cc66374006a41a74441d441796c8: 1
     0dc233b69b3400149803595cc9bb1137: -6
     35bb8817b12f95048b4cec4336a8060c: 2500
     ec99be0a2052e474db83cb1a27fb2b7d: 2500
@@ -334,4 +291,5 @@ AudioMixerSnapshotController:
     7e453c6d0f8483d41826e8b2d8a2d758: 2.9999983
     5ea14d6dc0d0f1d4e8457838b2dd9f3d: 0
     631d6a6e5f260d04e9aca4303bff8b7a: 80
+    deaf0bdee19a57a41a2343057f6be1d2: 1219
   m_TransitionOverrides: {}

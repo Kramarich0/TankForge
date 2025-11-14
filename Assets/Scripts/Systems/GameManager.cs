@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
         TeamEnum team = victimTeamComponent.team;
         if (team == TeamEnum.Neutral) return;
 
-        CapturePoint[] allPoints = FindObjectsOfType<CapturePoint>();
+        CapturePoint[] allPoints = FindObjectsByType<CapturePoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (CapturePoint point in allPoints)
         {
             point.RemoveTeamComponent(victimTeamComponent);

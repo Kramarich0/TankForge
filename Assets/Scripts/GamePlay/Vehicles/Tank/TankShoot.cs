@@ -38,7 +38,7 @@ public class TankShoot : MonoBehaviour
     {
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
-        AudioManager.AssignToMaster(audioSource);
+        // AudioManager.AssignToMaster(audioSource);
 
         audioSource.spatialBlend = 1f;
         audioSource.rolloffMode = AudioRolloffMode.Linear;
