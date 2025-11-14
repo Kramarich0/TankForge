@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
 
 public class TankSniperView : MonoBehaviour
@@ -25,24 +26,27 @@ public class TankSniperView : MonoBehaviour
 
     [Header("Optional follow settings")]
     public float followSpeed = 10f;
-    private Vector3 recoilPositionOffset = Vector3.zero;
-    private Vector3 recoilPositionVelocity = Vector3.zero;
     private bool isSniperView = false;
     private float zoomTarget = 0f;
     private float zoomCurrent = 0f;
     private float normalFOV;
     private Vector3 stableOffset;
     private float recoilDecay = 5f;
-    private float driveSwayTimer = 0f;
-    private readonly float driveSwayAmountX = 0.08f;
-    private readonly float driveSwayAmountY = 0.02f;
-    private float accumulatedRecoilAngle = 0f;
-    private float recoilAngleVelocity = 0f;
+    private Vector3 currentRecoilPosition = Vector3.zero;
+    private float currentRecoilAngle = 0f;
+    private Vector3 targetRecoilPosition = Vector3.zero;
+    private float targetRecoilAngle = 0f;
+
+    public AudioMixer masterMixer;
+    public string normalSnapshotName = "Normal";
+    public string sniperSnapshotName = "Sniper";
+    private AudioMixerSnapshot normalSnapshot;
+    private AudioMixerSnapshot sniperSnapshot;
 
     void Start()
     {
-        toggleViewAction?.action?.Enable();
-        zoomAction?.action?.Enable();
+        toggleViewAction.action?.Enable();
+        zoomAction.action?.Enable();
 
         if (mainCamera != null) normalFOV = mainCamera.fieldOfView;
         crosshairAimUI?.SetActive(true);
@@ -58,6 +62,11 @@ public class TankSniperView : MonoBehaviour
 
         zoomTarget = 0f;
         zoomCurrent = 0f;
+        if (masterMixer != null)
+        {
+            normalSnapshot = masterMixer.FindSnapshot(normalSnapshotName);
+            sniperSnapshot = masterMixer.FindSnapshot(sniperSnapshotName);
+        }
     }
 
     void Update()
@@ -98,20 +107,19 @@ public class TankSniperView : MonoBehaviour
     {
         if (!isSniperView || sniperCamera == null || gunEnd == null) return;
 
-        accumulatedRecoilAngle = Mathf.SmoothDamp(accumulatedRecoilAngle, 0f, ref recoilAngleVelocity, 1f / Mathf.Max(recoilDecay, 0.1f));
-        recoilPositionOffset = Vector3.SmoothDamp(
-            recoilPositionOffset,
-            Vector3.zero,
-            ref recoilPositionVelocity,
-            1f / Mathf.Max(recoilDecay, 0.1f)
-        );
+        targetRecoilPosition = Vector3.Lerp(targetRecoilPosition, Vector3.zero, Time.deltaTime * recoilDecay * 0.5f);
+        targetRecoilAngle = Mathf.Lerp(targetRecoilAngle, 0f, Time.deltaTime * recoilDecay * 0.5f);
+
+        currentRecoilPosition = Vector3.Lerp(currentRecoilPosition, targetRecoilPosition, Time.deltaTime * 15f);
+        currentRecoilAngle = Mathf.Lerp(currentRecoilAngle, targetRecoilAngle, Time.deltaTime * 15f);
+
 
         Vector3 zoomOffset = gunEnd.forward * (maxZoomOffset * zoomCurrent);
-        Vector3 basePos = gunEnd.position + stableOffset + gunEnd.forward * positionOffset + zoomOffset + recoilPositionOffset; // а ето заккоменть
+        Vector3 basePos = gunEnd.position + stableOffset + gunEnd.forward * positionOffset + zoomOffset + currentRecoilPosition;
         sniperCamera.transform.position = Vector3.Lerp(sniperCamera.transform.position, basePos, Time.deltaTime * followSpeed);
 
         Quaternion baseRot = Quaternion.LookRotation(gunEnd.forward, gunEnd.up);
-        Quaternion recoilLocalRot = Quaternion.Euler(accumulatedRecoilAngle, 0f, 0f);
+        Quaternion recoilLocalRot = Quaternion.Euler(currentRecoilAngle, 0f, 0f);
         Quaternion finalRot = baseRot * recoilLocalRot;
 
         sniperCamera.transform.rotation = Quaternion.Slerp(sniperCamera.transform.rotation, finalRot, Time.deltaTime * followSpeed);
@@ -124,6 +132,14 @@ public class TankSniperView : MonoBehaviour
     {
         if (GameUIManager.Instance != null && GameUIManager.Instance.IsPaused) return;
         isSniperView = !isSniperView;
+
+        if (!isSniperView)
+        {
+            currentRecoilPosition = Vector3.zero;
+            currentRecoilAngle = 0f;
+            targetRecoilPosition = Vector3.zero;
+            targetRecoilAngle = 0f;
+        }
 
         if (mainCamera != null) mainCamera.enabled = !isSniperView;
         if (sniperCamera != null) sniperCamera.enabled = isSniperView;
@@ -143,7 +159,10 @@ public class TankSniperView : MonoBehaviour
         {
             zoomTarget = Mathf.Clamp01(zoomTarget);
             zoomCurrent = Mathf.Clamp01(zoomCurrent);
+            sniperSnapshot.TransitionTo(0.2f);
         }
+        else
+            normalSnapshot.TransitionTo(0.2f);
     }
 
     void OnDestroy()
@@ -162,11 +181,17 @@ public class TankSniperView : MonoBehaviour
         float currentFOV = Mathf.Lerp(normalFOV, minFOV, zoomCurrent);
         float recoilScale = currentFOV / normalFOV;
 
-        recoilPositionOffset += 0.18f * recoilScale * -gunEnd.forward;
-        recoilPositionOffset += Random.Range(-0.05f, 0.05f) * recoilScale * gunEnd.right;
-        accumulatedRecoilAngle -= Random.Range(5.5f, 6f) * recoilScale;
+        targetRecoilPosition += 0.18f * recoilScale * -gunEnd.forward;
+        targetRecoilPosition += Random.Range(-0.05f, 0.05f) * recoilScale * gunEnd.right;
+        targetRecoilAngle -= Random.Range(5.5f, 6f) * recoilScale;
 
-        recoilDecay = 2f;
+        recoilDecay = 1.5f + (1f - zoomCurrent) * 2.5f;
     }
+    
+    public bool IsSniperActive()
+    {
+        return isSniperView;
+    }
+
 
 }

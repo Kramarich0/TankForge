@@ -34,6 +34,7 @@ public class TurretAiming : MonoBehaviour
     [SerializeField] private float yawStartThreshold = 2f;
     [SerializeField] private float yawStopThreshold = 0.8f;
     private float smoothedSpeed;
+    public TankSniperView sniperView;
 
     void Start()
     {
@@ -57,6 +58,8 @@ public class TurretAiming : MonoBehaviour
         loopAudioSource.volume = 0f;
         loopAudioSource.spatialBlend = 1f;
         loopAudioSource.dopplerLevel = .0f;
+        AudioManager.AssignToMaster(loopAudioSource);
+
     }
 
     void LateUpdate()
@@ -109,8 +112,16 @@ public class TurretAiming : MonoBehaviour
                 loopAudioSource.volume = Mathf.Lerp(loopAudioSource.volume, volume, audioFadeSpeed * Time.deltaTime);
                 loopAudioSource.pitch = Mathf.Lerp(loopAudioSource.pitch, pitch, audioFadeSpeed * Time.deltaTime);
 
-                if (!loopAudioSource.isPlaying)
-                    loopAudioSource.Play();
+                if (sniperView != null && sniperView.IsSniperActive())
+                {
+                    if (!loopAudioSource.isPlaying)
+                        loopAudioSource.Play();
+                }
+                else
+                {
+                    loopAudioSource.Stop();
+                }
+
             }
             else
             {

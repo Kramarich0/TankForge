@@ -11,7 +11,7 @@ public class TankShoot : MonoBehaviour
     public Transform gunEnd;
     public BulletPool bulletPool;
     public float bulletSpeed = 800f;
-    public float fireRate = 0.5f;
+    public float shotsPerSecond = 8f;
 
     [Header("Effects")]
     public GameObject muzzleSmoke;
@@ -26,6 +26,7 @@ public class TankShoot : MonoBehaviour
     public float recoilBack = 0.12f;
     public float recoilDecay = 8f;
     public float recoilJitter = 0.01f;
+    public float recoilPhysicalImpulse = 150f;
     public int bulletDamage = 20;
 
     private float nextFireTime = 0f;
@@ -37,6 +38,14 @@ public class TankShoot : MonoBehaviour
     {
         if (audioSource == null) audioSource = GetComponent<AudioSource>();
         if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
+        AudioManager.AssignToMaster(audioSource);
+
+        audioSource.spatialBlend = 1f;
+        audioSource.rolloffMode = AudioRolloffMode.Linear;
+        audioSource.minDistance = 10f;
+        audioSource.maxDistance = 500f;
+
+        originalLocalPos = transform.localPosition;
 
         originalLocalPos = transform.localPosition;
     }
@@ -52,7 +61,7 @@ public class TankShoot : MonoBehaviour
         if (reloadDisplay != null)
         {
             float remainingTime = Mathf.Max(0f, nextFireTime - Time.time);
-            reloadDisplay.SetReload(remainingTime, 1f / fireRate);
+            reloadDisplay.SetReload(remainingTime, 1f / shotsPerSecond);
         }
 
         if (shootAction.action.WasPressedThisFrame() && Time.time >= nextFireTime)
@@ -82,14 +91,15 @@ public class TankShoot : MonoBehaviour
 
     void Shoot()
     {
-        nextFireTime = Time.time + (1f / fireRate);
+        float fireInterval = 1f / Mathf.Max(0.0001f, shotsPerSecond);
+        nextFireTime = Time.time + fireInterval;
 
         recoilOffset += -transform.forward * recoilBack;
 
         if (recoilJitter > 0f)
         {
             Vector3 jitter = Random.insideUnitSphere * recoilJitter;
-            jitter.y = 0f; 
+            jitter.y = 0f;
             recoilOffset += jitter;
         }
 
@@ -104,6 +114,7 @@ public class TankShoot : MonoBehaviour
             tempSource.minDistance = 10f;
             tempSource.maxDistance = 500f;
             tempSource.rolloffMode = AudioRolloffMode.Linear;
+            AudioManager.AssignToMaster(tempSource);
 
             tempSource.Play();
             Destroy(tempSource, shootSound.length + 0.1f);
@@ -135,6 +146,13 @@ public class TankShoot : MonoBehaviour
                 shooterColliders
             );
         }
+
+        Rigidbody parentRb = GetComponentInParent<Rigidbody>();
+        if (parentRb != null && recoilPhysicalImpulse > 0f)
+        {
+            parentRb.AddForceAtPosition(-gunEnd.forward * recoilPhysicalImpulse, gunEnd.position, ForceMode.Impulse);
+        }
+        
         onShotFired?.Invoke();
     }
 

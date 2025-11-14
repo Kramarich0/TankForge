@@ -122,6 +122,7 @@ public class TankAI : MonoBehaviour
         if (idleSound != null)
         {
             idleSource = gameObject.AddComponent<AudioSource>();
+            AudioManager.AssignToMaster(idleSource);
             idleSource.clip = idleSound;
             idleSource.loop = true;
             idleSource.spatialBlend = 1f;
@@ -135,6 +136,7 @@ public class TankAI : MonoBehaviour
         if (driveSound != null)
         {
             driveSource = gameObject.AddComponent<AudioSource>();
+            AudioManager.AssignToMaster(driveSource);
             driveSource.clip = driveSound;
             driveSource.loop = true;
             driveSource.spatialBlend = 1f;
@@ -148,13 +150,14 @@ public class TankAI : MonoBehaviour
         if (shootSound != null)
         {
             shootSource = gameObject.AddComponent<AudioSource>();
+            AudioManager.AssignToMaster(shootSource);
             shootSource.clip = shootSound;
             shootSource.loop = false;
             shootSource.spatialBlend = 1f;
             shootSource.minDistance = 3f;
             shootSource.maxDistance = 50f;
             shootSource.rolloffMode = AudioRolloffMode.Logarithmic;
-            shootSource.volume = 0.6f; // Можно подстроить громкость
+            shootSource.volume = 0.6f;
         }
     }
 

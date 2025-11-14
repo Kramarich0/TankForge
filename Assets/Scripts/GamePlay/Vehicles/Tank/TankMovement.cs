@@ -50,12 +50,16 @@ public class TankMovement : MonoBehaviour
     private float blendVelocity = 0f;
     private float rawMoveSmoothed = 0f;
     private float rawTurnSmoothed = 0f;
-    private AudioSource idleSource;
-    private AudioSource driveSource;
     private float rawMoveInput = 0f;
     private float rawTurnInput = 0f;
     private float smoothedMove = 0f;
     private float smoothedTurn = 0f;
+    private AudioSource idleSource;
+    private AudioSource driveSource;
+
+    private float reverseLockTimer = 0f;
+    [Tooltip("Время блокировки мощности при смене направления (сек)")]
+    public float reverseLockDuration = 0.18f;
 
     void Awake()
     {
@@ -75,14 +79,15 @@ public class TankMovement : MonoBehaviour
 
         rb.isKinematic = false;
         rb.useGravity = true;
-        rb.interpolation = RigidbodyInterpolation.None;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-
 
         if (rb.angularDamping < 0.5f) rb.angularDamping = 0.5f;
 
         idleSource = gameObject.AddComponent<AudioSource>();
         driveSource = gameObject.AddComponent<AudioSource>();
+        AudioManager.AssignToMaster(idleSource);
+        AudioManager.AssignToMaster(driveSource);
         SetupAudioSource(idleSource, idleSound, true);
         SetupAudioSource(driveSource, driveSound, true);
 
@@ -99,6 +104,10 @@ public class TankMovement : MonoBehaviour
             source.playOnAwake = false;
             source.volume = 0f;
             source.pitch = 1f;
+            source.spatialBlend = 1f;
+            source.rolloffMode = AudioRolloffMode.Linear;
+            source.minDistance = 5f;
+            source.maxDistance = 500f;
         }
     }
 
@@ -141,7 +150,7 @@ public class TankMovement : MonoBehaviour
         rawTurnSmoothed = Mathf.Lerp(rawTurnSmoothed, rTurn, 5f * Time.deltaTime);
 
         float absMove = Mathf.Abs(rawMoveSmoothed);
-        float absTurn = Mathf.Abs(rawTurnSmoothed) * 0.5f; 
+        float absTurn = Mathf.Abs(rawTurnSmoothed) * 0.5f;
         float targetBlend = Mathf.Clamp01(absMove + absTurn);
 
         currentBlend = Mathf.SmoothDamp(currentBlend, targetBlend, ref blendVelocity, 0.2f);
@@ -158,6 +167,8 @@ public class TankMovement : MonoBehaviour
         float currentSpeedMS = Vector3.Dot(rb.linearVelocity, transform.forward);
         float currentSpeedKmh = currentSpeedMS * 3.6f;
         if (speedDisplay != null) speedDisplay.SetSpeed((int)currentSpeedKmh);
+
+        if (reverseLockTimer > 0f) reverseLockTimer -= Time.deltaTime;
     }
 
     void FixedUpdate()
@@ -191,10 +202,28 @@ public class TankMovement : MonoBehaviour
             rightTrack.ApplyTorque(rightPivot, 0f);
 
             float angularFactor = Mathf.Clamp01(Mathf.Abs(turnInput));
-            rb.AddRelativeTorque(Vector3.up * pivotAddRbTorque * angularFactor * Time.fixedDeltaTime, ForceMode.Acceleration);
+            rb.AddRelativeTorque(Vector3.up * pivotAddRbTorque * angularFactor, ForceMode.Acceleration);
             return;
         }
 
+        if (Mathf.Abs(currentForwardSpeed) > movingThreshold && moveInput != 0f && Mathf.Sign(currentForwardSpeed) != Mathf.Sign(moveInput) && reverseLockTimer <= 0f)
+        {
+            // запускаем таймер блокировки
+            reverseLockTimer = reverseLockDuration;
+        }
+
+
+        float desiredBrake = 0f;
+
+
+        if (reverseLockTimer > 0f)
+        {
+            // при блокировке — сильный тормоз и нулевая подача мощности
+            desiredBrake = maxBrakeTorque;
+            leftTrack.ApplyTorque(0f, desiredBrake);
+            rightTrack.ApplyTorque(0f, desiredBrake);
+            return; // держим торможение в этой FixedUpdate
+        }
 
         float speedFactor = Mathf.Clamp01(Mathf.Abs(currentForwardSpeed) / maxForwardSpeed);
         float turnModifier = Mathf.Lerp(1f, 0.5f, speedFactor);
@@ -202,7 +231,6 @@ public class TankMovement : MonoBehaviour
         float rightPower = Mathf.Clamp(moveInput - turnInput * turnSharpness * turnModifier, -1f, 1f);
 
 
-        float desiredBrake = 0f;
         if (Mathf.Abs(currentForwardSpeed) > movingThreshold && Mathf.Sign(currentForwardSpeed) != Mathf.Sign(moveInput) && moveInput != 0f)
         {
             float speedRatio = Mathf.InverseLerp(0.5f, maxForwardSpeed, Mathf.Abs(currentForwardSpeed));
@@ -223,7 +251,7 @@ public class TankMovement : MonoBehaviour
 
 
         float bodyTurnFactor = Mathf.Clamp01(Mathf.Abs(turnInput) * absMove);
-        rb.AddRelativeTorque(bodyTurnFactor * maxTurnTorque * Time.fixedDeltaTime * Vector3.up, ForceMode.Acceleration);
+        rb.AddRelativeTorque(bodyTurnFactor * maxTurnTorque * Vector3.up, ForceMode.Acceleration);
     }
 
     void LimitSpeed()
