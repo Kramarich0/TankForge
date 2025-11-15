@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8284883616253908340}
   - component: {fileID: 3500383129314085693}
   - component: {fileID: 3801860786099400932}
-  - component: {fileID: 3666320964831775292}
+  - component: {fileID: 6127732836876302978}
   m_Layer: 12
   m_Name: Panzer_VI_E_Track_R
   m_TagString: Untagged
@@ -90,27 +90,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3666320964831775292
-BoxCollider:
+--- !u!114 &6127732836876302978
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 335965515379975282}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.7148876, y: 1.1536644, z: 5.7907653}
-  m_Center: {x: 1.3675508, y: 0.5768322, z: 0.08727479}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60982b9a5a92afa40985d3c29008057e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackController
+  tankRigidbody: {fileID: 2509401565897758532}
+  leftTrackRenderer: {fileID: 862747582544207110}
+  rightTrackRenderer: {fileID: 0}
+  textureProperty: _MainTex
+  scrollSpeedFactor: 0.05
+  turnScrollFactor: 0.7
+  wheelRadius: 0.3
+  leftWheels: []
+  rightWheels: []
 --- !u!1 &720854140552592437
 GameObject:
   m_ObjectHideFlags: 0
@@ -1160,9 +1160,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4028780022492758184}
+  - component: {fileID: 8751402106025691335}
   - component: {fileID: 4743217205715912760}
   - component: {fileID: 3647258869403263868}
-  - component: {fileID: 8751402106025691335}
   - component: {fileID: 2509401565897758532}
   - component: {fileID: 4550064695049263837}
   - component: {fileID: 3369549077092873980}
@@ -1192,44 +1192,6 @@ Transform:
   - {fileID: 5919960485072220985}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4743217205715912760
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3792661680670055886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d93b28653ce0d814d883abd4fb7cff8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankHealth
-  maxHealth: 100
-  currentHealth: 0
-  healthDisplay: {fileID: 0}
-  deathPrefab: {fileID: 3792661680670055886, guid: 8a1f159ae94dc0c4696769c539a7f578, type: 3}
---- !u!195 &3647258869403263868
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3792661680670055886}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 1.877
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!114 &8751402106025691335
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1311,6 +1273,75 @@ MonoBehaviour:
   maxIdlePitch: 1.2
   minDrivePitch: 0.8
   maxDrivePitch: 1.3
+  leftTrack:
+    wheels:
+    - {fileID: 9107164038897286362}
+    - {fileID: 3225068037675337182}
+    - {fileID: 7905261286618601921}
+    - {fileID: 4332005298143648181}
+    - {fileID: 2597965396106941458}
+    - {fileID: 1411958536034947321}
+    - {fileID: 840150921845621548}
+    - {fileID: 4025295649542472010}
+    - {fileID: 4000349246039680910}
+    - {fileID: 4939367887701140254}
+    currentTorque: 0
+  rightTrack:
+    wheels:
+    - {fileID: 695481022067879786}
+    - {fileID: 2398747295552234926}
+    - {fileID: 8505664047987411766}
+    - {fileID: 1071098659399509614}
+    - {fileID: 8054976215493648516}
+    - {fileID: 4248491915782433029}
+    - {fileID: 7497330482676793308}
+    - {fileID: 6966302807424751343}
+    - {fileID: 4329130133890197034}
+    - {fileID: 6629243935948307966}
+    currentTorque: 0
+  maxMotorTorque: 1500
+  maxForwardSpeed: 8
+  maxBackwardSpeed: 3
+  maxBrakeTorque: 2000
+  turnSharpness: 1
+--- !u!114 &4743217205715912760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3792661680670055886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93b28653ce0d814d883abd4fb7cff8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankHealth
+  maxHealth: 100
+  currentHealth: 0
+  healthDisplay: {fileID: 0}
+  deathPrefab: {fileID: 3792661680670055886, guid: 8a1f159ae94dc0c4696769c539a7f578, type: 3}
+--- !u!195 &3647258869403263868
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3792661680670055886}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 1.877
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!54 &2509401565897758532
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2958,7 +2989,7 @@ GameObject:
   - component: {fileID: 4683581856932107850}
   - component: {fileID: 3108657581515730663}
   - component: {fileID: 2428030822713200145}
-  - component: {fileID: 8185444536117195808}
+  - component: {fileID: 8119403925908152796}
   m_Layer: 12
   m_Name: Panzer_VI_E
   m_TagString: Untagged
@@ -3044,7 +3075,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8185444536117195808
+--- !u!65 &8119403925908152796
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3054,7 +3085,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 14336
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -3063,8 +3094,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.7513642, y: 1.9361753, z: 6.355857}
-  m_Center: {x: 0.0000010728836, y: 1.0357895, z: -0.18787003}
+  m_Size: {x: 3.7513633, y: 1.5897026, z: 6.3558555}
+  m_Center: {x: 0.000001013279, y: 1.2090259, z: -0.18787003}
 --- !u!1 &7737118341145435587
 GameObject:
   m_ObjectHideFlags: 0
@@ -3816,7 +3847,7 @@ GameObject:
   - component: {fileID: 3094873574422638014}
   - component: {fileID: 2835855467121584003}
   - component: {fileID: 862747582544207110}
-  - component: {fileID: 7059007544840725613}
+  - component: {fileID: 3470511712248619353}
   m_Layer: 12
   m_Name: Panzer_VI_E_Track_L
   m_TagString: Untagged
@@ -3895,24 +3926,44 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7059007544840725613
-BoxCollider:
+--- !u!114 &3470511712248619353
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9119965944913994945}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.71488786, y: 1.1536645, z: 5.7907653}
-  m_Center: {x: -1.3775492, y: 0.5768319, z: 0.08727431}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60982b9a5a92afa40985d3c29008057e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackController
+  tankRigidbody: {fileID: 2509401565897758532}
+  leftTrackRenderer: {fileID: 862747582544207110}
+  rightTrackRenderer: {fileID: 3801860786099400932}
+  textureProperty: _MainTex
+  scrollSpeedFactor: 0.05
+  turnScrollFactor: 0.7
+  wheelRadius: 0.3
+  leftWheels:
+  - {fileID: 5413713896134704525}
+  - {fileID: 5091875714208518212}
+  - {fileID: 3007456592073652225}
+  - {fileID: 4813919704401637546}
+  - {fileID: 3198201790779155518}
+  - {fileID: 4792251898952823334}
+  - {fileID: 357294886782659776}
+  - {fileID: 1826054664211053594}
+  - {fileID: 2923289281842000279}
+  - {fileID: 4166782447864923280}
+  rightWheels:
+  - {fileID: 500006959386320726}
+  - {fileID: 1677889482578515658}
+  - {fileID: 7442447051432739607}
+  - {fileID: 6040631437414862104}
+  - {fileID: 1577557231552565935}
+  - {fileID: 4382064926859169994}
+  - {fileID: 7823992935148558553}
+  - {fileID: 701771372643133958}
+  - {fileID: 4738166773077117738}
+  - {fileID: 5711590392724389266}

@@ -86,7 +86,6 @@ public class AICombat
         }
         else
         {
-            // Use rb.velocity (standard) instead of linearVelocity which may not exist/behave differently
             if (t.TryGetComponent<Rigidbody>(out var rb)) targetVel = rb.linearVelocity;
         }
 

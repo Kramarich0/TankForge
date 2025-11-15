@@ -241,6 +241,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1453875624340670765}
   - component: {fileID: 6218849148806748994}
+  - component: {fileID: 3508428490546893302}
   m_Layer: 12
   m_Name: leftTrack
   m_TagString: Untagged
@@ -341,6 +342,45 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.0134, y: 0.0008108355, z: -0.0016103201}
     m_Extent: {x: 0.0031146095, y: 0.0058380906, z: 0.035988856}
   m_DirtyAABB: 0
+--- !u!114 &3508428490546893302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2041337256289040278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60982b9a5a92afa40985d3c29008057e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackController
+  tankRigidbody: {fileID: 4585202906806677004}
+  leftTrackRenderer: {fileID: 6218849148806748994}
+  rightTrackRenderer: {fileID: 2546718711450723389}
+  textureProperty: _MainTex
+  scrollSpeedFactor: 0.05
+  turnScrollFactor: 0.7
+  wheelRadius: 0.3
+  leftWheels:
+  - {fileID: 2282712483293564153}
+  - {fileID: 5756601794601527862}
+  - {fileID: 9130966864389122055}
+  - {fileID: 7347824133454942793}
+  - {fileID: 9064183653610888798}
+  - {fileID: 4400227383826751223}
+  - {fileID: 7899060131994754272}
+  - {fileID: 1319916965766389964}
+  - {fileID: 5881851135040671436}
+  rightWheels:
+  - {fileID: 2933179451823505245}
+  - {fileID: 2406261584591188067}
+  - {fileID: 6735962607379270782}
+  - {fileID: 8305473451298485365}
+  - {fileID: 1497719137284666205}
+  - {fileID: 8770776857131494369}
+  - {fileID: 3726103839468725327}
+  - {fileID: 6755535226605369331}
+  - {fileID: 491419590637934488}
 --- !u!1 &2098733122739505828
 GameObject:
   m_ObjectHideFlags: 0
@@ -1897,6 +1937,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7539283363799981359}
   - component: {fileID: 2546718711450723389}
+  - component: {fileID: 740366494008454722}
   m_Layer: 12
   m_Name: rightTrack
   m_TagString: Untagged
@@ -1997,6 +2038,45 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.013400003, y: 0.000810836, z: -0.0016103387}
     m_Extent: {x: 0.0031146258, y: 0.00583809, z: 0.035988852}
   m_DirtyAABB: 0
+--- !u!114 &740366494008454722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5752386376430457274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60982b9a5a92afa40985d3c29008057e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TrackController
+  tankRigidbody: {fileID: 4585202906806677004}
+  leftTrackRenderer: {fileID: 6218849148806748994}
+  rightTrackRenderer: {fileID: 2546718711450723389}
+  textureProperty: _MainTex
+  scrollSpeedFactor: 0.05
+  turnScrollFactor: 0.7
+  wheelRadius: 0.3
+  leftWheels:
+  - {fileID: 2282712483293564153}
+  - {fileID: 5756601794601527862}
+  - {fileID: 9130966864389122055}
+  - {fileID: 7347824133454942793}
+  - {fileID: 9064183653610888798}
+  - {fileID: 4400227383826751223}
+  - {fileID: 7899060131994754272}
+  - {fileID: 1319916965766389964}
+  - {fileID: 5881851135040671436}
+  rightWheels:
+  - {fileID: 2933179451823505245}
+  - {fileID: 2406261584591188067}
+  - {fileID: 6735962607379270782}
+  - {fileID: 8305473451298485365}
+  - {fileID: 1497719137284666205}
+  - {fileID: 8770776857131494369}
+  - {fileID: 3726103839468725327}
+  - {fileID: 6755535226605369331}
+  - {fileID: 491419590637934488}
 --- !u!1 &5782273255403265768
 GameObject:
   m_ObjectHideFlags: 0
@@ -2310,6 +2390,19 @@ MonoBehaviour:
   maxIdlePitch: 1.2
   minDrivePitch: 0.8
   maxDrivePitch: 1.3
+  leftTrack:
+    driveWheels: []
+    idleWheels: []
+    currentTorque: 0
+  rightTrack:
+    driveWheels: []
+    idleWheels: []
+    currentTorque: 0
+  maxMotorTorque: 1500
+  maxForwardSpeed: 8
+  maxBackwardSpeed: 3
+  maxBrakeTorque: 2000
+  turnSharpness: 1
 --- !u!114 &7143281257750848462
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3745,7 +3838,7 @@ MonoBehaviour:
   teamComp: {fileID: 5377059141490470958}
   tankAI: {fileID: 744730498311578427}
   lightSprite: {fileID: 21300000, guid: 922fdc92c6869b24f8980ee3b8bbe6ed, type: 3}
-  mediumSprite: {fileID: 21300000, guid: 58c3d870ba89b364da7ec62db723c3db, type: 3}
+  mediumSprite: {fileID: 21300000, guid: c5764947cf2547e4dbfa0c28030cc023, type: 3}
   heavySprite: {fileID: 21300000, guid: b5c942927194d3e40915e0e63da568b0, type: 3}
   size: 1
   localOffset: {x: 0, y: 0, z: 0}

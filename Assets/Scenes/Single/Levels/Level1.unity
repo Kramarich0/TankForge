@@ -6847,19 +6847,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: debugLogs
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: bulletPool
       value: 
       objectReference: {fileID: 702589404}
     - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
-      propertyPath: shootSound
-      value: 
-      objectReference: {fileID: 8300000, guid: 50d6a0caa7cd2854a95228cb6cca1c9e, type: 3}
-    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: debugGizmos
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: projectileSpeed
+      value: 700
       objectReference: {fileID: 0}
     - target: {fileID: 6336670235644700564, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: m_Layer
@@ -9583,6 +9583,10 @@ PrefabInstance:
       propertyPath: bulletPool
       value: 
       objectReference: {fileID: 702589404}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: projectileSpeed
+      value: 729
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -20761,9 +20765,8 @@ MonoBehaviour:
   inputDeadzone: 0.02
   leftTrack:
     wheels:
-    - {fileID: 1596958762}
     - {fileID: 1529050456}
-    - {fileID: 1681736825}
+    - {fileID: 1529050456}
     - {fileID: 1597771375}
     - {fileID: 512792315}
     - {fileID: 1184520639}

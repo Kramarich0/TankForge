@@ -78,16 +78,14 @@ public class TankHealth : MonoBehaviour, IDamageable
         if (deathPrefab != null)
         {
             GameObject hull = Instantiate(deathPrefab, transform.position, transform.rotation);
-
+            
             if (TryGetComponent<Rigidbody>(out var rbOriginal) && hull.TryGetComponent<Rigidbody>(out var rbHull))
             {
-                rbHull.centerOfMass = rbOriginal.centerOfMass;
-                rbHull.transform.rotation = rbOriginal.transform.rotation;
                 rbHull.linearVelocity = rbOriginal.linearVelocity;
                 rbHull.angularVelocity = rbOriginal.angularVelocity;
-                rbHull.MovePosition(rbOriginal.position);
-                rbHull.MoveRotation(rbOriginal.rotation);
+                rbHull.centerOfMass = rbOriginal.centerOfMass;
             }
+
         }
 
         Destroy(gameObject);

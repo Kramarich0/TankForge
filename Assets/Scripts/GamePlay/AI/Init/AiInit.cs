@@ -46,6 +46,12 @@ public class AIInit
             }
         }
 
+        if (owner.leftTrack != null && owner.rightTrack != null)
+        {
+            if (owner.TryGetComponent<Rigidbody>(out var rb))
+                TankWheelSetup.ApplyToAllWheels(owner.leftTrack.wheels, owner.rightTrack.wheels, rb.mass);
+        }
+
         if (owner.enemyHealthDisplayPrefab != null && owner.tankHealth != null)
         {
             var d = Object.Instantiate(owner.enemyHealthDisplayPrefab);

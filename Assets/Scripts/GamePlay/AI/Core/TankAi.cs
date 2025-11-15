@@ -49,7 +49,21 @@ public class TankAI : MonoBehaviour
     public float fireRate = 1f;
     public float minGunAngle = -5f;
     public float maxGunAngle = 20f;
+    public float moveResponse = 5f;
+    public float turnResponse = 5f;
+    public float maxForwardSpeed = 10f;
+    public float maxBackwardSpeed = 5f;
+    public float turnSharpness = 1.5f;
+    public float reverseLockDuration = 0.5f;
+    public float movingThreshold = 0.15f;
+
     internal int bulletDamage;
+
+    public TankTrack leftTrack;
+    public TankTrack rightTrack;
+    public float maxMotorTorque = 1500f;
+    public float maxBrakeTorque = 2000f;
+
 
     [Header("AI Aim & Movement Tweaks")]
     [Tooltip("Базовая разброс в градусах (при стойке)")]
@@ -123,6 +137,7 @@ public class TankAI : MonoBehaviour
     internal AudioSource driveSource;
     internal AudioSource shootSource;
     internal float strafePhase = 0f;
+
 
     TankAIImpl impl;
 
