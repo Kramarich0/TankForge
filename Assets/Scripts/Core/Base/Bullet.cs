@@ -58,7 +58,6 @@ public class Bullet : MonoBehaviour
         }
     }
 
-
     void FixedUpdate()
     {
         if (isInPool) return;

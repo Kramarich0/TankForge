@@ -41,6 +41,7 @@ public class PlayerTankHealth : MonoBehaviour, IDamageable
         }
 
         GameManager.Instance.OnPlayerTankDestroyed();
+        Destroy(gameObject);
 
     }
 

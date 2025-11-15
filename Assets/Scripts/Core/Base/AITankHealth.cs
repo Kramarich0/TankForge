@@ -2,9 +2,13 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(TeamComponent))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(TankAI))]
+[RequireComponent(typeof(TankCollisionDamage))]
 public class AITankHealth : MonoBehaviour, IDamageable
 {
     private static WaitForSeconds _waitForSeconds0_1 = new(0.1f);
+    private static WaitForFixedUpdate _waitForFixedUpdate = new();
 
     [Header("Health")]
     [HideInInspector] public float maxHealth;
@@ -18,11 +22,30 @@ public class AITankHealth : MonoBehaviour, IDamageable
     private TeamComponent teamComp;
     private string lastAttackerName;
 
+    private Rigidbody _cachedRigidbody;
+    private TankAI _cachedTankAI;
+    private TankCollisionDamage _cachedCollisionDamage;
+    private Collider[] _cachedColliders;
+    private WheelCollider[] _cachedWheelColliders;
+    private Renderer[] _cachedRenderers;
+
     void Start()
     {
         teamComp = GetComponent<TeamComponent>();
         currentHealth = maxHealth;
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+
+        CacheComponents();
+    }
+
+    private void CacheComponents()
+    {
+        _cachedRigidbody = GetComponent<Rigidbody>();
+        _cachedTankAI = GetComponent<TankAI>();
+        _cachedCollisionDamage = GetComponent<TankCollisionDamage>();
+        _cachedColliders = GetComponentsInChildren<Collider>();
+        _cachedWheelColliders = GetComponentsInChildren<WheelCollider>();
+        _cachedRenderers = GetComponentsInChildren<Renderer>();
     }
 
     public void TakeDamage(int amount, string source = null)
@@ -45,7 +68,7 @@ public class AITankHealth : MonoBehaviour, IDamageable
         if (isDead) return;
         isDead = true;
 
-        if (gameObject == null || !gameObject.activeInHierarchy)
+        if (!this || !gameObject.activeInHierarchy)
         {
             Debug.LogWarning($"[AITankHealth] Попытка умереть уничтоженного объекта: {name}");
             return;
@@ -56,37 +79,27 @@ public class AITankHealth : MonoBehaviour, IDamageable
 
     private IEnumerator SafeDeathSequence()
     {
-        if (gameObject == null || !gameObject.activeInHierarchy)
-        {
-            Debug.LogWarning($"[AITankHealth] Объект уже уничтожен: {name}");
-            yield break;
-        }
-
-        int ticketCost = GetTicketCost();
-        string victimName = teamComp.displayName ?? gameObject.name;
-        TeamComponent teamComponentRef = teamComp;
-
-        if (teamComponentRef != null && teamComponentRef.gameObject != null && teamComponentRef.gameObject.activeInHierarchy)
-        {
-            GameManager.Instance.OnTankDestroyed(teamComponentRef, ticketCost, lastAttackerName, victimName);
-        }
-        else
-        {
-            Debug.LogWarning($"[AITankHealth] TeamComponent невалиден для {name}");
-        }
-
-
-        yield return new WaitForFixedUpdate();
-        DisableAllComponentsImmediately();
+        if (!this) yield break;
 
         if (deathPrefab != null)
         {
             CreateCorpseSafely();
         }
 
+        int ticketCost = GetTicketCost();
+        string victimName = teamComp != null ? teamComp.displayName : null ?? gameObject.name;
+
+        if (teamComp != null)
+        {
+            GameManager.Instance.OnTankDestroyed(teamComp, ticketCost, lastAttackerName, victimName);
+        }
+
+        yield return _waitForFixedUpdate;
+        DisableAllComponentsImmediately();
+
         yield return _waitForSeconds0_1;
 
-        if (gameObject != null)
+        if (this && gameObject)
         {
             Destroy(gameObject);
         }
@@ -94,34 +107,35 @@ public class AITankHealth : MonoBehaviour, IDamageable
 
     private void DisableAllComponentsImmediately()
     {
-        if (TryGetComponent<Rigidbody>(out var rb))
+        if (_cachedRigidbody)
         {
-            rb.isKinematic = true;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            _cachedRigidbody.linearVelocity = Vector3.zero;
+            _cachedRigidbody.angularVelocity = Vector3.zero;
+            _cachedRigidbody.isKinematic = true;
         }
 
-        var colliders = GetComponentsInChildren<Collider>();
-        foreach (var collider in colliders)
+        for (int i = 0; i < _cachedColliders.Length; i++)
         {
-            collider.enabled = false;
+            if (_cachedColliders[i])
+                _cachedColliders[i].enabled = false;
         }
 
-        var wheelColliders = GetComponentsInChildren<WheelCollider>();
-        foreach (var wheel in wheelColliders)
+        for (int i = 0; i < _cachedWheelColliders.Length; i++)
         {
-            wheel.enabled = false;
+            if (_cachedWheelColliders[i])
+            {
+                _cachedWheelColliders[i].motorTorque = 0f;
+                _cachedWheelColliders[i].brakeTorque = 100f;
+            }
         }
 
-        if (TryGetComponent<TankAI>(out var ai))
-            ai.enabled = false;
-        if (TryGetComponent<TankCollisionDamage>(out var tcd))
-            tcd.enabled = false;
+        if (_cachedTankAI) _cachedTankAI.enabled = false;
+        if (_cachedCollisionDamage) _cachedCollisionDamage.enabled = false;
 
-        var renderers = GetComponentsInChildren<Renderer>();
-        foreach (var renderer in renderers)
+        for (int i = 0; i < _cachedRenderers.Length; i++)
         {
-            renderer.enabled = false;
+            if (_cachedRenderers[i])
+                _cachedRenderers[i].enabled = false;
         }
     }
 
@@ -132,19 +146,21 @@ public class AITankHealth : MonoBehaviour, IDamageable
             Vector3 spawnPos = transform.position + Vector3.up * 0.1f;
             GameObject hull = Instantiate(deathPrefab, spawnPos, transform.rotation);
 
+            EnsureCorpseHasWheels(hull);
+
             if (hull.TryGetComponent<Rigidbody>(out var rbHull))
             {
-                Vector3 randomForce = new Vector3(
-                    Random.Range(-2f, 2f),
-                    Random.Range(1f, 3f),
-                    Random.Range(-2f, 2f)
+                Vector3 randomForce = new(
+                    Random.Range(-1f, 1f),
+                    Random.Range(0.5f, 2f),
+                    Random.Range(-1f, 1f)
                 );
                 rbHull.AddForce(randomForce, ForceMode.Impulse);
 
-                Vector3 randomTorque = new Vector3(
+                Vector3 randomTorque = new(
+                    Random.Range(-3f, 3f),
                     Random.Range(-5f, 5f),
-                    Random.Range(-10f, 10f),
-                    Random.Range(-5f, 5f)
+                    Random.Range(-3f, 3f)
                 );
                 rbHull.AddTorque(randomTorque, ForceMode.Impulse);
             }
@@ -155,11 +171,20 @@ public class AITankHealth : MonoBehaviour, IDamageable
         }
     }
 
+    private void EnsureCorpseHasWheels(GameObject corpse)
+    {
+        var corpseWheels = corpse.GetComponentsInChildren<WheelCollider>();
+        if (corpseWheels.Length == 0)
+        {
+            Debug.LogWarning($"Префаб трупа {deathPrefab.name} не имеет WheelCollider'ов! Это может вызвать баги.");
+        }
+    }
+
     private int GetTicketCost()
     {
-        if (TryGetComponent<TankAI>(out var ai))
+        if (_cachedTankAI)
         {
-            return ai.CurrentTankClass switch
+            return _cachedTankAI.CurrentTankClass switch
             {
                 TankClass.Light => 100,
                 TankClass.Medium => 200,
