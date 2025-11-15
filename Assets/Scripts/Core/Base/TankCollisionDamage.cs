@@ -16,7 +16,7 @@ public class TankCollisionDamage : MonoBehaviour
     private readonly HashSet<int> processedCollisionIds = new();
 
     Rigidbody rb;
-    TeamComponent teamComp;
+    internal TeamComponent teamComp;
     TankHealth selfHealth;
 
     void Awake()

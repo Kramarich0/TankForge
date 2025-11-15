@@ -9,8 +9,15 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
 
         if (masterMixer != null)
         {
@@ -19,9 +26,17 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+
     public static void AssignToMaster(AudioSource source)
     {
-        if (Instance.masterGroup != null)
+        if (Instance != null && Instance.masterGroup != null)
+        {
             source.outputAudioMixerGroup = Instance.masterGroup;
+        }
+        else
+        {
+            Debug.LogWarning("[AudioManager] Instance или masterGroup не готовы! Присвоение пропущено для " + source.gameObject.name);
+        }
     }
+
 }

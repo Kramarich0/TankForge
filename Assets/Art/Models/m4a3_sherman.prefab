@@ -407,7 +407,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 340394951633140056}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00021719962, y: 0.9660917, z: -0.00081268966, w: -0.25819787}
+  m_LocalRotation: {x: -0.00021012555, y: 0.9654038, z: -0.00077794644, w: -0.2607583}
   m_LocalPosition: {x: 0, y: 4.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1000,7 +1000,6 @@ GameObject:
   - component: {fileID: 6310025947854341790}
   - component: {fileID: 8453794299781087703}
   - component: {fileID: 62971683839857363}
-  - component: {fileID: 4588363113449324173}
   - component: {fileID: 8277409355107377060}
   m_Layer: 13
   m_Name: m4a3_sherman
@@ -1107,15 +1106,15 @@ MonoBehaviour:
   gunEnd: {fileID: 5422209462523803796}
   body: {fileID: 2883153919416591581}
   bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  shootRange: 1000
-  moveSpeed: 3
+  shootRange: 100
+  moveSpeed: 6
   rotationSpeed: 40
   fireRate: 9
-  minGunAngle: -5
+  minGunAngle: -10
   maxGunAngle: 20
   projectileSpeed: 80
   bulletUseGravity: 1
-  debugGizmos: 1
+  debugGizmos: 0
   debugLogs: 0
   invertBodyForward: 0
   invertTurretForward: 0
@@ -1132,7 +1131,7 @@ MonoBehaviour:
   bulletPool: {fileID: 0}
   idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
   driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
-  shootSound: {fileID: 8300000, guid: 62505f6711ea120428991ed5cf386584, type: 3}
+  shootSound: {fileID: 8300000, guid: 50d6a0caa7cd2854a95228cb6cca1c9e, type: 3}
   minIdleVolume: 0.2
   maxIdleVolume: 0.5
   minDriveVolume: 0
@@ -1182,103 +1181,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
   team: 0
   displayName: M4a3 Sherman
---- !u!82 &4588363113449324173
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126485755847636676}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
 --- !u!114 &8277409355107377060
 MonoBehaviour:
   m_ObjectHideFlags: 0
