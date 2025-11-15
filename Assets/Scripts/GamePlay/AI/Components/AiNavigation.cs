@@ -44,15 +44,12 @@ public class AINavigation
             return;
         }
 
-        // ensure agent is allowed to move
         owner.agent.isStopped = false;
         owner.agent.updatePosition = true;
 
-        // If agent currently has no path or path is stale or destination changed significantly -> set destination
         bool needSet = true;
         if (owner.agent.hasPath && !owner.agent.pathPending)
         {
-            // if path already points near requested position, skip expensive SetDestination
             Vector3 curDest = owner.agent.path.corners.Length > 0 ? owner.agent.path.corners[owner.agent.path.corners.Length - 1] : owner.agent.destination;
             if (Vector3.Distance(curDest, position) < 0.5f)
                 needSet = false;
@@ -63,7 +60,6 @@ public class AINavigation
             owner.agent.SetDestination(position);
         }
 
-        // If agent seems stuck (has path but almost zero velocity) — try forcing reset + re-set
         if (owner.agent.hasPath && !owner.agent.pathPending)
         {
             float vel = owner.agent.velocity.magnitude;

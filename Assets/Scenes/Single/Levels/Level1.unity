@@ -6846,6 +6846,10 @@ PrefabInstance:
       value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: debugLogs
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: bulletPool
       value: 
       objectReference: {fileID: 702589404}
@@ -6853,6 +6857,10 @@ PrefabInstance:
       propertyPath: shootSound
       value: 
       objectReference: {fileID: 8300000, guid: 50d6a0caa7cd2854a95228cb6cca1c9e, type: 3}
+    - target: {fileID: 6310025947854341790, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
+      propertyPath: debugGizmos
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6336670235644700564, guid: f2f28eb57d17a1443ae1bccc36d4a72f, type: 3}
       propertyPath: m_Layer
       value: 13

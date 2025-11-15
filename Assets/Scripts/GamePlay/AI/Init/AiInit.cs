@@ -13,8 +13,6 @@ public class AIInit
         owner.tankHealth = owner.GetComponent<TankHealth>();
         owner.agent = owner.GetComponent<NavMeshAgent>();
         owner.teamComp = owner.GetComponent<TeamComponent>();
-
-
     }
 
 
@@ -29,7 +27,7 @@ public class AIInit
             owner.agent.angularSpeed = 120f;
             owner.agent.acceleration = 8f;
             owner.agent.updateRotation = false;
-            owner.agent.updatePosition = true;
+            owner.agent.updatePosition = false;
             owner.agent.stoppingDistance = 0f;
             owner.agent.autoBraking = false;
             owner.agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
@@ -71,10 +69,10 @@ public class AIInit
         }
 
 
-        SetupEngineAudio();
+        SetupAudio();
     }
 
-    void SetupEngineAudio()
+    void SetupAudio()
     {
         if (owner.idleSound != null)
         {
