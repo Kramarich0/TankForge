@@ -53,18 +53,30 @@ public class AIPerception
     public bool HasLineOfSight(Transform t)
     {
         if (t == null || owner.gunEnd == null) return false;
-        Vector3 from = owner.gunEnd.position;
+
+        Vector3 from = owner.gunEnd.position + owner.gunEnd.forward * 0.15f;
         Vector3 to = t.position + Vector3.up * 1.2f;
         Vector3 dir = to - from;
+        float maxDist = Mathf.Min(owner.shootRange, dir.magnitude);
 
-        if (Physics.Raycast(from, dir.normalized, out RaycastHit hit, owner.shootRange))
+        RaycastHit[] hits = Physics.RaycastAll(from, dir.normalized, maxDist);
+        if (hits == null || hits.Length == 0)
         {
-            if (hit.collider.transform.IsChildOf(owner.transform))
-            {
-                return false;
-            }
+            return true;
+        }
 
-            if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t)) return true;
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var hit in hits)
+        {
+            var hitTransform = hit.collider.transform;
+
+            if (hit.collider.isTrigger) continue;
+
+            if (hitTransform.IsChildOf(owner.transform)) continue;
+
+            if (hitTransform == t || hitTransform.IsChildOf(t))
+                return true;
 
             if (hit.collider.TryGetComponent<TeamComponent>(out var team))
             {
@@ -77,22 +89,20 @@ public class AIPerception
         return true;
     }
 
+
     public void DrawGizmos()
     {
         if (!owner.debugGizmos) return;
 
-        // область обнаружения врагов
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(owner.transform.position, owner.detectionRadius);
 
-        // текущая цель
         if (owner.currentTarget != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(owner.transform.position, owner.currentTarget.position);
         }
 
-        // текущая точка захвата
         if (owner.currentCapturePointTarget != null)
         {
             Gizmos.color = Color.magenta;

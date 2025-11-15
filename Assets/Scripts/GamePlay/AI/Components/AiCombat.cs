@@ -3,47 +3,90 @@ using UnityEngine;
 public class AICombat
 {
     readonly TankAI owner;
+
+    float pitchVelocity = 0f;
+
+    const float DefaultPitchSmoothTime = 0.08f;
+    const float DefaultPitchDeadzone = 0.6f;
+
     public AICombat(TankAI owner) { this.owner = owner; }
+
+    static float NormalizeAngle(float a)
+    {
+        a %= 360f;
+        if (a > 180f) a -= 360f;
+        if (a < -180f) a += 360f;
+        return a;
+    }
 
     public void AimAt(Transform t)
     {
+        if (t == null) return;
+
         if (owner.turret != null)
         {
             Vector3 dir = t.position - owner.turret.position;
             dir.y = 0f;
             if (dir.sqrMagnitude > 0.0001f)
             {
-                Quaternion targetRot = Quaternion.LookRotation(dir.normalized);
+                Vector3 forwardDir = dir.normalized * (owner.invertTurretForward ? -1f : 1f);
+                Quaternion targetRot = Quaternion.LookRotation(forwardDir, Vector3.up);
                 owner.turret.rotation = Quaternion.RotateTowards(owner.turret.rotation, targetRot, owner.rotationSpeed * Time.deltaTime);
             }
         }
 
-        if (owner.gun != null && owner.gunEnd != null)
+        if (owner.gun == null || owner.gunEnd == null) return;
+
+        Vector3 predicted = PredictTargetPosition(t);
+        Vector3 toTargetWorld = predicted - owner.gun.position;
+        if (toTargetWorld.sqrMagnitude < 0.000001f) return;
+
+        Quaternion desiredWorldRot = Quaternion.LookRotation(toTargetWorld.normalized, Vector3.up);
+        Quaternion turretWorldRot = owner.turret != null ? owner.turret.rotation : Quaternion.identity;
+        Quaternion desiredLocalRot = Quaternion.Inverse(turretWorldRot) * desiredWorldRot;
+        Vector3 desiredLocalEuler = desiredLocalRot.eulerAngles;
+
+        bool pitchUsesLocalX = owner.gunUsesLocalXForPitch;
+        float targetPitch = pitchUsesLocalX ? NormalizeAngle(desiredLocalEuler.x) : NormalizeAngle(desiredLocalEuler.z);
+        targetPitch = Mathf.Clamp(targetPitch, owner.minGunAngle, owner.maxGunAngle);
+
+        Vector3 curEuler = owner.gun.localEulerAngles;
+        float currentPitch = pitchUsesLocalX ? NormalizeAngle(curEuler.x) : NormalizeAngle(curEuler.z);
+        float delta = Mathf.DeltaAngle(currentPitch, targetPitch);
+
+        float deadzone = DefaultPitchDeadzone;
+        float smoothTime = DefaultPitchSmoothTime;
+
+        if (Mathf.Abs(delta) <= deadzone)
         {
-            Vector3 predicted = PredictTargetPosition(t);
-            Vector3 adjustedTarget = new(predicted.x, owner.gun.position.y, predicted.z);
-            Vector3 localDir = owner.turret.InverseTransformDirection(adjustedTarget - owner.gun.position);
-
-            float pitch;
-            if (owner.gunUsesLocalXForPitch)
-                pitch = Mathf.Atan2(localDir.y, localDir.z) * Mathf.Rad2Deg;
-            else
-                pitch = Mathf.Atan2(localDir.y, localDir.x) * Mathf.Rad2Deg;
-
-            pitch = Mathf.Clamp(pitch, owner.minGunAngle, owner.maxGunAngle);
-            Vector3 currentEuler = owner.gun.localEulerAngles;
-            float newPitch = Mathf.MoveTowardsAngle(currentEuler.x, pitch, owner.rotationSpeed * Time.deltaTime);
-            owner.gun.localEulerAngles = new Vector3(newPitch, currentEuler.y, currentEuler.z);
+            currentPitch = targetPitch;
+            pitchVelocity = 0f;
         }
+        else
+        {
+            float maxDelta = owner.rotationSpeed * Time.deltaTime;
+            float newPitch = Mathf.MoveTowardsAngle(currentPitch, targetPitch, maxDelta);
+            float smooth = Mathf.SmoothDampAngle(currentPitch, newPitch, ref pitchVelocity, smoothTime, Mathf.Infinity, Time.deltaTime);
+            currentPitch = smooth;
+        }
+
+        Vector3 newLocalEuler = curEuler;
+        if (pitchUsesLocalX) newLocalEuler.x = currentPitch; else newLocalEuler.z = currentPitch;
+        owner.gun.localEulerAngles = newLocalEuler;
     }
 
     public Vector3 PredictTargetPosition(Transform t)
     {
         Vector3 targetPos = t.position;
         Vector3 targetVel = Vector3.zero;
-        if (owner.targetAgent != null) targetVel = owner.targetAgent.velocity;
+
+        if (owner.targetAgent != null)
+        {
+            targetVel = owner.targetAgent.velocity;
+        }
         else
         {
+            // Use rb.velocity (standard) instead of linearVelocity which may not exist/behave differently
             if (t.TryGetComponent<Rigidbody>(out var rb)) targetVel = rb.linearVelocity;
         }
 

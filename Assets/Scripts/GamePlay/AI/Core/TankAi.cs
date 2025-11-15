@@ -51,6 +51,21 @@ public class TankAI : MonoBehaviour
     public float maxGunAngle = 20f;
     internal int bulletDamage;
 
+    [Header("AI Aim & Movement Tweaks")]
+    [Tooltip("Базовая разброс в градусах (при стойке)")]
+    public float baseSpreadDegrees = 1f;
+    [Tooltip("Множитель spread при максимальной движении")]
+    public float movingSpreadFactor = 6f;
+    [Tooltip("Множитель spread при стоянии")]
+    public float stationarySpreadFactor = 1f;
+    [Tooltip("Разрешить стреф/движение во время стрельбы")]
+    public bool enableStrafeWhileShooting = true;
+    [Tooltip("Радиус/дистанция стрефа вокруг цели")]
+    public float strafeRadius = 6f;
+    [Tooltip("Скорость фазы стрефа (0..1 — чем больше, тем быстрее круг)")]
+    [Range(0.05f, 2f)]
+    public float strafeSpeed = 0.8f;
+
     [Header("Projectile")]
     public float projectileSpeed = 80f;
     public bool bulletUseGravity = true;
@@ -107,6 +122,7 @@ public class TankAI : MonoBehaviour
     internal AudioSource idleSource;
     internal AudioSource driveSource;
     internal AudioSource shootSource;
+    internal float strafePhase = 0f;
 
     TankAIImpl impl;
 

@@ -7,7 +7,17 @@ public class AIWeapons
 
     public void ShootAt(Transform t)
     {
-        if (owner.bulletPool == null || owner.gunEnd == null) return;
+        if (owner.gunEnd == null)
+        {
+            if (owner.debugLogs) Debug.LogWarning("[AIWeapons] gunEnd is null, cannot shoot.");
+            return;
+        }
+
+        if (owner.bulletPool == null)
+        {
+            if (owner.debugLogs) Debug.LogWarning("[AIWeapons] bulletPool is null on " + owner.name);
+            return;
+        }
 
         Vector3 predicted = new AICombat(owner).PredictTargetPosition(t);
         Vector3 aim = predicted - owner.gunEnd.position;
@@ -45,6 +55,17 @@ public class AIWeapons
             initVelocity = aim.normalized * owner.projectileSpeed;
         }
 
+        float moveSpeed = (owner.agent != null) ? owner.agent.velocity.magnitude : 0f;
+        float speedFactor = (owner.moveSpeed > 0f) ? Mathf.Clamp01(moveSpeed / owner.moveSpeed) : 0f;
+
+        float spreadDeg = owner.baseSpreadDegrees * Mathf.Lerp(owner.stationarySpreadFactor, owner.movingSpreadFactor, speedFactor);
+
+        Quaternion spreadRot =
+            Quaternion.AngleAxis(Random.Range(-spreadDeg, spreadDeg), owner.gunEnd.right) *
+            Quaternion.AngleAxis(Random.Range(-spreadDeg, spreadDeg), owner.gunEnd.up);
+
+        Vector3 finalInitVel = spreadRot * initVelocity;
+
         string shooterDisplay = (owner.teamComp != null && !string.IsNullOrEmpty(owner.teamComp.displayName))
             ? owner.teamComp.displayName
             : owner.gameObject.name;
@@ -52,13 +73,13 @@ public class AIWeapons
         Collider[] shooterColliders = owner.GetComponentsInParent<Collider>();
 
         owner.bulletPool.SpawnBullet(
-            owner.gunEnd.position,
-            initVelocity,
-            owner.teamComp != null ? owner.teamComp.team : TeamEnum.Neutral,
-            shooterDisplay,
-            owner.bulletDamage,
-            shooterColliders
-        );
+           owner.gunEnd.position,
+           finalInitVel,
+           owner.teamComp != null ? owner.teamComp.team : TeamEnum.Neutral,
+           shooterDisplay,
+           owner.bulletDamage,
+           shooterColliders
+       );
 
         owner.shootSource?.Play();
     }

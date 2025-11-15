@@ -30,8 +30,10 @@ public class AIInit
             owner.agent.acceleration = 8f;
             owner.agent.updateRotation = false;
             owner.agent.updatePosition = true;
-            owner.agent.stoppingDistance = owner.shootRange * 0.85f;
+            owner.agent.stoppingDistance = 0f;
+            owner.agent.autoBraking = false;
             owner.agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+            owner.strafePhase = Random.value;
 
             if (NavMesh.SamplePosition(owner.transform.position, out NavMeshHit hit, 10f, NavMesh.AllAreas))
             {
