@@ -23,8 +23,8 @@ public class MovementPhysics
         if (ctx.reverseLockTimer > 0f)
         {
             desiredBrake = owner.maxBrakeTorque;
-            if (owner.leftTrack != null) owner.leftTrack.ApplyTorque(0f, desiredBrake);
-            if (owner.rightTrack != null) owner.rightTrack.ApplyTorque(0f, desiredBrake);
+            owner.leftTrack?.ApplyTorque(0f, desiredBrake);
+            owner.rightTrack?.ApplyTorque(0f, desiredBrake);
             return;
         }
 
@@ -56,7 +56,7 @@ public class MovementPhysics
         float leftMotor = leftPower * owner.maxMotorTorque * speedLimitFactor * ctx.enginePower * (leftPower < 0f ? reverseFactor : 1f);
         float rightMotor = rightPower * owner.maxMotorTorque * speedLimitFactor * ctx.enginePower * (rightPower < 0f ? reverseFactor : 1f);
 
-        if (owner.leftTrack != null) owner.leftTrack.ApplyTorque(leftMotor, desiredBrake);
-        if (owner.rightTrack != null) owner.rightTrack.ApplyTorque(rightMotor, desiredBrake);
+        owner.leftTrack?.ApplyTorque(leftMotor, desiredBrake);
+        owner.rightTrack?.ApplyTorque(rightMotor, desiredBrake);
     }
 }

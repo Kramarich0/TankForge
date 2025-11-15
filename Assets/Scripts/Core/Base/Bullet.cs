@@ -20,7 +20,7 @@ public class Bullet : MonoBehaviour
     private float lifetimeTimer;
     private ObjectPool<Bullet> pool;
     private readonly List<Collider> ignoredColliders = new();
-
+    private bool isInPool = true;
     public event Action<Bullet> OnBulletExpired;
 
     void Awake()
@@ -35,6 +35,9 @@ public class Bullet : MonoBehaviour
 
     public void Initialize(Vector3 velocity, TeamEnum shooter, string shooterName = null, int damage = 20, Collider[] ignoreWith = null)
     {
+        isInPool = false;
+        col.enabled = true;
+
         rb.linearVelocity = velocity;
         shooterTeam = shooter;
         this.shooterName = shooterName;
@@ -44,7 +47,6 @@ public class Bullet : MonoBehaviour
         lifetimeTimer = lifeTime;
         Debug.Log($"[Bullet] Initialize vel={velocity.magnitude:F1} team={shooter} shooterName={shooterName} damage={damage} ignores={ignoreWith?.Length ?? 0}");
 
-        // Игнорируем только коллайдеры стрелка
         if (ignoreWith != null)
         {
             foreach (var oc in ignoreWith)
@@ -59,15 +61,17 @@ public class Bullet : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isInPool) return;
+
         lifetimeTimer -= Time.fixedDeltaTime;
         if (lifetimeTimer <= 0f)
             ReturnToPool();
     }
 
-
     void OnCollisionEnter(Collision collision)
     {
-        if (collision == null) return;
+        if (isInPool || collision == null) return;
+
         Debug.Log($"[Bullet] Collide with {collision.collider.name} (parent={collision.collider.transform.root.name}) shooterTeam={shooterTeam}");
 
         TeamEnum? targetTeam = null;
@@ -78,13 +82,35 @@ public class Bullet : MonoBehaviour
 
         if (targetTeam.HasValue && targetTeam.Value == shooterTeam)
         {
+            Debug.Log($"[Bullet] Ignoring collision with same team: {shooterTeam}");
             return;
         }
 
-        var damageable = collision.collider.GetComponentInParent<IDamageable>();
-        damageable?.TakeDamage(damage, shooterName);
+        IDamageable damageable = FindDamageable(collision.collider);
 
+        if (damageable != null)
+        {
+            Debug.Log($"[Bullet] Dealing {damage} damage to {damageable.GetType().Name}");
+            damageable.TakeDamage(damage, shooterName);
+        }
         ReturnToPool();
+    }
+
+    private IDamageable FindDamageable(Collider collider)
+    {
+        if (collider.TryGetComponent<IDamageable>(out var damageable)) return damageable;
+
+        damageable = collider.GetComponentInParent<IDamageable>();
+        if (damageable != null) return damageable;
+
+        var root = collider.transform.root;
+        if (root != collider.transform)
+        {
+            damageable = root.GetComponent<IDamageable>();
+            if (damageable != null) return damageable;
+        }
+
+        return null;
     }
 
     public void CleanupBeforeSpawn()
@@ -100,10 +126,16 @@ public class Bullet : MonoBehaviour
         rb.angularVelocity = Vector3.zero;
         col.enabled = true;
         lifetimeTimer = 0f;
+        isInPool = false;
     }
 
     private void ReturnToPool()
     {
+        if (isInPool) return;
+        isInPool = true;
+
+        col.enabled = false;
+
         if (ignoredColliders.Count > 0)
         {
             foreach (var oc in ignoredColliders)
@@ -116,7 +148,6 @@ public class Bullet : MonoBehaviour
 
         pool?.Release(this);
         OnBulletExpired?.Invoke(this);
-        gameObject.SetActive(false);
     }
 
     public void SetPool(ObjectPool<Bullet> pool)

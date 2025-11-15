@@ -217,7 +217,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -436,7 +436,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -677,7 +677,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -806,7 +806,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1041,7 +1041,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1201,7 +1201,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1279,75 +1279,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankAI
-  tankClass: 1
-  lightStats:
-    health: 75
-    moveSpeed: 5
-    rotationSpeed: 60
-    fireRate: 1
-    shootRange: 80
-    bulletDamage: 100
-  mediumStats:
-    health: 150
-    moveSpeed: 4.3
-    rotationSpeed: 40
-    fireRate: 0.1
-    shootRange: 100
-    bulletDamage: 50
-  heavyStats:
-    health: 300
-    moveSpeed: 2
-    rotationSpeed: 30
-    fireRate: 0.5
-    shootRange: 120
-    bulletDamage: 10
-  enemyHealthDisplayPrefab: {fileID: 0}
-  player: {fileID: 0}
+  tankDefinition: {fileID: 11400000, guid: 8fae0d0dd57391b46921f80845b85735, type: 2}
   turret: {fileID: 9007876570790468700}
   gun: {fileID: 8750642076954178279}
   gunEnd: {fileID: 5422209462523803796}
   body: {fileID: 2883153919416591581}
-  bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  shootRange: 100
-  moveSpeed: 6
-  rotationSpeed: 40
-  fireRate: 9
-  minGunAngle: -10
-  maxGunAngle: 20
-  baseSpreadDegrees: 1
-  movingSpreadFactor: 6
-  stationarySpreadFactor: 1
-  enableStrafeWhileShooting: 1
-  strafeRadius: 6
-  strafeSpeed: 0.8
-  projectileSpeed: 80
-  bulletUseGravity: 1
-  debugGizmos: 1
-  debugLogs: 1
-  invertBodyForward: 0
-  invertTurretForward: 0
-  gunUsesLocalXForPitch: 0
-  detectionRadius: 500
-  fieldOfView: 140
-  detectionMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  capturePointsLayer:
-    serializedVersion: 2
-    m_Bits: 16384
-  capturePointDetectionRadius: 60
   bulletPool: {fileID: 0}
-  idleSound: {fileID: 8300000, guid: 37ba6ca7a36ccb342aee6c71e1a82d31, type: 3}
-  driveSound: {fileID: 8300000, guid: 666a4b334b15c534da609c6b55bef1b2, type: 3}
-  shootSound: {fileID: 8300000, guid: 50d6a0caa7cd2854a95228cb6cca1c9e, type: 3}
-  minIdleVolume: 0.2
-  maxIdleVolume: 0.5
-  minDriveVolume: 0
-  maxDriveVolume: 0.5
-  minIdlePitch: 0.8
-  maxIdlePitch: 1.2
-  minDrivePitch: 0.8
-  maxDrivePitch: 1.3
   leftTrack:
     wheels:
     - {fileID: 2409879411131420910}
@@ -1370,11 +1307,16 @@ MonoBehaviour:
     - {fileID: 2767024045570366146}
     - {fileID: 4855180271833676457}
     currentTorque: 0
-  maxMotorTorque: 4000
-  maxForwardSpeed: 11
-  maxBackwardSpeed: 1
-  maxBrakeTorque: 50
-  turnSharpness: 1
+  debugGizmos: 0
+  debugLogs: 0
+  invertBodyForward: 0
+  invertTurretForward: 0
+  gunUsesLocalXForPitch: 0
+  enableStrafeWhileShooting: 1
+  capturePointsLayer:
+    serializedVersion: 2
+    m_Bits: 16384
+  capturePointDetectionRadius: 600
 --- !u!114 &6074745128718472985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1389,7 +1331,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TankHealth
   maxHealth: 100
   currentHealth: 0
-  healthDisplay: {fileID: 0}
   deathPrefab: {fileID: 2126485755847636676, guid: bb049f3b93570854bbe07281da1673ee, type: 3}
 --- !u!195 &8489948446680324052
 NavMeshAgent:
@@ -1452,6 +1393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
+  tankId: 405fb66d-6ead-4f1a-be4b-4381153e6070
   team: 0
   displayName: M4a3 Sherman
 --- !u!114 &8277409355107377060
@@ -1573,7 +1515,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1791,7 +1733,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2038,7 +1980,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2167,7 +2109,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2338,7 +2280,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2467,7 +2409,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2627,7 +2569,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -3219,7 +3161,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -3437,7 +3379,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -3655,7 +3597,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25

@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(TeamComponent))]
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(TankHealth))]
+[RequireComponent(typeof(IDamageable))]
 public class TankCollisionDamage : MonoBehaviour
 {
     [Header("Collision damage settings")]
@@ -17,17 +17,17 @@ public class TankCollisionDamage : MonoBehaviour
 
     Rigidbody rb;
     internal TeamComponent teamComp;
-    TankHealth selfHealth;
+    IDamageable selfDamageable;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         teamComp = GetComponent<TeamComponent>();
-        selfHealth = GetComponent<TankHealth>();
+        selfDamageable = GetComponent<IDamageable>();
 
         if (rb == null) Debug.LogError("[TankCollisionDamage] Rigidbody missing!");
         if (teamComp == null) Debug.LogError("[TankCollisionDamage] TeamComponent missing!");
-        if (selfHealth == null) Debug.LogError("[TankCollisionDamage] TankHealth missing!");
+        if (selfDamageable == null) Debug.LogError("[TankCollisionDamage] TankHealth missing!");
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -44,8 +44,8 @@ public class TankCollisionDamage : MonoBehaviour
         StartCoroutine(RemoveProcessedAfterFixedUpdate(otherId));
 
 
-        TankHealth otherHealth = collision.collider.GetComponentInParent<TankHealth>();
-        if (otherHealth == null) { if (debugLogs) Debug.Log("[TC] other has no TankHealth"); return; }
+        IDamageable otherDamageable = collision.collider.GetComponentInParent<IDamageable>();
+        if (otherDamageable == null) { if (debugLogs) Debug.Log("[TC] other has no IDamageable"); return; }
 
         TeamComponent otherTeam = collision.collider.GetComponentInParent<TeamComponent>();
         if (otherTeam != null && teamComp != null && otherTeam.team == teamComp.team)
@@ -77,9 +77,8 @@ public class TankCollisionDamage : MonoBehaviour
             Debug.Log($"[TC] Collide: {name} (m={massThis}) <-> {collision.collider.name} (m={massOther}) | v={impactSpeed:F2} => dmgToOther={damageToOther}, dmgToThis={damageToThis}");
         }
 
-        otherHealth.TakeDamage(damageToOther);
-
-        selfHealth.TakeDamage(damageToThis);
+        otherDamageable.TakeDamage(damageToOther, source: gameObject.name);
+        selfDamageable.TakeDamage(damageToThis, source: collision.gameObject.name);
     }
 
     private IEnumerator RemoveProcessedAfterFixedUpdate(int id)

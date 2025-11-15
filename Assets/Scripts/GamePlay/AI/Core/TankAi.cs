@@ -1,159 +1,136 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(TankHealth))]
+[RequireComponent(typeof(AITankHealth))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(TeamComponent))]
 public class TankAI : MonoBehaviour
 {
-    public enum TankClass { Light, Medium, Heavy }
-    public enum AIState { Idle, Patrolling, Moving, Capturing, Fighting }
+    [Header("=== ОСНОВНЫЕ НАСТРОЙКИ ===")]
+    [Header("Определение танка")]
+    [Tooltip("Обязательно назначить TankDefinition для этого танка")]
+    public TankDefinition tankDefinition;
 
-    [System.Serializable]
-    public struct TankStats
-    {
-        public float health;
-        public float moveSpeed;
-        public float rotationSpeed;
-        public float fireRate;
-        public float shootRange;
-        public int bulletDamage;
-    }
+    [Header("=== СИСТЕМА ЗДОРОВЬЯ ===")]
+    internal AITankHealth tankHealth;
 
-    [Header("Class")]
-    public TankClass tankClass = TankClass.Medium;
-    public TankStats lightStats = new() { health = 75f, moveSpeed = 7f, rotationSpeed = 60f, fireRate = 1f, shootRange = 80f, bulletDamage = 10 };
-    public TankStats mediumStats = new() { health = 150f, moveSpeed = 4.3f, rotationSpeed = 40f, fireRate = .5f, shootRange = 100f, bulletDamage = 100 };
-    public TankStats heavyStats = new() { health = 300f, moveSpeed = 2f, rotationSpeed = 30f, fireRate = .2f, shootRange = 120f, bulletDamage = 200 };
-
-    [Header("Health")]
-    internal TankHealth tankHealth;
-
-    [Header("UI")]
-    public HealthAiDisplay enemyHealthDisplayPrefab;
-
-    [Header("Transforms")]
-    public Transform player;
+    [Header("=== ПРЕФАБЫ И ССЫЛКИ ===")]
+    [Header("Transform точки")]
     public Transform turret;
     public Transform gun;
     public Transform gunEnd;
     public Transform body;
 
-    [Header("Prefabs")]
-    public GameObject bulletPrefab;
+    [Header("Префабы объектов")]
+    public BulletPool bulletPool;
 
-    [Header("Movement / Combat")]
-    public float shootRange = 100f;
-    public float moveSpeed = 3f;
-    public float rotationSpeed = 40f;
-    public float fireRate = 1f;
-    public float minGunAngle = -5f;
-    public float maxGunAngle = 20f;
-    public float moveResponse = 5f;
-    public float turnResponse = 5f;
-    public float maxForwardSpeed = 10f;
-    public float maxBackwardSpeed = 5f;
-    public float turnSharpness = 1.5f;
-    public float reverseLockDuration = 0.5f;
-    public float movingThreshold = 0.15f;
-
-    internal int bulletDamage;
-
+    [Header("Система гусениц")]
     public TankTrack leftTrack;
     public TankTrack rightTrack;
-    public float maxMotorTorque = 1500f;
-    public float maxBrakeTorque = 2000f;
 
-
-    [Header("AI Aim & Movement Tweaks")]
-    [Tooltip("Базовая разброс в градусах (при стойке)")]
-    public float baseSpreadDegrees = 1f;
-    [Tooltip("Множитель spread при максимальной движении")]
-    public float movingSpreadFactor = 6f;
-    [Tooltip("Множитель spread при стоянии")]
-    public float stationarySpreadFactor = 1f;
-    [Tooltip("Разрешить стреф/движение во время стрельбы")]
-    public bool enableStrafeWhileShooting = true;
-    [Tooltip("Радиус/дистанция стрефа вокруг цели")]
-    public float strafeRadius = 6f;
-    [Tooltip("Скорость фазы стрефа (0..1 — чем больше, тем быстрее круг)")]
-    [Range(0.05f, 2f)]
-    public float strafeSpeed = 0.8f;
-
-    [Header("Projectile")]
-    public float projectileSpeed = 80f;
-    public bool bulletUseGravity = true;
-
-    [Header("Debug / Fixes")]
+    [Header("=== ОТЛАДКА И НАСТРОЙКИ ===")]
     public bool debugGizmos = true;
     public bool debugLogs = false;
+
+    [Header("Корректировки осей моделей")]
     [Tooltip("Если модель корпуса в сцене смотрит 'назад' относительно forward (Z), включи это")]
     public bool invertBodyForward = false;
     [Tooltip("Если башня у модели смотрит в -Z (назад), включи это")]
     public bool invertTurretForward = false;
     [Tooltip("Если ствол вверх/вниз использует локальную ось X вместо Z, включи это")]
     public bool gunUsesLocalXForPitch = true;
-
-    [Header("Perception")]
-    public float detectionRadius = 50f;
-    public float fieldOfView = 140f;
-    public LayerMask detectionMask = -1;
-
-    [Header("Capture Points")]
+    [Header("Другое")]
+    public bool enableStrafeWhileShooting = true;
     public LayerMask capturePointsLayer = -1;
     public float capturePointDetectionRadius = 60f;
-    internal CapturePoint currentCapturePointTarget = null;
-    internal bool isCapturing = false;
 
+    public float MoveSpeed => tankDefinition.moveSpeed;
+    public float RotationSpeed => tankDefinition.rotationSpeed;
+
+    public float ShootRange => tankDefinition.shootRange;
+    public int MaxGunAngle => tankDefinition.maxGunAngle;
+    public int MinGunAngle => tankDefinition.minGunAngle;
+    public float FireRate => tankDefinition.fireRate;
+    public int BulletDamage => tankDefinition.bulletDamage;
+    public float ProjectileSpeed => tankDefinition.projectileSpeed;
+    public bool BulletUseGravity => tankDefinition.bulletUseGravity;
+
+    public float DetectionRadius => tankDefinition.detectionRadius;
+    public float StrafeRadius => tankDefinition.strafeRadius;
+    public float StrafeSpeed => tankDefinition.strafeSpeed;
+    public float BaseSpreadDegrees => tankDefinition.baseSpreadDegrees;
+    public float MovingSpreadFactor => tankDefinition.movingSpreadFactor;
+    public float StationarySpreadFactor => tankDefinition.stationarySpreadFactor;
+
+    public float MaxMotorTorque => tankDefinition.maxMotorTorque;
+    public float MaxBrakeTorque => tankDefinition.maxBrakeTorque;
+    public float MoveResponse => tankDefinition.moveResponse;
+    public float TurnResponse => tankDefinition.turnResponse;
+    public float MaxForwardSpeed => tankDefinition.maxForwardSpeed;
+    public float MaxBackwardSpeed => tankDefinition.maxBackwardSpeed;
+    public float TurnSharpness => tankDefinition.turnSharpness;
+    public float ReverseLockDuration => tankDefinition.reverseLockDuration;
+    public float MovingThreshold => tankDefinition.movingThreshold;
+
+    public AudioClip IdleSound => tankDefinition.idleSound;
+    public AudioClip DriveSound => tankDefinition.driveSound;
+    public AudioClip ShootSound => tankDefinition.shootSound;
+    public float MinIdleVolume => tankDefinition.minIdleVolume;
+    public float MaxIdleVolume => tankDefinition.maxIdleVolume;
+    public float MinDriveVolume => tankDefinition.minDriveVolume;
+    public float MaxDriveVolume => tankDefinition.maxDriveVolume;
+    public float MinIdlePitch => tankDefinition.minIdlePitch;
+    public float MaxIdlePitch => tankDefinition.maxIdlePitch;
+    public float MinDrivePitch => tankDefinition.minDrivePitch;
+    public float MaxDrivePitch => tankDefinition.maxDrivePitch;
+
+    [Header("=== СЛУЖЕБНЫЕ ПЕРЕМЕННЫЕ ===")]
     internal NavMeshAgent agent;
-    internal float nextFireTime = 0f;
     internal bool navAvailable = false;
-
     internal TeamComponent teamComp;
-    internal Transform currentTarget;
     internal NavMeshAgent targetAgent;
     internal AIState currentState = AIState.Idle;
-    public BulletPool bulletPool;
-
+    internal float nextFireTime = 0f;
+    internal float strafePhase = 0f;
+    internal Transform currentTarget;
     internal float scanTimer = 0f;
     internal readonly float scanInterval = 0.4f;
-
-    [Header("Audio")]
-    public AudioClip idleSound;
-    public AudioClip driveSound;
-    public AudioClip shootSound;
-
-    [Header("Engine Audio Settings")]
-    [Range(0f, 1f)] public float minIdleVolume = 0.2f;
-    [Range(0f, 1f)] public float maxIdleVolume = 0.5f;
-    [Range(0f, 1f)] public float minDriveVolume = 0f;
-    [Range(0f, 1f)] public float maxDriveVolume = 0.5f;
-    [Range(0.5f, 2f)] public float minIdlePitch = 0.8f;
-    [Range(0.5f, 2f)] public float maxIdlePitch = 1.2f;
-    [Range(0.5f, 2f)] public float minDrivePitch = 0.8f;
-    [Range(0.5f, 2f)] public float maxDrivePitch = 1.3f;
-
+    internal CapturePoint currentCapturePointTarget = null;
     internal AudioSource idleSource;
     internal AudioSource driveSource;
     internal AudioSource shootSource;
-    internal float strafePhase = 0f;
 
+    public TankClass CurrentTankClass => tankDefinition.tankClass;
 
     TankAIImpl impl;
 
     void Awake()
     {
+        if (tankDefinition == null)
+        {
+            Debug.LogError($"[TankAI] TankDefinition не назначен для {gameObject.name}!");
+            return;
+        }
+
         impl = new TankAIImpl(this);
         impl.Awake();
+
+        if (tankHealth != null)
+        {
+            tankHealth.maxHealth = tankDefinition.health;
+            tankHealth.currentHealth = tankDefinition.health;
+        }
     }
 
     void Start()
     {
+        if (tankDefinition == null) return;
         impl.Start();
     }
 
     void Update()
     {
+        if (tankDefinition == null) return;
         impl.Update();
     }
 
@@ -161,4 +138,5 @@ public class TankAI : MonoBehaviour
     {
         impl?.OnDrawGizmos();
     }
+
 }

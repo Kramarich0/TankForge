@@ -5,7 +5,6 @@ public class TankAIImpl
     readonly TankAI owner;
     readonly AIInit init;
     readonly AIAudio audio;
-    readonly AIStats stats;
     readonly AIPerception perception;
     readonly AINavigation navigation;
     readonly AICombat combat;
@@ -18,12 +17,10 @@ public class TankAIImpl
         this.owner = owner;
         init = new AIInit(owner);
         audio = new AIAudio(owner);
-        stats = new AIStats(owner);
         perception = new AIPerception(owner);
         navigation = new AINavigation(owner);
         combat = new AICombat(owner);
         weapons = new AIWeapons(owner);
-
         stateHandler = new AIStateHandler(owner, perception, navigation, combat, weapons);
     }
 
@@ -38,7 +35,7 @@ public class TankAIImpl
         audio.UpdateEngineAudio();
 
         if (owner.agent != null)
-            owner.agent.speed = owner.moveSpeed;
+            owner.agent.speed = owner.MoveSpeed;
 
         stateHandler.UpdateState();
     }

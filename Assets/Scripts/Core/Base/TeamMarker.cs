@@ -1,10 +1,10 @@
 using UnityEngine;
 
-[ExecuteAlways]
 [RequireComponent(typeof(SpriteRenderer))]
 public class TeamMarker : MonoBehaviour
 {
     [Header("Target / Pivot")]
+    
     public Transform pivot;
 
     [Header("References")]
@@ -68,11 +68,11 @@ public class TeamMarker : MonoBehaviour
         if (sr == null || teamComp == null || tankAI == null)
             return;
 
-        sr.sprite = tankAI.tankClass switch
+        sr.sprite = tankAI.CurrentTankClass switch
         {
-            TankAI.TankClass.Light => lightSprite,
-            TankAI.TankClass.Medium => mediumSprite,
-            TankAI.TankClass.Heavy => heavySprite,
+            TankClass.Light => lightSprite,
+            TankClass.Medium => mediumSprite,
+            TankClass.Heavy => heavySprite,
             _ => null,
         };
         sr.color = (teamComp.team == TeamEnum.Friendly) ? Color.green : Color.red;

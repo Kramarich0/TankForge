@@ -7,7 +7,7 @@ public class HealthDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private Image healthBar;
 
-    private TankHealth playerHealth;
+    private PlayerTankHealth playerHealth;
 
     void Start()
     {
@@ -19,7 +19,7 @@ public class HealthDisplay : MonoBehaviour
             return;
         }
 
-        playerHealth = playerObject.GetComponent<TankHealth>();
+        playerHealth = playerObject.GetComponent<PlayerTankHealth>();
         if (playerHealth == null)
         {
             Debug.LogError("[HealthDisplay] На игроке нет компонента TankHealth!", this);

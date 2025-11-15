@@ -5,7 +5,6 @@ public class AINavigation
 {
     readonly TankAI owner;
 
-    // Добавляем контекст как у игрока
     float smoothedMove = 0f;
     float smoothedTurn = 0f;
     float moveVelocity = 0f;
@@ -17,20 +16,17 @@ public class AINavigation
 
     public void UpdateNavigation()
     {
-        // Обновляем таймер обратного хода как у игрока
         if (reverseLockTimer > 0f)
             reverseLockTimer -= Time.deltaTime;
 
-        // Сглаживаем вводы как у игрока
         if (Mathf.Abs(smoothedTurn) < 0.05f) smoothedTurn = 0f;
 
         float targetMove = GetTargetMoveInput();
         float targetTurn = GetTargetTurnInput();
 
-        smoothedMove = Mathf.SmoothDamp(smoothedMove, targetMove, ref moveVelocity, 1f / Mathf.Max(owner.moveResponse, 0.1f));
-        smoothedTurn = Mathf.SmoothDamp(smoothedTurn, targetTurn, ref turnVelocity, 1f / Mathf.Max(owner.turnResponse, 0.1f));
+        smoothedMove = Mathf.SmoothDamp(smoothedMove, targetMove, ref moveVelocity, 1f / Mathf.Max(owner.MoveResponse, 0.1f));
+        smoothedTurn = Mathf.SmoothDamp(smoothedTurn, targetTurn, ref turnVelocity, 1f / Mathf.Max(owner.TurnResponse, 0.1f));
 
-        // Управление мощностью двигателя как у игрока
         float inputMagnitude = Mathf.Max(Mathf.Abs(smoothedMove), Mathf.Abs(smoothedTurn));
         float targetEnginePower = inputMagnitude > 0.01f ? 1f : 0f;
         enginePower = Mathf.MoveTowards(enginePower, targetEnginePower, Time.deltaTime * 0.8f);
@@ -42,7 +38,6 @@ public class AINavigation
 
         UpdateNavigation();
 
-        // Обновляем цель агента
         if (!owner.agent.hasPath || Vector3.Distance(owner.agent.destination, position) > 0.5f)
             owner.agent.SetDestination(position);
 
@@ -51,7 +46,6 @@ public class AINavigation
 
         if (!hasTracks)
         {
-            // Fallback для объектов без гусениц
             owner.agent.updatePosition = true;
             owner.agent.isStopped = false;
             AlignBodyToVelocity();
@@ -61,7 +55,6 @@ public class AINavigation
         owner.agent.updatePosition = false;
         owner.agent.isStopped = false;
 
-        // Останавливаемся если близко к цели
         float stopDist = Mathf.Max(0.25f, owner.agent.stoppingDistance);
         Vector3 toTarget = position - owner.transform.position;
         toTarget.y = 0f;
@@ -73,10 +66,8 @@ public class AINavigation
             return;
         }
 
-        // Используем сглаженные значения как у игрока
         ApplyTankPhysics(smoothedMove, smoothedTurn, rb);
 
-        // Плавно ориентируем корпус в направлении движения
         AlignBodyToMovementDirection(smoothedMove, smoothedTurn);
     }
 
@@ -92,10 +83,8 @@ public class AINavigation
         Vector3 dir = toNext.normalized;
         float angle = Vector3.SignedAngle(owner.transform.forward, dir, Vector3.up);
 
-        // Определяем ввод движения на основе направления
         float moveInput = Vector3.Dot(owner.transform.forward, dir);
 
-        // При больших углах сначала поворачиваем на месте
         if (Mathf.Abs(angle) > 60f)
             moveInput = Mathf.Clamp(moveInput, -0.3f, 0.3f);
 
@@ -114,7 +103,6 @@ public class AINavigation
         Vector3 dir = toNext.normalized;
         float angle = Vector3.SignedAngle(owner.transform.forward, dir, Vector3.up);
 
-        // Нормализуем угол для поворота
         float turnInput = Mathf.Clamp(angle / 45f, -1f, 1f);
 
         return turnInput;
@@ -124,47 +112,41 @@ public class AINavigation
     {
         if (rb == null) return;
 
-        // Копируем физику из MovementPhysics игрока
         float currentForwardSpeed = Vector3.Dot(rb.linearVelocity, owner.transform.forward);
         float absForwardSpeed = Mathf.Abs(currentForwardSpeed);
 
-
-        // Reverse lock как у игрока
-        if (absForwardSpeed > owner.movingThreshold && moveInput != 0f &&
+        if (absForwardSpeed > owner.MovingThreshold && moveInput != 0f &&
             Mathf.Sign(currentForwardSpeed) != Mathf.Sign(moveInput) && reverseLockTimer <= 0f)
         {
-            reverseLockTimer = owner.reverseLockDuration;
+            reverseLockTimer = owner.ReverseLockDuration;
         }
 
         float desiredBrake = 0f;
         if (reverseLockTimer > 0f)
         {
-            desiredBrake = owner.maxBrakeTorque;
-            if (owner.leftTrack != null) owner.leftTrack.ApplyTorque(0f, desiredBrake);
-            if (owner.rightTrack != null) owner.rightTrack.ApplyTorque(0f, desiredBrake);
+            desiredBrake = owner.MaxBrakeTorque;
+            owner.leftTrack?.ApplyTorque(0f, desiredBrake);
+            owner.rightTrack?.ApplyTorque(0f, desiredBrake);
             return;
         }
 
-        // Расчет мощности поворота как у игрока
-        float speedFactor = Mathf.Clamp01(absForwardSpeed / owner.maxForwardSpeed);
+        float speedFactor = Mathf.Clamp01(absForwardSpeed / owner.MaxForwardSpeed);
         float lowSpeedBoost = 1f + (1f - speedFactor) * 2.0f;
-        float effectiveTurnSharpness = owner.turnSharpness * lowSpeedBoost;
+        float effectiveTurnSharpness = owner.TurnSharpness * lowSpeedBoost;
 
         float leftPower = Mathf.Clamp(moveInput + turnInput * effectiveTurnSharpness, -1f, 1f);
         float rightPower = Mathf.Clamp(moveInput - turnInput * effectiveTurnSharpness, -1f, 1f);
 
-        // Обработка реверса как у игрока
         bool wantsReverse = Mathf.Sign(moveInput) != Mathf.Sign(currentForwardSpeed);
         if (absForwardSpeed > 0.5f && wantsReverse)
         {
-            float speedRatio = Mathf.InverseLerp(0.5f, owner.maxForwardSpeed, absForwardSpeed);
-            desiredBrake = Mathf.Lerp(owner.maxBrakeTorque * 0.2f, owner.maxBrakeTorque, speedRatio);
+            float speedRatio = Mathf.InverseLerp(0.5f, owner.MaxForwardSpeed, absForwardSpeed);
+            desiredBrake = Mathf.Lerp(owner.MaxBrakeTorque * 0.2f, owner.MaxBrakeTorque, speedRatio);
             leftPower *= 0.2f;
             rightPower *= 0.2f;
         }
 
-        // Ограничение скорости как у игрока
-        float currentMaxSpeed = currentForwardSpeed > 0f ? owner.maxForwardSpeed : owner.maxBackwardSpeed;
+        float currentMaxSpeed = currentForwardSpeed > 0f ? owner.MaxForwardSpeed : owner.MaxBackwardSpeed;
         float speedLimitFactor = 1f;
         if (absForwardSpeed > currentMaxSpeed * 0.8f)
         {
@@ -173,13 +155,12 @@ public class AINavigation
         }
 
         float reverseFactor = 0.6f;
-        float leftMotor = leftPower * owner.maxMotorTorque * speedLimitFactor * enginePower * (leftPower < 0f ? reverseFactor : 1f);
-        float rightMotor = rightPower * owner.maxMotorTorque * speedLimitFactor * enginePower * (rightPower < 0f ? reverseFactor : 1f);
+        float leftMotor = leftPower * owner.MaxMotorTorque * speedLimitFactor * enginePower * (leftPower < 0f ? reverseFactor : 1f);
+        float rightMotor = rightPower * owner.MaxMotorTorque * speedLimitFactor * enginePower * (rightPower < 0f ? reverseFactor : 1f);
 
         if (owner.leftTrack != null) owner.leftTrack.ApplyTorque(leftMotor, desiredBrake);
         if (owner.rightTrack != null) owner.rightTrack.ApplyTorque(rightMotor, desiredBrake);
 
-        // Боковая стабилизация для уменьшения скольжения
         Vector3 lateralVel = Vector3.Project(rb.linearVelocity, owner.transform.right);
         if (lateralVel.sqrMagnitude > 0.01f)
         {
@@ -191,14 +172,12 @@ public class AINavigation
     {
         if (owner.body == null) return;
 
-        // Определяем желаемое направление на основе вводов
         Vector3 desiredForward = owner.transform.forward;
 
         if (Mathf.Abs(moveInput) > 0.1f || Mathf.Abs(turnInput) > 0.1f)
         {
-            // При движении ориентируемся по направлению движения
             Quaternion targetRotation = Quaternion.LookRotation(desiredForward);
-            owner.body.rotation = Quaternion.RotateTowards(owner.body.rotation, targetRotation, owner.rotationSpeed * Time.deltaTime);
+            owner.body.rotation = Quaternion.RotateTowards(owner.body.rotation, targetRotation, owner.RotationSpeed * Time.deltaTime);
         }
     }
 
@@ -211,7 +190,7 @@ public class AINavigation
             {
                 Vector3 forwardDir = vel.normalized * (owner.invertBodyForward ? -1f : 1f);
                 Quaternion target = Quaternion.LookRotation(forwardDir);
-                owner.body.rotation = Quaternion.RotateTowards(owner.body.rotation, target, owner.rotationSpeed * Time.deltaTime);
+                owner.body.rotation = Quaternion.RotateTowards(owner.body.rotation, target, owner.RotationSpeed * Time.deltaTime);
             }
         }
     }

@@ -15,7 +15,7 @@ public class TurretAiming : MonoBehaviour
     public AudioClip yawLoopSound;
     [Range(0f, 1f)] public float yawMaxVolume = 1f;
     [SerializeField] private float yawMinVolume = 0.1f;
-    [SerializeField] private Vector2 yawPitchRange = new Vector2(0.8f, 1.2f);
+    [SerializeField] private Vector2 yawPitchRange = new(0.8f, 1.2f);
     [SerializeField] private float audioFadeSpeed = 5f;
 
     [Header("Pitch (gun)")]

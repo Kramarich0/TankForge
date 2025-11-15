@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
             if (tank == null) continue;
             else if (tank.GetComponent<TeamComponent>() is TeamComponent tc)
             {
-                int cost = GetTankCost(tank.tankClass);
+                int cost = GetTankCost(tank);
                 if (tc.team == TeamEnum.Enemy)
                 {
                     enemyTickets += cost;
@@ -104,28 +104,41 @@ public class GameManager : MonoBehaviour
         IsLevelInitialized = true;
     }
 
-    int GetTankCost(TankAI.TankClass tankClass)
+    int GetTankCost(TankAI tank)
     {
-        return tankClass switch
+        return tank.CurrentTankClass switch
         {
-            TankAI.TankClass.Light => 100,
-            TankAI.TankClass.Medium => 200,
-            TankAI.TankClass.Heavy => 300,
+            TankClass.Light => 100,
+            TankClass.Medium => 200,
+            TankClass.Heavy => 300,
             _ => 150
         };
     }
+
 
     public void OnTankDestroyed(TeamComponent victimTeamComponent, int ticketCost, string killerName = null, string victimName = null, bool killerIsPlayer = false)
     {
         if (isGameFinished || victimTeamComponent == null) return;
 
+        if (victimTeamComponent.gameObject == null || !victimTeamComponent.gameObject.activeInHierarchy)
+        {
+            Debug.LogWarning($"[GameManager] Попытка обработать смерть уничтоженного объекта: {victimName}");
+            return;
+        }
+
         TeamEnum team = victimTeamComponent.team;
         if (team == TeamEnum.Neutral) return;
 
-        CapturePoint[] allPoints = FindObjectsByType<CapturePoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (CapturePoint point in allPoints)
+        if (victimTeamComponent.gameObject != null && victimTeamComponent.gameObject.activeInHierarchy)
         {
-            point.RemoveTeamComponent(victimTeamComponent);
+            CapturePoint[] allPoints = FindObjectsByType<CapturePoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (CapturePoint point in allPoints)
+            {
+                if (point != null)
+                {
+                    point.RemoveTeamComponent(victimTeamComponent); 
+                }
+            }
         }
 
         string victimColor = team == TeamEnum.Friendly ? "#00FF00" : "#FF0000";

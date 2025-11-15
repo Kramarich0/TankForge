@@ -28,10 +28,10 @@ public class AIStateHandler
             perception.FindNearestCapturePoint();
         }
 
-        Transform target = DetermineTarget(out TankAI.AIState nextState);
+        Transform target = DetermineTarget(out AIState nextState);
         owner.currentState = nextState;
 
-        if (nextState == TankAI.AIState.Fighting && target != null)
+        if (nextState == AIState.Fighting && target != null)
         {
             combat.AimAt(target);
 
@@ -48,19 +48,19 @@ public class AIStateHandler
                 if (los && angle < shootAngleThreshold)
                 {
                     weapons.ShootAt(target);
-                    owner.nextFireTime = Time.time + 1f / Mathf.Max(0.0001f, owner.fireRate);
+                    owner.nextFireTime = Time.time + 1f / Mathf.Max(0.0001f, owner.FireRate);
                 }
             }
 
 
             if (owner.enableStrafeWhileShooting)
             {
-                Vector3 strafePoint = GetStrafePoint(target, owner.strafeRadius, owner.strafeSpeed, owner.strafePhase);
+                Vector3 strafePoint = GetStrafePoint(target, owner.StrafeRadius, owner.StrafeSpeed, owner.strafePhase);
 
                 navigation.MoveTo(strafePoint);
 
                 if (owner.agent != null)
-                    owner.agent.stoppingDistance = Mathf.Max(0.3f, owner.shootRange * 0.05f);
+                    owner.agent.stoppingDistance = Mathf.Max(0.3f, owner.ShootRange * 0.05f);
             }
             else
             {
@@ -69,12 +69,12 @@ public class AIStateHandler
                 if (owner.agent != null)
                 {
                     float dist = Vector3.Distance(owner.transform.position, target.position);
-                    owner.agent.stoppingDistance = Mathf.Clamp(owner.shootRange * 0.12f, 0.3f, owner.shootRange * 0.4f);
+                    owner.agent.stoppingDistance = Mathf.Clamp(owner.ShootRange * 0.12f, 0.3f, owner.ShootRange * 0.4f);
 
-                    if (dist < owner.shootRange * 0.45f)
-                        owner.agent.speed = owner.moveSpeed * 0.45f;
+                    if (dist < owner.ShootRange * 0.45f)
+                        owner.agent.speed = owner.MoveSpeed * 0.45f;
                     else
-                        owner.agent.speed = owner.moveSpeed;
+                        owner.agent.speed = owner.MoveSpeed;
                 }
             }
         }
@@ -91,39 +91,33 @@ public class AIStateHandler
         }
     }
 
-    Transform DetermineTarget(out TankAI.AIState nextState)
+    Transform DetermineTarget(out AIState nextState)
     {
         if (owner.currentCapturePointTarget != null)
         {
             float distToCapturePoint = Vector3.Distance(owner.transform.position, owner.currentCapturePointTarget.transform.position);
             float distToEnemy = owner.currentTarget != null ? Vector3.Distance(owner.transform.position, owner.currentTarget.position) : float.MaxValue;
 
-            if (distToCapturePoint < distToEnemy || distToEnemy > owner.shootRange * 1.5f)
+            if (distToCapturePoint < distToEnemy || distToEnemy > owner.ShootRange * 1.5f)
             {
-                nextState = TankAI.AIState.Moving;
+                nextState = AIState.Moving;
                 return owner.currentCapturePointTarget.transform;
             }
-            else if (distToEnemy < owner.shootRange)
+            else if (distToEnemy < owner.ShootRange)
             {
-                nextState = TankAI.AIState.Fighting;
+                nextState = AIState.Fighting;
                 return owner.currentTarget;
             }
-        }
-
-        if (owner.player != null)
-        {
-            nextState = TankAI.AIState.Fighting;
-            return owner.player;
         }
 
         if (owner.currentTarget != null)
         {
             float distToEnemy = Vector3.Distance(owner.transform.position, owner.currentTarget.position);
-            nextState = (distToEnemy <= owner.shootRange) ? TankAI.AIState.Fighting : TankAI.AIState.Moving;
+            nextState = (distToEnemy <= owner.ShootRange) ? AIState.Fighting : AIState.Moving;
             return owner.currentTarget;
         }
 
-        nextState = TankAI.AIState.Patrolling;
+        nextState = AIState.Patrolling;
         return null;
     }
 

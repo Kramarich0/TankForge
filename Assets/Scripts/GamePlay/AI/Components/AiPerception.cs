@@ -57,7 +57,7 @@ public class AIPerception
         Vector3 from = owner.gunEnd.position + owner.gunEnd.forward * 0.15f;
         Vector3 to = t.position + Vector3.up * 1.2f;
         Vector3 dir = to - from;
-        float maxDist = Mathf.Min(owner.shootRange, dir.magnitude);
+        float maxDist = Mathf.Min(owner.ShootRange, dir.magnitude);
 
         RaycastHit[] hits = Physics.RaycastAll(from, dir.normalized, maxDist);
         if (hits == null || hits.Length == 0)
@@ -95,7 +95,7 @@ public class AIPerception
         if (!owner.debugGizmos) return;
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(owner.transform.position, owner.detectionRadius);
+        Gizmos.DrawWireSphere(owner.transform.position, owner.DetectionRadius);
 
         if (owner.currentTarget != null)
         {

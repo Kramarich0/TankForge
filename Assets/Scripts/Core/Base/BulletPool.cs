@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -11,29 +12,42 @@ public class BulletPool : MonoBehaviour
     void Awake()
     {
         pool = new ObjectPool<Bullet>(
-            createFunc: () =>
-            {
-                var bullet = Instantiate(prefab, transform);
-                bullet.gameObject.SetActive(false);
-                bullet.SetPool(pool);
-                return bullet;
-            },
-
-            actionOnGet: bullet =>
-            {
-                bullet.CleanupBeforeSpawn();
-            },
-
-            actionOnRelease: bullet =>
-            {
-                bullet.gameObject.SetActive(false);
-            },
-
-            actionOnDestroy: bullet => Destroy(bullet.gameObject),
+            createFunc: CreateBullet,
+            actionOnGet: OnBulletGet,
+            actionOnRelease: OnBulletRelease,
+            actionOnDestroy: Destroy,
             collectionCheck: true,
             defaultCapacity: initialSize,
             maxSize: 500
         );
+
+        var prewarm = new List<Bullet>();
+        for (int i = 0; i < initialSize; i++)
+        {
+            prewarm.Add(pool.Get());
+        }
+        foreach (var bullet in prewarm)
+        {
+            pool.Release(bullet);
+        }
+    }
+
+    private Bullet CreateBullet()
+    {
+        var bullet = Instantiate(prefab, transform);
+        bullet.gameObject.SetActive(false);
+        bullet.SetPool(pool);
+        return bullet;
+    }
+
+    private void OnBulletGet(Bullet bullet)
+    {
+        bullet.CleanupBeforeSpawn();
+    }
+
+    private void OnBulletRelease(Bullet bullet)
+    {
+        bullet.gameObject.SetActive(false);
     }
 
     public Bullet SpawnBullet(Vector3 position, Vector3 velocity, TeamEnum team, string shooterName, int damage, Collider[] ignoreColliders = null)

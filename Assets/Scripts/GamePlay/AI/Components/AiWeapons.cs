@@ -27,9 +27,9 @@ public class AIWeapons
 
         Vector3 initVelocity;
 
-        if (owner.bulletUseGravity)
+        if (owner.BulletUseGravity)
         {
-            float v = owner.projectileSpeed;
+            float v = owner.ProjectileSpeed;
             float g = Mathf.Abs(Physics.gravity.y);
             float d = distance;
             float v4 = v * v * v * v;
@@ -47,18 +47,18 @@ public class AIWeapons
             }
             else
             {
-                initVelocity = aim.normalized * owner.projectileSpeed;
+                initVelocity = aim.normalized * owner.ProjectileSpeed;
             }
         }
         else
         {
-            initVelocity = aim.normalized * owner.projectileSpeed;
+            initVelocity = aim.normalized * owner.ProjectileSpeed;
         }
 
         float moveSpeed = (owner.agent != null) ? owner.agent.velocity.magnitude : 0f;
-        float speedFactor = (owner.moveSpeed > 0f) ? Mathf.Clamp01(moveSpeed / owner.moveSpeed) : 0f;
+        float speedFactor = (owner.MoveSpeed > 0f) ? Mathf.Clamp01(moveSpeed / owner.MoveSpeed) : 0f;
 
-        float spreadDeg = owner.baseSpreadDegrees * Mathf.Lerp(owner.stationarySpreadFactor, owner.movingSpreadFactor, speedFactor);
+        float spreadDeg = owner.BaseSpreadDegrees * Mathf.Lerp(owner.StationarySpreadFactor, owner.MovingSpreadFactor, speedFactor);
 
         Quaternion spreadRot =
             Quaternion.AngleAxis(Random.Range(-spreadDeg, spreadDeg), owner.gunEnd.right) *
@@ -77,7 +77,7 @@ public class AIWeapons
            finalInitVel,
            owner.teamComp != null ? owner.teamComp.team : TeamEnum.Neutral,
            shooterDisplay,
-           owner.bulletDamage,
+           owner.BulletDamage,
            shooterColliders
        );
 

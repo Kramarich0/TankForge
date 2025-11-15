@@ -135,7 +135,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -532,7 +532,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -637,7 +637,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 922fdc92c6869b24f8980ee3b8bbe6ed, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b5c942927194d3e40915e0e63da568b0, type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -773,7 +773,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -902,7 +902,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -936,12 +936,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6271281965909831519}
-  - component: {fileID: 7083762602395735835}
-  - component: {fileID: 2588661511699522136}
   - component: {fileID: 7957705648650151865}
-  - component: {fileID: 7777448432533058211}
-  - component: {fileID: 6851493366426089184}
+  - component: {fileID: 7083762602395735835}
   - component: {fileID: 2293328772028465975}
+  - component: {fileID: 6851493366426089184}
+  - component: {fileID: 2588661511699522136}
+  - component: {fileID: 7777448432533058211}
   m_Layer: 12
   m_Name: Panzer2F
   m_TagString: EnemyTank
@@ -968,6 +968,54 @@ Transform:
   - {fileID: 8445456810011470239}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7957705648650151865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377131968068272437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankAI
+  tankDefinition: {fileID: 11400000, guid: b584e32103971b448b35d3f542199010, type: 2}
+  turret: {fileID: 5949117071991103269}
+  gun: {fileID: 6037874240717466212}
+  gunEnd: {fileID: 8783475529552488698}
+  body: {fileID: 7100674820746053045}
+  bulletPool: {fileID: 0}
+  leftTrack:
+    wheels:
+    - {fileID: 7943283988121682641}
+    - {fileID: 449612602436726900}
+    - {fileID: 1243420869681184834}
+    - {fileID: 555088518906599043}
+    - {fileID: 4155198154969978963}
+    - {fileID: 5286024279924804597}
+    - {fileID: 6043663604558953086}
+    currentTorque: 0
+  rightTrack:
+    wheels:
+    - {fileID: 8600911158043928187}
+    - {fileID: 9177686586492812401}
+    - {fileID: 4328855596815008765}
+    - {fileID: 8564475421515181402}
+    - {fileID: 6284323306021930736}
+    - {fileID: 7699356911140290413}
+    - {fileID: 207809024800457299}
+    currentTorque: 0
+  debugGizmos: 0
+  debugLogs: 0
+  invertBodyForward: 0
+  invertTurretForward: 0
+  gunUsesLocalXForPitch: 0
+  enableStrafeWhileShooting: 1
+  capturePointsLayer:
+    serializedVersion: 2
+    m_Bits: 16384
+  capturePointDetectionRadius: 60
 --- !u!114 &7083762602395735835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -982,8 +1030,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TankHealth
   maxHealth: 100
   currentHealth: 0
-  healthDisplay: {fileID: 0}
   deathPrefab: {fileID: 2377131968068272437, guid: b963691fd0dcb544cb696f4ff1cba611, type: 3}
+--- !u!114 &2293328772028465975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377131968068272437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51eb7dc7187fb8249a3a376f3f7b88ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankCollisionDamage
+  minCollisionSpeed: 3
+  damageMultiplier: 0.01
+  debugLogs: 1
+--- !u!114 &6851493366426089184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2377131968068272437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
+  tankId: 1b290f62-29c0-4b71-ae81-88fa469398da
+  team: 1
+  displayName: Panzer II F
 --- !u!195 &2588661511699522136
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1006,87 +1083,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &7957705648650151865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377131968068272437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98dfacf0d2054d8439fa30e826ea95d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankAI
-  tankClass: 0
-  lightStats:
-    health: 75
-    moveSpeed: 5
-    rotationSpeed: 60
-    fireRate: 1
-    shootRange: 80
-    bulletDamage: 10
-  mediumStats:
-    health: 150
-    moveSpeed: 3
-    rotationSpeed: 40
-    fireRate: 0.1
-    shootRange: 100
-    bulletDamage: 50
-  heavyStats:
-    health: 300
-    moveSpeed: 2
-    rotationSpeed: 30
-    fireRate: 0.5
-    shootRange: 120
-    bulletDamage: 100
-  enemyHealthDisplayPrefab: {fileID: 0}
-  player: {fileID: 0}
-  turret: {fileID: 5949117071991103269}
-  gun: {fileID: 6037874240717466212}
-  gunEnd: {fileID: 8783475529552488698}
-  body: {fileID: 7100674820746053045}
-  bulletPrefab: {fileID: 8395639834743769822, guid: 767f13233417e4947a430199e4adac42, type: 3}
-  shootRange: 100
-  moveSpeed: 3
-  rotationSpeed: 40
-  fireRate: 9
-  minGunAngle: -5
-  maxGunAngle: 20
-  baseSpreadDegrees: 1
-  movingSpreadFactor: 6
-  stationarySpreadFactor: 1
-  enableStrafeWhileShooting: 1
-  strafeRadius: 6
-  strafeSpeed: 0.8
-  projectileSpeed: 400
-  bulletUseGravity: 1
-  debugGizmos: 0
-  debugLogs: 0
-  invertBodyForward: 0
-  invertTurretForward: 0
-  gunUsesLocalXForPitch: 0
-  detectionRadius: 500
-  fieldOfView: 140
-  detectionMask:
-    serializedVersion: 2
-    m_Bits: 10240
-  capturePointsLayer:
-    serializedVersion: 2
-    m_Bits: 16384
-  capturePointDetectionRadius: 60
-  bulletPool: {fileID: 0}
-  idleSound: {fileID: 0}
-  driveSound: {fileID: 0}
-  shootSound: {fileID: 0}
-  minIdleVolume: 0.2
-  maxIdleVolume: 0.5
-  minDriveVolume: 0
-  maxDriveVolume: 0.5
-  minIdlePitch: 0.8
-  maxIdlePitch: 1.2
-  minDrivePitch: 0.8
-  maxDrivePitch: 1.3
 --- !u!54 &7777448432533058211
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1095,7 +1091,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2377131968068272437}
   serializedVersion: 5
-  m_Mass: 12
+  m_Mass: 1200
   m_LinearDamping: 0.4
   m_AngularDamping: 0.8
   m_CenterOfMass: {x: 0, y: -0.4, z: 0}
@@ -1114,35 +1110,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &6851493366426089184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377131968068272437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8745222fb2769a94299f5425a683493d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamComponent
-  team: 1
-  displayName: Panzer II F
---- !u!114 &2293328772028465975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2377131968068272437}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51eb7dc7187fb8249a3a376f3f7b88ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TankCollisionDamage
-  minCollisionSpeed: 3
-  damageMultiplier: 0.01
-  debugLogs: 1
 --- !u!1 &2411091379665770527
 GameObject:
   m_ObjectHideFlags: 0
@@ -1247,7 +1214,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1376,7 +1343,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1505,7 +1472,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1634,7 +1601,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1763,7 +1730,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -1981,7 +1948,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2199,7 +2166,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2459,7 +2426,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2588,7 +2555,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25
@@ -2992,7 +2959,7 @@ WheelCollider:
     spring: 35000
     damper: 4500
     targetPosition: 0.5
-  m_SuspensionDistance: 0
+  m_SuspensionDistance: 0.3
   m_ForceAppPointDistance: 0
   m_Mass: 20
   m_WheelDampingRate: 0.25

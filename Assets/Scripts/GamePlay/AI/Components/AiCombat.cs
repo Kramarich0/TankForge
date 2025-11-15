@@ -31,7 +31,7 @@ public class AICombat
             {
                 Vector3 forwardDir = dir.normalized * (owner.invertTurretForward ? -1f : 1f);
                 Quaternion targetRot = Quaternion.LookRotation(forwardDir, Vector3.up);
-                owner.turret.rotation = Quaternion.RotateTowards(owner.turret.rotation, targetRot, owner.rotationSpeed * Time.deltaTime);
+                owner.turret.rotation = Quaternion.RotateTowards(owner.turret.rotation, targetRot, owner.RotationSpeed * Time.deltaTime);
             }
         }
 
@@ -48,7 +48,7 @@ public class AICombat
 
         bool pitchUsesLocalX = owner.gunUsesLocalXForPitch;
         float targetPitch = pitchUsesLocalX ? NormalizeAngle(desiredLocalEuler.x) : NormalizeAngle(desiredLocalEuler.z);
-        targetPitch = Mathf.Clamp(targetPitch, owner.minGunAngle, owner.maxGunAngle);
+        targetPitch = Mathf.Clamp(targetPitch, owner.MinGunAngle, owner.MaxGunAngle);
 
         Vector3 curEuler = owner.gun.localEulerAngles;
         float currentPitch = pitchUsesLocalX ? NormalizeAngle(curEuler.x) : NormalizeAngle(curEuler.z);
@@ -64,7 +64,7 @@ public class AICombat
         }
         else
         {
-            float maxDelta = owner.rotationSpeed * Time.deltaTime;
+            float maxDelta = owner.RotationSpeed * Time.deltaTime;
             float newPitch = Mathf.MoveTowardsAngle(currentPitch, targetPitch, maxDelta);
             float smooth = Mathf.SmoothDampAngle(currentPitch, newPitch, ref pitchVelocity, smoothTime, Mathf.Infinity, Time.deltaTime);
             currentPitch = smooth;
@@ -91,14 +91,14 @@ public class AICombat
 
         Vector3 dir = targetPos - owner.gunEnd.position;
         float dist = dir.magnitude;
-        float time = dist / Mathf.Max(0.001f, owner.projectileSpeed);
+        float time = dist / Mathf.Max(0.001f, owner.ProjectileSpeed);
 
         for (int i = 0; i < 3; i++)
         {
             Vector3 predicted = targetPos + targetVel * time;
             Vector3 toPred = predicted - owner.gunEnd.position;
             float d = toPred.magnitude;
-            time = d / Mathf.Max(0.001f, owner.projectileSpeed);
+            time = d / Mathf.Max(0.001f, owner.ProjectileSpeed);
         }
 
         return targetPos + targetVel * time;

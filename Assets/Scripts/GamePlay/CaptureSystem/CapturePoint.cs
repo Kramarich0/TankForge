@@ -24,18 +24,18 @@ public class CapturePoint : MonoBehaviour
 
     private TeamEnum controllingTeam = TeamEnum.Neutral;
 
-    
+
     private float captureProgress = 0f;
 
     private Coroutine ticketCoroutine;
 
-    private readonly Dictionary<TeamEnum, HashSet<TeamComponent>> present = new()
+    private readonly Dictionary<TeamEnum, HashSet<string>> presentTankIds = new()
     {
-        { TeamEnum.Friendly, new HashSet<TeamComponent>() },
-        { TeamEnum.Enemy,    new HashSet<TeamComponent>() }
+        { TeamEnum.Friendly, new HashSet<string>() },
+        { TeamEnum.Enemy,    new HashSet<string>() }
     };
 
-    
+
     private const float EPS = 0.001f;
 
     void Start()
@@ -52,6 +52,21 @@ public class CapturePoint : MonoBehaviour
         else captureProgress = 0f;
 
         UpdateUI();
+    }
+
+    private void OnDisable()
+    {
+        if (ticketCoroutine != null)
+        {
+            StopCoroutine(ticketCoroutine);
+            ticketCoroutine = null;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        presentTankIds[TeamEnum.Friendly].Clear();
+        presentTankIds[TeamEnum.Enemy].Clear();
     }
 
     void Awake()
@@ -71,10 +86,9 @@ public class CapturePoint : MonoBehaviour
 
         if (tc != null && tc.team != TeamEnum.Neutral)
         {
-            var set = present[tc.team];
-            if (set.Add(tc))
+            if (presentTankIds[tc.team].Add(tc.tankId))
             {
-                Debug.Log($"[CapturePoint] Entered: {tc.gameObject.name}, team={tc.team}. Count now: {set.Count}");
+                Debug.Log($"[CapturePoint] Entered: {tc.displayName ?? tc.gameObject.name} (ID: {tc.tankId}), team={tc.team}. Count now: {presentTankIds[tc.team].Count}");
             }
         }
         else
@@ -90,36 +104,28 @@ public class CapturePoint : MonoBehaviour
 
         if (tc != null && tc.team != TeamEnum.Neutral)
         {
-            var set = present[tc.team];
-            if (set.Remove(tc))
+            if (presentTankIds[tc.team].Remove(tc.tankId))
             {
-                Debug.Log($"[CapturePoint] Exited: {tc.gameObject.name}, team={tc.team}. Count now: {set.Count}");
+                Debug.Log($"[CapturePoint] Exited: {tc.displayName ?? tc.gameObject.name} (ID: {tc.tankId}), team={tc.team}. Count now: {presentTankIds[tc.team].Count}");
             }
         }
     }
-
     void Update()
     {
-        int friendlyCount = present[TeamEnum.Friendly].Count;
-        int enemyCount = present[TeamEnum.Enemy].Count;
+        int friendlyCount = presentTankIds[TeamEnum.Friendly].Count;
+        int enemyCount = presentTankIds[TeamEnum.Enemy].Count;
         int net = friendlyCount - enemyCount;
 
-        
-        
-        
         if (controllingTeam != TeamEnum.Neutral)
         {
-            
-
-            
             if (friendlyCount == 0 && enemyCount == 0)
             {
-                
+
             }
-            
+
             else if (friendlyCount == enemyCount)
             {
-                
+
                 if ((controllingTeam == TeamEnum.Friendly && friendlyCount > 0) ||
                     (controllingTeam == TeamEnum.Enemy && enemyCount > 0))
                 {
@@ -136,17 +142,17 @@ public class CapturePoint : MonoBehaviour
                 }
                 else
                 {
-                    
+
                     captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * neutralDecaySpeed);
                 }
             }
-            
-            else if (net > 0) 
+
+            else if (net > 0)
             {
                 float speed = Mathf.Max(1, net) * captureRatePerPlayer;
                 captureProgress = Mathf.MoveTowards(captureProgress, captureTime, Time.deltaTime * speed);
             }
-            else 
+            else
             {
                 float speed = Mathf.Max(1, -net) * captureRatePerPlayer;
                 captureProgress = Mathf.MoveTowards(captureProgress, -captureTime, Time.deltaTime * speed);
@@ -154,7 +160,7 @@ public class CapturePoint : MonoBehaviour
         }
         else
         {
-            
+
             if (friendlyCount == 0 && enemyCount == 0)
             {
                 captureProgress = Mathf.MoveTowards(captureProgress, 0f, Time.deltaTime * neutralDecaySpeed);
@@ -175,10 +181,6 @@ public class CapturePoint : MonoBehaviour
             }
         }
 
-        
-        
-        
-        
         if (controllingTeam != TeamEnum.Neutral)
         {
             bool stillFullyOwned =
@@ -187,14 +189,11 @@ public class CapturePoint : MonoBehaviour
 
             if (!stillFullyOwned)
             {
-                
+
                 LoseControl();
             }
         }
 
-        
-        
-        
         if (captureProgress >= captureTime && controllingTeam != TeamEnum.Friendly)
         {
             SetControllingTeam(TeamEnum.Friendly);
@@ -208,7 +207,7 @@ public class CapturePoint : MonoBehaviour
         UpdateUI();
     }
 
-    
+
     private void LoseControl()
     {
         if (ticketCoroutine != null)
@@ -240,7 +239,7 @@ public class CapturePoint : MonoBehaviour
         controllingTeam = team;
         captureProgress = (team == TeamEnum.Friendly) ? captureTime : -captureTime;
 
-        
+
         if (ticketCoroutine != null) StopCoroutine(ticketCoroutine);
         ticketCoroutine = StartCoroutine(TicketDrainRoutine());
 
@@ -249,19 +248,19 @@ public class CapturePoint : MonoBehaviour
 
     private IEnumerator TicketDrainRoutine()
     {
-        
+
         while (controllingTeam != TeamEnum.Neutral)
         {
             yield return new WaitForSeconds(ticketInterval);
 
-            
+
             bool fullyCaptured =
                 (controllingTeam == TeamEnum.Friendly && captureProgress >= captureTime - EPS) ||
                 (controllingTeam == TeamEnum.Enemy && captureProgress <= -captureTime + EPS);
 
             if (!fullyCaptured)
             {
-                
+
                 Debug.Log("[CapturePoint] TicketDrain: владение больше не полностью — останавливаем слив.");
                 yield break;
             }
@@ -277,12 +276,24 @@ public class CapturePoint : MonoBehaviour
 
     public void RemoveTeamComponent(TeamComponent tc)
     {
-        if (tc == null || tc.team == TeamEnum.Neutral) return;
-
-        if (present.ContainsKey(tc.team))
+        if (tc == null || string.IsNullOrEmpty(tc.tankId))
         {
-            present[tc.team].Remove(tc);
-            Debug.Log($"[CapturePoint] Removed destroyed tank: {tc.name}");
+            Debug.LogWarning($"[CapturePoint] Попытка удалить невалидный танк");
+            return;
+        }
+
+        if (tc.team == TeamEnum.Neutral) return;
+
+        if (presentTankIds.ContainsKey(tc.team))
+        {
+            if (presentTankIds[tc.team].Remove(tc.tankId))
+            {
+                Debug.Log($"[CapturePoint] Удалён танк по ID: {tc.tankId}, team={tc.team}");
+            }
+            else
+            {
+                Debug.Log($"[CapturePoint] Танк с ID {tc.tankId} не найден в списке для удаления");
+            }
         }
     }
 

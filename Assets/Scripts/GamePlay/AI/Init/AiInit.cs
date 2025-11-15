@@ -10,7 +10,7 @@ public class AIInit
 
     public void Awake()
     {
-        owner.tankHealth = owner.GetComponent<TankHealth>();
+        owner.tankHealth = owner.GetComponent<AITankHealth>();
         owner.agent = owner.GetComponent<NavMeshAgent>();
         owner.teamComp = owner.GetComponent<TeamComponent>();
     }
@@ -19,11 +19,9 @@ public class AIInit
     public void Start()
     {
 
-        new AIStats(owner).ApplyStatsFromClass();
-
         if (owner.agent != null)
         {
-            owner.agent.speed = owner.moveSpeed;
+            owner.agent.speed = owner.MoveSpeed;
             owner.agent.angularSpeed = 120f;
             owner.agent.acceleration = 8f;
             owner.agent.updateRotation = false;
@@ -52,14 +50,6 @@ public class AIInit
                 TankWheelSetup.ApplyToAllWheels(owner.leftTrack.wheels, owner.rightTrack.wheels, rb.mass);
         }
 
-        if (owner.enemyHealthDisplayPrefab != null && owner.tankHealth != null)
-        {
-            var d = Object.Instantiate(owner.enemyHealthDisplayPrefab);
-            d.target = owner.tankHealth;
-            d.targetTeam = owner.teamComp;
-        }
-
-
         owner.StartCoroutine(DelayedSetupAudio());
     }
 
@@ -80,39 +70,39 @@ public class AIInit
 
     void SetupAudio()
     {
-        if (owner.idleSound != null)
+        if (owner.IdleSound != null)
         {
             owner.idleSource = owner.gameObject.AddComponent<AudioSource>();
             AudioManager.AssignToMaster(owner.idleSource);
-            owner.idleSource.clip = owner.idleSound;
+            owner.idleSource.clip = owner.IdleSound;
             owner.idleSource.loop = true;
             owner.idleSource.spatialBlend = 1f;
             owner.idleSource.minDistance = 3f;
             owner.idleSource.maxDistance = 50f;
             owner.idleSource.rolloffMode = AudioRolloffMode.Logarithmic;
-            owner.idleSource.volume = owner.minIdleVolume;
+            owner.idleSource.volume = owner.MinIdlePitch;
             owner.idleSource.Play();
         }
 
-        if (owner.driveSound != null)
+        if (owner.DriveSound != null)
         {
             owner.driveSource = owner.gameObject.AddComponent<AudioSource>();
             AudioManager.AssignToMaster(owner.driveSource);
-            owner.driveSource.clip = owner.driveSound;
+            owner.driveSource.clip = owner.DriveSound;
             owner.driveSource.loop = true;
             owner.driveSource.spatialBlend = 1f;
             owner.driveSource.minDistance = 3f;
             owner.driveSource.maxDistance = 50f;
             owner.driveSource.rolloffMode = AudioRolloffMode.Logarithmic;
-            owner.driveSource.volume = owner.minDriveVolume;
+            owner.driveSource.volume = owner.MinDriveVolume;
             owner.driveSource.Play();
         }
 
-        if (owner.shootSound != null)
+        if (owner.ShootSound != null)
         {
             owner.shootSource = owner.gameObject.AddComponent<AudioSource>();
             AudioManager.AssignToMaster(owner.shootSource);
-            owner.shootSource.clip = owner.shootSound;
+            owner.shootSource.clip = owner.ShootSound;
             owner.shootSource.loop = false;
             owner.shootSource.spatialBlend = 1f;
             owner.shootSource.minDistance = 3f;

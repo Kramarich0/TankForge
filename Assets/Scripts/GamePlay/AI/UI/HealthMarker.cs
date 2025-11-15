@@ -4,7 +4,7 @@ using UnityEngine;
 public class HealthMarkerSimple : MonoBehaviour
 {
     [Header("Target")]
-    public TankHealth targetHealth;
+    public AITankHealth targetHealth;
     public TeamComponent targetTeam;
 
     [Header("Size")]
